@@ -1,0 +1,68 @@
+services:
+  - type: web
+    name: dope-events
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn DopeEvents.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: localhost,127.0.0.1,${RENDER_EXTERNAL_HOSTNAME}
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://${RENDER_EXTERNAL_HOSTNAME}
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_DB_NAME
+        sync: false
+      - key: SUPABASE_DB_USER
+        sync: false
+      - key: SUPABASE_DB_PASSWORD
+        sync: false
+      - key: SUPABASE_DB_HOST
+        sync: false
+      - key: SUPABASE_DB_PORT
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+      - key: CONSUMER_KEY
+        sync: false
+      - key: CONSUMER_SECRET
+        sync: false
+      - key: SHORTCODE
+        sync: false
+      - key: PASSKEY
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: CALLBACK_URL
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
