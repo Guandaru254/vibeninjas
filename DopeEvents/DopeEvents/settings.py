@@ -167,3 +167,7 @@ AUTH_USER_MODEL = 'events.User'
 
 # Default auto field for all apps
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configure Django for Heroku
+import django_heroku
+django_heroku.settings(locals())
