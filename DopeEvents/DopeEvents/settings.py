@@ -61,18 +61,34 @@ CSRF_TRUSTED_ORIGINS = [f"http://{origin.strip()}" for origin in config('CSRF_TR
 # Database Configuration
 if os.getenv('RENDER_SERVICE_ID', None):
     # Render database configuration
-    if os.getenv('DATABASE_URL'):
-        import dj_database_url
-        DATABASES = {
-            'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'tazamoexp',
+            'USER': 'tazamoexp_user',
+            'PASSWORD': 'L1QGpwRFo4zpQpx2mqgWHxLXammcTzbO',
+            'HOST': 'dpg-d5oa0la4d50c73c5qmd0-a/tazamoexp',
+            'PORT': '5432',
         }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+    }
+    # Production settings
+    DEBUG = False
+    ALLOWED_HOSTS = ['vibeninjas.co.ke', 'localhost', '127.0.0.1', '*']
+    
+    # Security settings for production
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Session security
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
 else:
     # Development database
     DATABASES = {
