@@ -1,5 +1,5 @@
 services:
-  # Web Service
+  # Web Service - Updated WSGI path for nested Django structure
   - type: web
     name: dopeevents-web
     env: python
