@@ -1,196 +1,160 @@
-# TazamoXP- A Ticket and Event Platform
+# DopeEvents Django Project
 
-A ticket and event platform that allows organizers to create and manage events, while attendees can purchase tickets securely.
-
-## Features
-
-### Core Features
-- User authentication for event organizers
-- Event creation and management
-- Ticket purchasing system
-- Secure payment processing with Stripe
-- Mobile responsive design
-
-### Pro Features (TazamoXM Pro)
-- Advanced analytics
-- Priority support
-- Custom branding
-- Multiple subscription tiers:
-  - Daily ($5/day)
-  - Monthly ($49/month)
-  - Yearly ($399/year)
-
-## Technology Stack
-
-- **Backend**: Django 4.2
-- **Frontend**: Bootstrap 5.3
-- **Database**: SQLite (Development) / PostgreSQL (Production)
-- **Payment Processing**: Stripe,M-PESA
-- **Icons**: Font Awesome 6.4
-- **Additional Libraries**: Pillow (Image processing)
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/tazamoafrica/TazamoEXP.git
-cd DopeEvents
-```
-
-2. Create and activate virtual environment:
-```bash
-python -m venv env
-env\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Create environment variables file (.env):
-```plaintext
-SECRET_KEY=your_django_secret_key
-STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-```
-
-5. Run migrations:
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-6. Create superuser:
-```bash
-python manage.py createsuperuser
-```
-
-7. Run the development server:
-```bash
-python manage.py runserver
-```
+A clean, organized Django events management application.
 
 ## Project Structure
 
 ```
 DopeEvents/
-├── events/                 # Main application directory
-│   ├── migrations/        # Database migrations
-│   ├── templates/        # HTML templates
-│   │   ├── base.html    # Base template
-│   │   ├── events/      # Event-related templates
-│   │   └── registration/ # Auth-related templates
-│   ├── models.py        # Database models
-│   ├── views.py         # View logic
-│   ├── urls.py          # URL configurations
-│   └── forms.py         # Form definitions
-├── static/              # Static files (CSS, JS, images)
-├── media/              # User-uploaded files
-└── manage.py           # Django management script
+├── .env                    # Environment variables (local)
+├── .env.development         # Development environment
+├── .env.production          # Production environment
+├── .gitignore              # Git ignore rules
+├── requirements.txt         # Python dependencies
+├── env/                   # Virtual environment
+└── DopeEvents/            # Django project
+    ├── manage.py           # Django management script
+    ├── DopeEvents/        # Django configuration
+    │   ├── settings.py     # Main settings
+    │   ├── urls.py        # URL routing
+    │   └── wsgi.py        # WSGI configuration
+    ├── events/            # Events app
+    ├── payments/          # Payments app
+    ├── analytics/         # Analytics app
+    ├── seller_merchandise/ # Merchandise app
+    ├── static/           # Static files
+    ├── media/            # Media files
+    └── templates/        # HTML templates
 ```
 
-## Models
+## Quick Start
 
-### User
-- Custom user model extending AbstractUser
-- Includes pro status tracking
-- Handles subscription management
+### 1. Setup Virtual Environment
+```bash
+python -m venv env
+source env/bin/activate  # On Windows: env\Scripts\activate
+```
 
-### Event
-- Title, description, image
-- Date and location
-- Ticket pricing and availability
-- Organizer relationship
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-### Ticket
-- Event relationship
-- Buyer information
-- Payment tracking
-- Unique ticket code
+### 3. Configure Environment
+Copy `.env.example` to `.env` and configure:
+- Database settings
+- Cloudinary keys
+- Email configuration
+- Payment integrations
 
-### Subscription
-- User relationship
-- Plan type and status
-- Payment tracking
-- Expiration handling
+### 4. Run Migrations
+```bash
+python DopeEvents/manage.py migrate
+```
 
-## API Endpoints
+### 5. Create Superuser
+```bash
+python DopeEvents/manage.py createsuperuser
+```
 
-### Events
-- `GET /events/` - List all events
-- `GET /event/<id>/` - Event details
-- `POST /create-event/` - Create new event
-- `PUT /edit-event/<id>/` - Update event
-- `DELETE /event/<id>/` - Delete event
+### 6. Start Development Server
+```bash
+python DopeEvents/manage.py runserver
+```
 
-### Authentication
-- `POST /login/` - Organizer login
-- `POST /logout/` - Logout
-- `GET /dashboard/` - Organizer dashboard
+## Features
 
-### Tickets
-- `POST /checkout/<event_id>/` - Purchase tickets
-- `GET /ticket/<ticket_id>/` - Ticket confirmation
-
-### Subscriptions
-- `POST /subscribe/<plan>/` - Subscribe to pro plan
-- `GET /pro-features/` - Pro features
-- `GET /subscription/settings/` - Manage subscription
+- **Event Management**: Create and manage events
+- **User Authentication**: User registration and login
+- **Payment Processing**: Stripe and M-Pesa integration
+- **Media Management**: Cloudinary integration
+- **Analytics**: Event tracking and reporting
+- **Merchandise**: Product sales management
 
 ## Configuration
 
-### Required Environment Variables
-- `SECRET_KEY`: Django secret key
-- `STRIPE_PUBLISHABLE_KEY`: Stripe public key
-- `STRIPE_SECRET_KEY`: Stripe secret key
+### Environment Variables
+Key environment variables needed:
 
-### Optional Environment Variables
-- `DEBUG`: Set to False in production
-- `ALLOWED_HOSTS`: List of allowed hosts
-- `DATABASE_URL`: Database connection string
-
-## Development
-
-1. Setup pre-commit hooks:
 ```bash
-pre-commit install
+# Database
+DB_NAME=your_database_name
+DB_USER=your_database_user
+DB_PASSWORD=your_password
+DB_HOST=your_host
+DB_PORT=5432
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Email
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=your_email@gmail.com
+EMAIL_HOST_PASSWORD=your_app_password
+
+# Stripe
+STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+
+# M-Pesa
+MPESA_CONSUMER_KEY=your_consumer_key
+MPESA_CONSUMER_SECRET=your_consumer_secret
 ```
 
-2. Run tests:
-```bash
-python manage.py test
-```
+## Dependencies
 
-3. Check code style:
-```bash
-flake8 .
-```
+Main dependencies include:
+- Django 4.2+
+- Django REST Framework
+- PostgreSQL (psycopg2)
+- Cloudinary
+- Stripe
+- Gunicorn
+- Whitenoise
 
 ## Deployment
 
-1. Set environment variables
-2. Collect static files:
+This project can be deployed to:
+- **Render.com** (recommended)
+- **Heroku**
+- **DigitalOcean**
+- **AWS**
+- **Google Cloud Platform**
+
+See deployment guides for specific platforms.
+
+## Development
+
+### Adding New Apps
 ```bash
-python manage.py collectstatic
+python DopeEvents/manage.py startapp new_app_name
 ```
 
-3. Configure database
-4. Setup web server (Nginx/Apache)
-5. Configure SSL certificate
+### Running Tests
+```bash
+python DopeEvents/manage.py test
+```
+
+### Collecting Static Files
+```bash
+python DopeEvents/manage.py collectstatic
+```
 
 ## Contributing
 
 1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create pull request
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
 
 ## Support
 
-For support, email info@tazamoafrica.com or create an issue in the repository.
+For support and questions, please open an issue in the repository.

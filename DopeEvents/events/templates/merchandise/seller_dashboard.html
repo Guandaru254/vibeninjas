@@ -1,97 +1,208 @@
 {% extends 'merchandise/base_merchandise.html' %}
 {% load humanize %}
 
-{% block merchandise_title %}Seller Dashboard - TazamoEXP{% endblock %}
+{% block title %}Seller Dashboard - TazamoEXP{% endblock %}
 
-{% block page_title %}Seller Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
 
-{% block page_subtitle %}Manage your merchandise and track your orders{% endblock %}
+{% block page_subtitle %}Overview of your business performance{% endblock %}
 
-{% block breadcrumb_items %}
-    <li class="breadcrumb-item active" aria-current="page">Seller Dashboard</li>
+{% block breadcrumb_sub_items %}
+    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Minimalist Professional Dashboard Styles */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Clean stats cards */
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.stat-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 300;
+    color: #111827;
+    margin: 8px 0 4px 0;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.stat-icon.primary {
+    background: #f0f9ff;
+    color: #0284c7;
+}
+
+.stat-icon.success {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.stat-icon.warning {
+    background: #fefce8;
+    color: #ca8a04;
+}
+
+.stat-icon.info {
+    background: #f0f9ff;
+    color: #0ea5e9;
+}
+
+.trend {
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.trend.positive {
+    color: #16a34a;
+}
+
+.content-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-header-clean {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #fafbfc;
+}
+
+.card-header-clean h5 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.btn-clean {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-clean:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #111827;
+}
+</style>
 {% endblock %}
 
 {% block merchandise_content %}
-<div class="row">
-    <!-- Stats Summary -->
-    <div class="col-12 mb-4">
-        <div class="row g-4">
-            <div class="col-md-3 col-6">
-                <div class="card stats-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Total Sales</h6>
-                                <h3 class="mb-0">Ksh. {{ total_sales|default:0|floatformat:2|intcomma }}</h3>
-                            </div>
-                            <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-currency-dollar text-primary"></i>
-                            </div>
+<div class="dashboard-container">
+    <!-- Stats Overview -->
+    <div class="row g-4 mb-6">
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value">Ksh. {{ total_sales|default:0|floatformat:0|intcomma }}</div>
+                        <div class="trend positive">
+                            <i class="bi bi-arrow-up"></i>
+                            <span>12% from last month</span>
                         </div>
-                        <div class="mt-3">
-                            <span class="text-success"><i class="bi bi-graph-up-arrow me-1"></i> 12%</span>
-                            <span class="text-muted ms-2">vs last month</span>
-                        </div>
+                    </div>
+                    <div class="stat-icon primary">
+                        <i class="bi bi-currency-dollar"></i>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-3 col-6">
-                <div class="card stats-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Total Orders</h6>
-                                <h3 class="mb-0">{{ total_orders|default:0 }}</h3>
-                            </div>
-                            <div class="bg-success bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-cart-check text-success"></i>
-                            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Orders</div>
+                        <div class="stat-value">{{ total_orders|default:0 }}</div>
+                        <div class="trend positive">
+                            <i class="bi bi-arrow-up"></i>
+                            <span>5% from last month</span>
                         </div>
-                        <div class="mt-3">
-                            <span class="text-success"><i class="bi bi-graph-up-arrow me-1"></i> 5%</span>
-                            <span class="text-muted ms-2">vs last month</span>
-                        </div>
+                    </div>
+                    <div class="stat-icon success">
+                        <i class="bi bi-cart-check"></i>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-3 col-6">
-                <div class="card stats-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Products</h6>
-                                <h3 class="mb-0">{{ total_products|default:0 }}</h3>
-                            </div>
-                            <div class="bg-warning bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-box-seam text-warning"></i>
-                            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Products</div>
+                        <div class="stat-value">{{ total_products|default:0 }}</div>
+                        <div class="trend positive">
+                            <i class="bi bi-plus-circle"></i>
+                            <span>{{ active_products|default:0 }} active</span>
                         </div>
-                        <div class="mt-3">
-                            <span class="text-success"><i class="bi bi-plus-circle me-1"></i> {{ active_products|default:0 }}</span>
-                            <span class="text-muted ms-2">active</span>
-                        </div>
+                    </div>
+                    <div class="stat-icon warning">
+                        <i class="bi bi-box-seam"></i>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-3 col-6">
-                <div class="card stats-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Conversion</h6>
-                                <h3 class="mb-0">{{ conversion_rate|default:0 }}%</h3>
-                            </div>
-                            <div class="bg-info bg-opacity-10 p-3 rounded">
-                                <i class="bi bi-graph-up-arrow text-info"></i>
-                            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Conversion</div>
+                        <div class="stat-value">{{ conversion_rate|default:0 }}%</div>
+                        <div class="trend positive">
+                            <i class="bi bi-arrow-up-right"></i>
+                            <span>2.5% from last month</span>
                         </div>
-                        <div class="mt-3">
-                            <span class="text-success"><i class="bi bi-arrow-up-right me-1"></i> 2.5%</span>
-                            <span class="text-muted ms-2">vs last month</span>
-                        </div>
+                    </div>
+                    <div class="stat-icon info">
+                        <i class="bi bi-graph-up"></i>
                     </div>
                 </div>
             </div>

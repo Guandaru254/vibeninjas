@@ -16,8 +16,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary',
-    'cloudinary_storage',
     'events',
     'payments',
     'analytics',
@@ -66,32 +64,6 @@ DATABASES = {
     }
 }
 
-# Cloudinary Configuration (only if credentials are provided)
-CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='')
-CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY', default='')
-CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET', default='')
-
-# Only configure Cloudinary if credentials are available
-if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
-        'API_KEY': CLOUDINARY_API_KEY,
-        'API_SECRET': CLOUDINARY_API_SECRET,
-    }
-    
-    # Default Cloudinary settings
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
-    
-    # Cloudinary URLs
-    CLOUDINARY_URL = config('CLOUDINARY_URL', default='')
-else:
-    # Use local storage for development if Cloudinary not configured
-    print("Cloudinary not configured - using local storage for development")
-    print("Set up Cloudinary credentials in .env file for production")
-
-# Cloudinary URLs
-CLOUDINARY_URL = config('CLOUDINARY_URL', default='')
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
@@ -133,7 +105,3 @@ AUTH_USER_MODEL = 'events.User'
 
 # Default auto field for all apps
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Configure Django for Heroku
-import django_heroku
-django_heroku.settings(locals())
