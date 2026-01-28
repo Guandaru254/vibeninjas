@@ -33,7 +33,7 @@ MIDDLEWARE = [
     'analytics.middleware.VisitorTrackingMiddleware',
 ]
 
-ROOT_URLCONF = 'DopeEvents.urls'
+ROOT_URLCONF = 'vibeninjas.urls'
 
 TEMPLATES = [
     {
@@ -52,7 +52,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'DopeEvents.wsgi.application'
+WSGI_APPLICATION = 'vibeninjas.wsgi.application'
 
 CSRF_TRUSTED_ORIGINS = [f"http://{origin.strip()}" for origin in config('CSRF_TRUSTED_ORIGINS', default='').split(',') if origin.strip()]
 
@@ -78,7 +78,7 @@ EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@events.com')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@vibeninjas.com')
 
 # M-Pesa Configuration
 MPESA_CONSUMER_KEY = config('CONSUMER_KEY', default='') 

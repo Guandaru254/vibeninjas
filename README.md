@@ -1,4 +1,4 @@
-# TazamoXP- A Ticket and Event Platform
+# Vibeninjas - A Ticket and Event Platform
 
 A ticket and event platform that allows organizers to create and manage events, while attendees can purchase tickets securely.
 
@@ -11,7 +11,7 @@ A ticket and event platform that allows organizers to create and manage events, 
 - Secure payment processing with Stripe
 - Mobile responsive design
 
-### Pro Features (TazamoXM Pro)
+### Pro Features (Vibeninjas Pro)
 - Advanced analytics
 - Priority support
 - Custom branding
@@ -33,8 +33,8 @@ A ticket and event platform that allows organizers to create and manage events, 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/tazamoafrica/TazamoEXP.git
-cd DopeEvents
+git clone https://github.com/Siblore/vibeninjas.git
+cd vibeninjas
 ```
 
 2. Create and activate virtual environment:
@@ -74,7 +74,7 @@ python manage.py runserver
 ## Project Structure
 
 ```
-DopeEvents/
+vibeninjas/
 ├── events/                 # Main application directory
 │   ├── migrations/        # Database migrations
 │   ├── templates/        # HTML templates
@@ -193,4 +193,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Support
 
-For support, email info@tazamoafrica.com or create an issue in the repository.
+For support, email info@vibeninjas.com or create an issue in the repository.

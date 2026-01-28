@@ -4,8 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 # Admin site configuration
-admin.site.site_header = 'DopeEvents Admin'
-admin.site.site_title = 'DopeEvents Administration'
+admin.site.site_header = 'Vibeninjas Admin'
+admin.site.site_title = 'Vibeninjas Administration'
 admin.site.index_title = 'Site Administration'
 
 # Make sure the admin site is properly registered
