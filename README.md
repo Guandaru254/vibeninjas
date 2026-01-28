@@ -33,7 +33,7 @@ A ticket and event platform that allows organizers to create and manage events, 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Siblore/vibeninjas.git
+git clone https://github.com/tazamoafrica/vibeninjas.git
 cd vibeninjas
 ```
 

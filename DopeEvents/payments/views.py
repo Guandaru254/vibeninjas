@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -12,7 +11,7 @@ from events.forms import TicketPurchaseForm
 from .services import MpesaService
 import json
 
-@login_required
+
 def checkout(request, pk):
     event = get_object_or_404(Event, pk=pk)
     category_id = request.GET.get('category')
@@ -56,7 +55,7 @@ def checkout(request, pk):
     
     return render(request, 'events/checkout.html', context)
 
-@login_required
+
 @require_POST
 def initiate_mpesa_payment(request, pk):
     """Initiate M-Pesa STK push payment"""
