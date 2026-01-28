@@ -1,0 +1,667 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}Create Event - Event Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        border: 1px solid #eef2f7;
+        transition: all 0.3s ease;
+    }
+    
+    .form-section:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+        border-color: #e0e6ed;
+    }
+    
+    .form-section h5 {
+        color: #1a365d;
+        font-weight: 700;
+        font-size: 1.4rem;
+        border-bottom: 2px solid #f0f4f8;
+        padding-bottom: 1rem;
+        margin: -0.5rem 0 2rem 0;
+        display: flex;
+        align-items: center;
+        letter-spacing: -0.3px;
+    }
+    
+    .form-section h5 i {
+        margin-right: 10px;
+        color: #4361ee;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        letter-spacing: -0.2px;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.25s ease;
+        font-size: 0.95rem;
+        color: #2d3748;
+        background-color: #f8fafc;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        background-color: #fff;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .ticket-category {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 1.75rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    
+    .ticket-category:hover {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+        border-color: #cbd5e1;
+        transform: translateY(-2px);
+    }
+    
+    .ticket-category .card-header {
+        background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1.25rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .ticket-category .card-body {
+        padding: 1.5rem;
+    }
+    
+    .btn-add-category {
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+    }
+    
+    .btn-add-category:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-add-category:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 3px rgba(79, 70, 229, 0.2);
+    }
+    
+    .btn-remove-category {
+        color: #dc3545;
+        background: none;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-remove-category:hover {
+        background-color: #f8d7da;
+    }
+    
+    .btn-submit {
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.25s ease;
+        width: 100%;
+        max-width: 300px;
+        display: block;
+        margin: 2.5rem auto 0;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-submit:hover {
+        background: #4338ca;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+    
+    .btn-submit:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-submit::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%, -50%);
+        transform-origin: 50% 50%;
+    }
+    
+    .btn-submit:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+        0% {
+            transform: scale(0, 0);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(100, 100);
+            opacity: 0;
+        }
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-top: 0.5rem;
+        line-height: 1.5;
+    }
+    
+    .form-text.small {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+    
+    .image-preview {
+        width: 100%;
+        height: 220px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-top: 0.75rem;
+        background-color: #f8fafc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .image-preview:hover {
+        border-color: #94a3b8;
+        background-color: #f1f5f9;
+    }
+    
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    .image-upload-label {
+        cursor: pointer;
+        display: block;
+    }
+    
+    .image-upload-text {
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .image-upload-text i {
+        font-size: 2.5rem;
+        color: #cbd5e1;
+        margin-bottom: 1rem;
+        display: block;
+        transition: all 0.3s ease;
+    }
+    
+    .image-preview:hover .image-upload-text i {
+        color: #94a3b8;
+        transform: translateY(-3px);
+    }
+    
+    .invalid-feedback {
+        font-size: 0.85rem;
+    }
+    
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        color: #6c757d;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .back-button:hover {
+        color: #4361ee;
+    }
+    
+    .back-button i {
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-lg-5" style="margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <a href="{% url 'dashboard' %}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <h1 class="mb-4">Create New Event</h1>
+            
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Event Information Section -->
+                <div class="form-section">
+                    <h5><i class="fas fa-info-circle"></i> Event Information</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-4">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">Event Title</label>
+                                {{ form.title|addclass:"form-control" }}
+                                <div class="invalid-feedback">{{ form.title.errors }}</div>
+                                <div class="form-text">Choose a clear and descriptive title for your event.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-4">
+                                <label for="{{ form.category.id_for_label }}" class="form-label">Event Category</label>
+                                {{ form.category|addclass:"form-select" }}
+                                <div class="invalid-feedback">{{ form.category.errors }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Event Description</label>
+                        {{ form.description|addclass:"form-control" }}
+                        <div class="invalid-feedback">{{ form.description.errors }}</div>
+                        <div class="form-text">Provide detailed information about your event to attract attendees.</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label for="{{ form.date.id_for_label }}" class="form-label">Date & Time</label>
+                                <div class="input-group">
+                                    {{ form.date|addclass:"form-control" }}
+                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                </div>
+                                <div class="invalid-feedback">{{ form.date.errors }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                                <div class="input-group">
+                                    {{ form.location|addclass:"form-control" }}
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                </div>
+                                <div class="invalid-feedback">{{ form.location.errors }}</div>
+                                <div class="form-text">e.g., Venue name, address, or online meeting link</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label for="{{ form.total_tickets.id_for_label }}" class="form-label">Total Tickets Available</label>
+                                <div class="input-group">
+                                    {{ form.total_tickets|addclass:"form-control" }}
+                                    <span class="input-group-text"><i class="fas fa-ticket-alt"></i></span>
+                                </div>
+                                <div class="invalid-feedback">{{ form.total_tickets.errors }}</div>
+                                <div class="form-text">Total number of tickets available for all categories</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label for="{{ form.image.id_for_label }}" class="form-label">Event Image</label>
+                                <div class="image-upload-label">
+                                    {{ form.image|addclass:"d-none" }}
+                                    <div class="image-preview" id="imagePreview">
+                                        <div class="image-upload-text">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p>Click to upload an image or drag and drop</p>
+                                            <small class="text-muted">Recommended size: 1200x630px (JPG, PNG, or GIF)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="invalid-feedback">{{ form.image.errors }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- Ticket Categories Section -->
+                <div class="form-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0"><i class="fas fa-ticket-alt"></i> Ticket Categories</h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="add-category">
+                            <i class="fas fa-plus me-1"></i> Add Category
+                        </button>
+                    </div>
+                    
+                    {{ ticket_formset.management_form }}
+                    <div id="ticket-categories">
+                        {% for ticket_form in ticket_formset %}
+                        <div class="ticket-category mb-4" id="category-{{ forloop.counter0 }}">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-ticket-alt me-2"></i>
+                                        <span class="category-title">Ticket Category {{ forloop.counter }}</span>
+                                    </h6>
+                                    {% if not forloop.first %}
+                                    <button type="button" class="btn btn-sm btn-link text-danger btn-remove-category" data-index="{{ forloop.counter0 }}">
+                                        <i class="fas fa-times"></i> Remove
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Category Name</label>
+                                            {{ ticket_form.name|addclass:"form-control category-name" }}
+                                            <div class="invalid-feedback">{{ ticket_form.name.errors }}</div>
+                                            <div class="form-text">e.g., General Admission, VIP, Early Bird</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Category Type</label>
+                                            {{ ticket_form.category_type|addclass:"form-select" }}
+                                            <div class="invalid-feedback">{{ ticket_form.category_type.errors }}</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Price (Ksh)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Ksh</span>
+                                                {{ ticket_form.price|addclass:"form-control" }}
+                                            </div>
+                                            <div class="invalid-feedback">{{ ticket_form.price.errors }}</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Available Tickets</label>
+                                            {{ ticket_form.available_tickets|addclass:"form-control" }}
+                                            <div class="invalid-feedback">{{ ticket_form.available_tickets.errors }}</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Max Tickets Per Purchase</label>
+                                            {{ ticket_form.max_tickets_per_purchase|addclass:"form-control" }}
+                                            <div class="invalid-feedback">{{ ticket_form.max_tickets_per_purchase.errors }}</div>
+                                            <div class="form-text">Set 0 for no limit</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Sales Period</label>
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text"><i class="fas fa-calendar-plus"></i></span>
+                                                        {{ ticket_form.sales_start|addclass:"form-control form-control-sm" }}
+                                                    </div>
+                                                    <div class="form-text small">Start</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text"><i class="fas fa-calendar-minus"></i></span>
+                                                        {{ ticket_form.sales_end|addclass:"form-control form-control-sm" }}
+                                                    </div>
+                                                    <div class="form-text small">End</div>
+                                                </div>
+                                            </div>
+                                            <div class="invalid-feedback">{{ ticket_form.sales_start.errors }} {{ ticket_form.sales_end.errors }}</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Description (Optional)</label>
+                                            {{ ticket_form.description|addclass:"form-control" }}
+                                            <div class="invalid-feedback">{{ ticket_form.description.errors }}</div>
+                                            <div class="form-text">Describe any special benefits or restrictions for this ticket type</div>
+                                        </div>
+                                    </div>
+                                    {% if ticket_form.instance.pk %}
+                                    <div class="mt-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" name="{{ ticket_form.DELETE.html_name }}" id="{{ ticket_form.DELETE.id_for_label }}" class="form-check-input">
+                                            <label class="form-check-label text-danger" for="{{ ticket_form.DELETE.id_for_label }}">
+                                                Remove this ticket category
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-section text-center">
+                    <button type="submit" class="btn btn-lg btn-primary btn-submit">
+                        <i class="fas fa-calendar-plus me-2"></i> Create Event
+                    </button>
+                    <p class="text-muted mt-3 mb-0">
+                        <i class="fas fa-info-circle me-1"></i> You can edit these details later from your dashboard
+                    </p>
+                </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize datetime pickers for sales start/end
+        function initDateTimePickers() {
+            const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+            datetimeInputs.forEach(input => {
+                // Set min date to current date/time
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                input.min = `${year}-${month}-${day}T${hours}:${minutes}`;
+            });
+        }
+        initDateTimePickers();
+
+        // Image preview functionality
+        const imageInput = document.querySelector('input[type="file"]');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        if (imageInput && imagePreview) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.innerHTML = `<img src="${e.target.result}" class="img-fluid" alt="Event preview">`;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Make the preview area clickable
+            imagePreview.addEventListener('click', () => imageInput.click());
+        }
+
+        // Dynamic ticket categories
+        const ticketCategories = document.getElementById('ticket-categories');
+        const addCategoryBtn = document.getElementById('add-category');
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+        let formCount = ticketCategories.children.length;
+
+        // Add new ticket category
+        if (addCategoryBtn) {
+            addCategoryBtn.addEventListener('click', function() {
+                const newForm = ticketCategories.children[0].cloneNode(true);
+                const formRegex = /form-(\d+)-/g;
+                const newFormNum = formCount++;
+                
+                // Update form IDs and names
+                newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${newFormNum}-`);
+                newForm.id = `category-${newFormNum}`;
+                
+                // Update remove button
+                const removeBtn = newForm.querySelector('.btn-remove-category');
+                if (removeBtn) {
+                    removeBtn.style.display = 'block';
+                    removeBtn.setAttribute('data-index', newFormNum);
+                }
+                
+                // Clear input values
+                const inputs = newForm.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    if (input.type === 'checkbox') {
+                        input.checked = false;
+                    } else if (input.type === 'select-one') {
+                        input.selectedIndex = 0;
+                    } else {
+                        input.value = '';
+                    }
+                });
+                
+                // Update category title
+                const title = newForm.querySelector('.category-title');
+                if (title) {
+                    title.textContent = `Ticket Category ${newFormNum + 1}`;
+                }
+                
+                // Append to container
+                ticketCategories.appendChild(newForm);
+                
+                // Update total form count
+                totalForms.setAttribute('value', formCount);
+                
+                // Re-initialize datetime pickers for the new form
+                initDateTimePickers();
+                
+                // Scroll to the new category
+                newForm.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+        
+        // Remove ticket category
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.btn-remove-category')) {
+                const button = e.target.closest('.btn-remove-category');
+                const index = button.getAttribute('data-index');
+                const categoryDiv = document.getElementById(`category-${index}`);
+                
+                if (categoryDiv) {
+                    // If this is an existing form (not just added client-side), mark it for deletion
+                    const deleteInput = categoryDiv.querySelector('input[type="checkbox"][name$="-DELETE"]');
+                    if (deleteInput) {
+                        deleteInput.checked = true;
+                        categoryDiv.style.display = 'none';
+                    } else {
+                        // If it's a new form, just remove it
+                        categoryDiv.remove();
+                        formCount--;
+                        totalForms.setAttribute('value', formCount);
+                        
+                        // Renumber remaining forms
+                        const categories = ticketCategories.children;
+                        for (let i = 0; i < categories.length; i++) {
+                            const category = categories[i];
+                            const formId = i;
+                            const formPrefix = `form-${formId}-`;
+                            
+                            // Update form IDs and names
+                            const formRegex = /form-\d+-/g;
+                            category.innerHTML = category.innerHTML.replace(formRegex, formPrefix);
+                            category.id = `category-${formId}`;
+                            
+                            // Update remove button data-index
+                            const removeBtn = category.querySelector('.btn-remove-category');
+                            if (removeBtn) {
+                                removeBtn.setAttribute('data-index', formId);
+                            }
+                            
+                            // Update category title
+                            const title = category.querySelector('.category-title');
+                            if (title) {
+                                title.textContent = `Ticket Category ${formId + 1}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Update category title when name changes
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('category-name')) {
+                const categoryDiv = e.target.closest('.ticket-category');
+                if (categoryDiv) {
+                    const title = categoryDiv.querySelector('.category-title');
+                    if (title && e.target.value) {
+                        title.textContent = e.target.value;
+                    } else {
+                        const index = categoryDiv.id.split('-')[1];
+                        title.textContent = `Ticket Category ${parseInt(index) + 1}`;
+                    }
+                }
+            }
+        });
+        
+        // Form validation
+        const form = document.querySelector('form.needs-validation');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

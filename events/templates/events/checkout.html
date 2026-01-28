@@ -1,0 +1,490 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}Checkout - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header text-black" style="background-color: #f8f9fa;">
+                    <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Complete Your Purchase</h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Event Details Section -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            {% if event.image %}
+                            <img src="{{ event.image.url }}" class="img-fluid rounded shadow-sm"
+                                alt="{{ event.title }}">
+                            {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center shadow-sm"
+                                style="height: 150px;">
+                                <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="fw-bold mb-3">{{ event.title }}</h5>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-calendar text-primary me-2"></i>
+                                <span>{{ event.date|date:"F d, Y g:i A" }}</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                <span>{{ event.location }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Ticket Category -->
+                    <div class="card bg-light border-primary mb-4">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-ticket-alt me-2"></i>Selected Ticket Type
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5 class="mb-1">{{ selected_category.name }}</h5>
+                                    <p class="text-muted small mb-0">{{ selected_category.description }}</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="h4 mb-0">Ksh {{ selected_category.price }}</div>
+                                    <small class="text-muted">per ticket</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Form -->
+                    <form id="checkout-form" method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="category_id" value="{{ selected_category.id }}">
+
+                        <!-- Personal Information -->
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-user me-2"></i>Personal Information
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.buyer_name.id_for_label }}" class="form-label">Full Name</label>
+                                {{ form.buyer_name|addclass:"form-control" }}
+                                <div class="invalid-feedback">{{ form.buyer_name.errors }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.buyer_email.id_for_label }}" class="form-label">Email
+                                    Address</label>
+                                {{ form.buyer_email|addclass:"form-control" }}
+                                <div class="invalid-feedback">{{ form.buyer_email.errors }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.buyer_phone.id_for_label }}" class="form-label">Phone Number
+                                    (Required for M-Pesa)</label>
+                                {{ form.buyer_phone|addclass:"form-control" }}
+                                <div class="form-text">Format: 0712345678 or +254712345678</div>
+                                <div class="invalid-feedback">{{ form.buyer_phone.errors }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.quantity.id_for_label }}" class="form-label">Number of
+                                    Tickets</label>
+                                {{ form.quantity|addclass:"form-control" }}
+                                <div class="form-text">Maximum: {{ selected_category.max_tickets_per_purchase }} tickets
+                                </div>
+                                <div class="invalid-feedback">{{ form.quantity.errors }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-receipt me-2"></i>Order Summary
+                                </h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Ticket Type:</span>
+                                    <span>{{ selected_category.name }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Price per Ticket:</span>
+                                    <span>Ksh {{ selected_category.price }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Quantity:</span>
+                                    <span id="quantity-display">1</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total Amount:</strong>
+                                    <strong class="text-primary" id="total-amount">
+                                        Ksh {{ selected_category.price }}
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-credit-card me-2"></i>Payment Method
+                        </h6>
+                        <div class="mb-4">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="payment_method" id="mpesa" value="mpesa"
+                                    checked>
+                                <label class="btn btn-outline-primary" for="mpesa">
+                                    <i class="fas fa-mobile-alt me-2"></i>M-Pesa
+                                </label>
+
+                                <input type="radio" class="btn-check" name="payment_method" id="stripe" value="stripe">
+                                <label class="btn btn-outline-primary" for="stripe">
+                                    <i class="fas fa-credit-card me-2"></i>Card Payment
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Stripe Payment Section -->
+                        <div id="stripe-payment" class="mb-4" style="display: none;">
+                            <div id="card-element" class="form-control" style="height: 40px; padding: 10px;"></div>
+                            <div id="card-errors" role="alert" class="text-danger mt-2 small"></div>
+                        </div>
+
+                        <!-- M-Pesa Payment Section -->
+                        <div id="mpesa-payment" class="mb-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                You will receive a payment prompt on your phone. Please enter your M-Pesa PIN to
+                                complete the payment.
+                            </div>
+                        </div>
+
+                        <!-- Payment Status -->
+                        <div id="payment-status" class="alert" style="display: none;"></div>
+
+                        <button type="submit" id="submit-button" class="btn btn-primary btn-lg w-100">
+                            <span id="button-text">Complete Purchase</span>
+                            <div id="spinner" class="spinner-border spinner-border-sm ms-2" role="status"
+                                style="display: none;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>
+                                <span id="security-text">Secured by M-Pesa</span>
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    let stripe = null;
+    let cardElement = null;
+    let currentTransactionId = null;
+    let paymentStatusInterval = null;
+
+    // Initialize Stripe only if publishable key is available
+    {% if stripe_publishable_key %}
+    try {
+        stripe = Stripe('{{ stripe_publishable_key|escapejs }}');
+        const elements = stripe.elements();
+        cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        // Handle card element errors
+        cardElement.on('change', function (event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+    } catch (error) {
+        console.error('Error initializing Stripe:', error);
+    }
+    {% endif %}
+
+    // Handle payment method selection
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const stripePayment = document.getElementById('stripe-payment');
+            const mpesaPayment = document.getElementById('mpesa-payment');
+            const securityText = document.getElementById('security-text');
+
+            if (this.value === 'stripe') {
+                stripePayment.style.display = 'block';
+                mpesaPayment.style.display = 'none';
+                securityText.textContent = 'Secured by Stripe';
+            } else {
+                stripePayment.style.display = 'none';
+                mpesaPayment.style.display = 'block';
+                securityText.textContent = 'Secured by M-Pesa';
+            }
+        });
+    });
+
+    // Handle quantity changes
+    document.getElementById('id_quantity').addEventListener('change', function () {
+        const quantity = parseInt(this.value) || 1;
+        const maxTickets = '{{ selected_category.max_tickets_per_purchase }}';
+    const price = '{{ selected_category.price }}';
+
+    // Validate quantity
+    if (quantity > maxTickets) {
+        this.value = maxTickets;
+    } else if (quantity < 1) {
+        this.value = 1;
+    }
+
+    const total = price * parseInt(this.value);
+    document.getElementById('quantity-display').textContent = this.value;
+    document.getElementById('total-amount').textContent = `Ksh ${total.toFixed(2)}`;
+    });
+
+    // Show payment status
+    function showPaymentStatus(message, type) {
+        const statusDiv = document.getElementById('payment-status');
+        statusDiv.className = `alert alert-${type}`;
+        statusDiv.innerHTML = message;
+        statusDiv.style.display = 'block';
+    }
+
+    // Hide payment status
+    function hidePaymentStatus() {
+        const statusDiv = document.getElementById('payment-status');
+        statusDiv.style.display = 'none';
+    }
+
+    // Show loading state
+    function showLoadingState(message = 'Processing payment...') {
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = document.getElementById('button-text');
+        const spinner = document.getElementById('spinner');
+
+        submitButton.disabled = true;
+        buttonText.textContent = message;
+        spinner.style.display = 'inline-block';
+    }
+
+    // Hide loading state
+    function hideLoadingState() {
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = document.getElementById('button-text');
+        const spinner = document.getElementById('spinner');
+
+        submitButton.disabled = false;
+        buttonText.textContent = 'Complete Purchase';
+        spinner.style.display = 'none';
+    }
+
+    // Check M-Pesa payment status
+    function checkMpesaPaymentStatus(transactionId) {
+        fetch(`/check-payment-status/${transactionId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.status === 'success') {
+                        clearInterval(paymentStatusInterval);
+                        showPaymentStatus(
+                            '<i class="fas fa-check-circle me-2"></i>Payment successful! Redirecting to confirmation page...',
+                            'success'
+                        );
+
+                        // Redirect to confirmation page after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = `/ticket-confirmation/${transactionId}/`;
+                        }, 2000);
+
+                    } else if (data.status === 'failed') {
+                        clearInterval(paymentStatusInterval);
+                        hideLoadingState();
+                        showPaymentStatus(
+                            '<i class="fas fa-times-circle me-2"></i>Payment failed. Please try again.',
+                            'danger'
+                        );
+
+                    } else if (data.status === 'cancelled') {
+                        clearInterval(paymentStatusInterval);
+                        hideLoadingState();
+                        showPaymentStatus(
+                            '<i class="fas fa-ban me-2"></i>Payment was cancelled. Please try again.',
+                            'warning'
+                        );
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error checking payment status:', error);
+            });
+    }
+
+    // Handle M-Pesa payment
+    async function handleMpesaPayment(formData) {
+        try {
+            const response = await fetch('{% url "initiate_mpesa_payment" event.pk %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                currentTransactionId = data.transaction_id;
+
+                showLoadingState('Waiting for M-Pesa payment...');
+                showPaymentStatus(
+                    '<i class="fas fa-mobile-alt me-2"></i>' + data.message,
+                    'info'
+                );
+
+                // Start polling for payment status
+                paymentStatusInterval = setInterval(() => {
+                    checkMpesaPaymentStatus(currentTransactionId);
+                }, 3000);
+
+                // Stop polling after 5 minutes
+                setTimeout(() => {
+                    if (paymentStatusInterval) {
+                        clearInterval(paymentStatusInterval);
+                        hideLoadingState();
+                        showPaymentStatus(
+                            '<i class="fas fa-clock me-2"></i>Payment timeout. Please try again.',
+                            'warning'
+                        );
+                    }
+                }, 300000); // 5 minutes
+
+            } else {
+                hideLoadingState();
+                showPaymentStatus(
+                    '<i class="fas fa-exclamation-triangle me-2"></i>' + data.error,
+                    'danger'
+                );
+            }
+
+        } catch (error) {
+            console.error('Error initiating M-Pesa payment:', error);
+            hideLoadingState();
+            showPaymentStatus(
+                '<i class="fas fa-exclamation-triangle me-2"></i>An error occurred. Please try again.',
+                'danger'
+            );
+        }
+    }
+
+    // Handle Stripe payment
+    async function handleStripePayment(formData) {
+        try {
+            // Create payment intent
+            const response = await fetch('{% url "create_payment_intent" event.pk %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // Confirm card payment
+                const { error, paymentIntent } = await stripe.confirmCardPayment(data.client_secret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: formData.get('buyer_name'),
+                            email: formData.get('buyer_email'),
+                        }
+                    }
+                });
+
+                if (error) {
+                    hideLoadingState();
+                    showPaymentStatus(
+                        '<i class="fas fa-exclamation-triangle me-2"></i>' + error.message,
+                        'danger'
+                    );
+                } else if (paymentIntent.status === 'succeeded') {
+                    // Payment successful - redirect to confirmation
+                    showPaymentStatus(
+                        '<i class="fas fa-check-circle me-2"></i>Payment successful! Redirecting...',
+                        'success'
+                    );
+
+                    setTimeout(() => {
+                        window.location.href = `{% url 'ticket_confirmation' 'INTENT_ID' %}`.replace('INTENT_ID', paymentIntent.id);
+                    }, 2000);
+                }
+            } else {
+                throw new Error('Failed to create payment intent');
+            }
+        } catch (error) {
+            console.error('Error processing Stripe payment:', error);
+            hideLoadingState();
+            showPaymentStatus(
+                '<i class="fas fa-exclamation-triangle me-2"></i>An error occurred. Please try again.',
+                'danger'
+            );
+        }
+    }
+
+    // Handle form submission
+    const form = document.getElementById('checkout-form');
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // Hide any previous status messages
+        hidePaymentStatus();
+
+        // Validate form
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+
+        // Get selected payment method
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        const formData = new FormData(form);
+
+        // Validate phone number for M-Pesa
+        if (paymentMethod === 'mpesa') {
+            const phoneNumber = formData.get('buyer_phone');
+            if (!phoneNumber || phoneNumber.length < 10) {
+                showPaymentStatus(
+                    '<i class="fas fa-exclamation-triangle me-2"></i>Please provide a valid phone number for M-Pesa payment.',
+                    'danger'
+                );
+                return;
+            }
+        }
+
+        showLoadingState();
+
+        // Handle payment based on selected method 
+        
+        if (paymentMethod === 'mpesa') {
+            await handleMpesaPayment(formData);
+        } else if (paymentMethod === 'stripe') {
+            await handleStripePayment(formData);
+        }
+    });
+
+    // Clean up intervals when page is about to unload
+    window.addEventListener('beforeunload', function () {
+        if (paymentStatusInterval) {
+            clearInterval(paymentStatusInterval);
+        }
+    });
+</script>
+{% endblock %}

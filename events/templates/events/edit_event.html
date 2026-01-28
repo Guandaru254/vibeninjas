@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}Edit {{ event.title }} - Event Management{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Event: {{ event.title }}</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Error Messages -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        
+                        {% if form.errors or ticket_formset.errors %}
+                            <div class="alert alert-warning">
+                                <strong>Please correct the following errors:</strong>
+                                <ul class="mb-0 mt-2">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ field|title }}: {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for form in ticket_formset %}
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <li>Ticket Category {{ forloop.parentloop.parentloop.counter }} - {{ field|title }}: {{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        <!-- Event Details Section -->
+                        <h5 class="mb-3">Event Details</h5>
+                        <div class="mb-4">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">Event Title</label>
+                            {{ form.title|addclass:"form-control" }}
+                            <div class="invalid-feedback">{{ form.title.errors }}</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">Category</label>
+                            <div class="input-group">
+                                {{ form.category|addclass:"form-control" }}
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                            </div>
+                            <div class="invalid-feedback">{{ form.category.errors }}</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Description</label>
+                            {{ form.description|addclass:"form-control" }}
+                            <div class="invalid-feedback">{{ form.description.errors }}</div>
+                        </div>
+                        
+                        <!-- Image Upload Section -->
+                        <div class="mb-4">
+                            <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Event Image</label>
+                            {% if event.image %}
+                                <div class="mb-3">
+                                    <img src="{{ event.image.url }}" alt="{{ event.title }}" 
+                                         class="img-thumbnail shadow-sm" style="max-width: 200px;">
+                                </div>
+                            {% endif %}
+                            <div class="input-group">
+                                {{ form.image|addclass:"form-control" }}
+                                <span class="input-group-text"><i class="fas fa-image"></i></span>
+                            </div>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> Upload a new image to replace the current one.
+                            </div>
+                        </div>
+                        
+                        <!-- Date and Location Section -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.date.id_for_label }}" class="form-label fw-bold">Date & Time</label>
+                                <div class="input-group">
+                                    {{ form.date|addclass:"form-control" }}
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.location.id_for_label }}" class="form-label fw-bold">Location</label>
+                                <div class="input-group">
+                                    {{ form.location|addclass:"form-control" }}
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Tickets Section -->
+                        <div class="mb-4">
+                            <label for="{{ form.total_tickets.id_for_label }}" class="form-label fw-bold">Total Tickets</label>
+                            <div class="input-group">
+                                {{ form.total_tickets|addclass:"form-control" }}
+                                <span class="input-group-text"><i class="fas fa-ticket-alt"></i></span>
+                            </div>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> Currently sold: {{ event.tickets_sold }} tickets
+                            </div>
+                        </div>
+
+                        <!-- Ticket Categories Section -->
+                        <h5 class="mb-3 mt-4">Ticket Categories</h5>
+                        {{ ticket_formset.management_form }}
+                        <div id="ticket-categories">
+                            {% for ticket_form in ticket_formset %}
+                            <div class="ticket-category card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="card-title mb-0">Ticket Category {{ forloop.counter }}</h6>
+                                        {% if ticket_form.instance.pk %}
+                                        <div class="form-check">
+                                            {{ ticket_form.DELETE|addclass:"form-check-input" }}
+                                            <label class="form-check-label text-danger">Delete this category</label>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Category Name</label>
+                                            {{ ticket_form.name|addclass:"form-control" }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Category Type</label>
+                                            {{ ticket_form.category_type|addclass:"form-control" }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Price (Ksh)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Ksh</span>
+                                                {{ ticket_form.price|addclass:"form-control" }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Available Tickets</label>
+                                            {{ ticket_form.available_tickets|addclass:"form-control" }}
+                                            {% if ticket_form.instance.pk %}
+                                            <div class="form-text">
+                                                Tickets sold: {{ ticket_form.instance.tickets.count }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <!-- Max Tickets Per Purchase Field -->
+                                        <div class="col-md-6">
+                                            <label class="form-label">Max Tickets Per Purchase</label>
+                                            <div class="input-group">
+                                                {{ ticket_form.max_tickets_per_purchase|addclass:"form-control" }}
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-ticket-alt"></i>
+                                                </span>
+                                            </div>
+                                            <div class="form-text text-muted">
+                                                Maximum tickets one person can buy
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Sales Start</label>
+                                            {{ ticket_form.sales_start|addclass:"form-control" }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Sales End</label>
+                                            {{ ticket_form.sales_end|addclass:"form-control" }}
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Description</label>
+                                            {{ ticket_form.description|addclass:"form-control" }}
+                                        </div>
+                                    </div>
+                                    {{ ticket_form.id }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Update Event
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize datetime pickers
+    const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+    datetimeInputs.forEach(input => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        input.min = `${year}-${month}-${day}T${hours}:${minutes}`;
+    });
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        // Validate total tickets
+        const totalTickets = parseInt(document.querySelector('#id_total_tickets').value) || 0;
+        let categoryTotal = 0;
+        document.querySelectorAll('[id$="-available_tickets"]').forEach(input => {
+            categoryTotal += parseInt(input.value) || 0;
+        });
+        
+        if (totalTickets !== categoryTotal) {
+            e.preventDefault();
+            alert('The sum of available tickets across all categories must equal the total tickets.');
+            return;
+        }
+
+        // Validate max tickets per purchase
+        let hasError = false;
+        document.querySelectorAll('[id$="-max_tickets_per_purchase"]').forEach(input => {
+            const maxTickets = parseInt(input.value) || 0;
+            const availableTickets = parseInt(
+                input.closest('.ticket-category')
+                    .querySelector('[id$="-available_tickets"]').value
+            ) || 0;
+
+            if (maxTickets <= 0) {
+                e.preventDefault();
+                hasError = true;
+                alert('Maximum tickets per purchase must be greater than 0');
+            } else if (maxTickets > availableTickets) {
+                e.preventDefault();
+                hasError = true;
+                alert('Maximum tickets per purchase cannot exceed available tickets');
+            }
+        });
+
+        if (hasError) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% endblock %}
