@@ -70,13 +70,16 @@ WSGI_APPLICATION = 'DopeEvents.DopeEvents.wsgi.application'
 # --- DATABASE ---
 # Production-ready: Use DATABASE_URL from environment (Render/Supabase)
 # Fallback: Local SQLite for development if no URL is found
+
 DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL', default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600,
-        conn_params={'sslmode': 'require'}
     )
 }
+
+# Add this right below to handle the SSL requirement for Supabase
+DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
 # --- STATIC & MEDIA FILES ---
 STATIC_URL = '/static/'
