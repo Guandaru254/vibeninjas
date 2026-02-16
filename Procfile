@@ -1,0 +1,1 @@
+web: gunicorn DopeEvents.DopeEvents.wsgi:application
