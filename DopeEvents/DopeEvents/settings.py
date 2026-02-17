@@ -100,10 +100,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 _static_dir = BASE_DIR / 'static'
 STATICFILES_DIRS = [_static_dir] if _static_dir.exists() else []
 
-# WhiteNoise static files storage
-# Using CompressedStaticFilesStorage (not Manifest) to avoid a known
-# race condition bug in CompressedManifestStaticFilesStorage on Render
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Do NOT use WhiteNoise's CompressedStaticFilesStorage or
+# CompressedManifestStaticFilesStorage — both cause FileNotFoundError
+# on Render during collectstatic due to a race condition in their
+# compression worker threads. WhiteNoise middleware still serves
+# static files correctly without a custom STATICFILES_STORAGE.
 
 # ─── CLOUDINARY ───────────────────────────────────────────────────────────────
 CLOUDINARY_STORAGE = {
