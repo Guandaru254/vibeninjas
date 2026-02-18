@@ -1,878 +1,297 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TazamoExp{% endblock %}</title>
-    {% load static %}
-    {% block extra_css %}{% endblock %}
+    <title>{% block title %}iZoza — Live Events & Tickets{% endblock %}</title>
     
-    <!-- CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- WhatsApp CSS -->
-    <link rel="stylesheet" href="{% static 'css/whatsapp.css' %}">
-    
-    <!-- Privacy & Cookie CSS -->
-    <link rel="stylesheet" href="{% static 'css/privacy.css' %}">
-    
-    <!-- Standardized Button CSS -->
-    <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Urbanist:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <style>
-        :root {
-            --primary-color: rgb(202, 129, 20);
-            --primary-gradient: linear-gradient(135deg, rgb(231, 148, 23) 0%, rgb(231, 165, 22) 100%);
-            --hover-gradient: linear-gradient(45deg, rgb(230, 156, 21), #FF8C42);
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        main {
-            flex: 1;
-            margin-top: 85px;
-        }
-
-        @keyframes kenyanGlitter {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        .kenya-glitter {
-            background: linear-gradient(
-                300deg,
-                #008000 0%,    /* Kenya - Green */
-                #FF0000 12%,   /* Kenya - Red */
-                #FFFFFF 24%,   /* Kenya - White */
-                #000000 36%,   /* Kenya - Black */
-                #FF0000 48%,   /* South Africa - Red */
-                #0000FF 60%,   /* South Africa - Blue */
-                #FFB90F 72%,   /* Ghana - Gold */
-                #008000 84%,   /* Ghana - Green */
-                #FFFFFF 96%    /* Nigeria - White */
-            );
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: kenyanGlitter 6s ease infinite;
-            font-weight: 900;
-            position: relative;
-        }
-
-        .kenya-glitter::after {
-            content: 'VibeNinjas';
-            position: absolute;
-            left: 0;
-            top: 0;
-            background: linear-gradient(
-                300deg,
-                #008000 0%,    /* Kenya - Green */
-                #FF0000 12%,   /* Kenya - Red */
-                #FFFFFF 24%,   /* Kenya - White */
-                #000000 36%,   /* Kenya - Black */
-                #FF0000 48%,   /* South Africa - Red */
-                #0000FF 60%,   /* South Africa - Blue */
-                #FFB90F 72%,   /* Ghana - Gold */
-                #008000 84%,   /* Ghana - Green */
-                #FFFFFF 96%    /* Nigeria - White */
-            );
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: kenyanGlitter 6s ease infinite reverse;
-            z-index: -1;
-            opacity: 0.7;
-            filter: blur(1px);
-        }
-
-        .navbar {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1030;
-        }
-
-        .navbar-brand {
-            font-weight: 900;
-            font-size: 1.3rem;
-            margin-right: auto;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        }
-
-        .navbar-brand:hover {
-            transform: scale(1.02);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
-        }
-
-        .navbar-brand .fas {
-            font-size: 1.1rem;
-            margin-right: 0.4rem;
-            background: linear-gradient(
-                300deg,
-                #008000 0%,    /* Kenya - Green */
-                #FF0000 12%,   /* Kenya - Red */
-                #FFFFFF 24%,   /* Kenya - White */
-                #000000 36%,   /* Kenya - Black */
-                #FF0000 48%,   /* South Africa - Red */
-                #0000FF 60%,   /* South Africa - Blue */
-                #FFB90F 72%,   /* Ghana - Gold */
-                #008000 84%,   /* Ghana - Green */
-                #FFFFFF 96%    /* Nigeria - White */
-            );
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: kenyanGlitter 6s ease infinite;
-            display: inline-block;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
-        }
-
-        @keyframes spinGlitter {
-            0% {
-                transform: rotate(0deg) scale(1);
-            }
-            50% {
-                transform: rotate(180deg) scale(1.2);
-            }
-            100% {
-                transform: rotate(360deg) scale(1);
-            }
-        }
-
-        @keyframes iconGlitter {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.8;
-            }
-        }
-
-        .navbar-dark {
-            background: var(--primary-gradient) !important;
-        }
-
-        /* Dropdown Styles */
-        .dropdown-submenu {
-            position: relative;
-        }
-
-        .dropdown-submenu .dropdown-menu {
-            top: 0;
-            left: 100%;
-            margin-top: -1px;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-        }
-
-        .dropdown-item {
-            padding: 0.7rem 1rem;
-            transition: all 0.2s ease;
-        }
-
-
-    /* Dropdown Submenu Styles */
-    .dropdown-submenu {
-        position: relative;
-    }
-
-    /* Dropdown Submenu Styles */
-.dropdown-submenu > .dropdown-menu {
-    position: absolute;
-    left: -300px; /* Change from 100% to negative width */
-    top: 0;
-    margin-top: 0;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-    width: 300px; /* Explicit width */
+:root {
+  --bg-primary: #ffffff; --bg-secondary: #fafafa; --bg-tertiary: #f5f5f5;
+  --text-primary: #0a0a0a; --text-secondary: #525252; --text-tertiary: #a3a3a3;
+  --border-color: #e5e5e5; --border-light: #f0f0f0;
+  --coral: #ff4d4d; --coral-dark: #e03030; --coral-light: #ff7070;
+  --coral-bg: rgba(255, 77, 77, 0.08); --coral-glow: rgba(255, 77, 77, 0.2);
+  --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+  --font-display: 'Urbanist', sans-serif; --font-body: 'Inter', sans-serif;
+  --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04); --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1); --t-fast: 0.15s var(--ease); --t-base: 0.25s var(--ease);
 }
+[data-theme="dark"] {
+  --bg-primary: #0a0a0a; --bg-secondary: #141414; --bg-tertiary: #1f1f1f;
+  --text-primary: #ffffff; --text-secondary: #a3a3a3; --text-tertiary: #737373;
+  --border-color: #2a2a2a; --border-light: #1f1f1f;
+  --glass-bg: rgba(20, 20, 20, 0.7); --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3); --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--text-primary);
+  background: var(--bg-primary); transition: background var(--t-base), color var(--t-base);
+  min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; margin-top: 72px; }
+a { text-decoration: none; color: inherit; transition: var(--t-fast); }
+img { max-width: 100%; display: block; }
 
+/* Epic Loading */
+.loading-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s var(--ease), visibility 0.5s var(--ease); }
+.loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loading-ring { width: 80px; height: 80px; position: relative; }
+.loading-ring::before, .loading-ring::after { content: ''; position: absolute; inset: 0; border-radius: 50%;
+  border: 3px solid transparent; }
+.loading-ring::before { border-top-color: var(--coral); border-right-color: var(--coral);
+  animation: spin 1s linear infinite; filter: drop-shadow(0 0 8px var(--coral-glow)); }
+.loading-ring::after { border-bottom-color: var(--coral-light); border-left-color: var(--coral-light);
+  animation: spin 1s linear infinite reverse; filter: drop-shadow(0 0 12px var(--coral-glow)); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-logo { font-family: var(--font-display); font-size: 2rem; font-weight: 900; letter-spacing: -0.02em;
+  color: var(--text-primary); animation: fadeIn 0.8s var(--ease); margin-top: 2rem; }
+.loading-logo .dot { color: var(--coral); animation: blink 1.5s ease-in-out infinite; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Navbar */
+.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 72px;
+  background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color); transition: all var(--t-base); }
+.navbar-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; height: 100%; display: flex;
+  align-items: center; justify-content: space-between; gap: 2rem; }
+.logo { font-family: var(--font-display); font-size: 1.6rem; font-weight: 900; letter-spacing: -0.02em;
+  color: var(--text-primary); display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0; }
+.logo-dot { width: 8px; height: 8px; background: var(--coral); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } }
+.nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+.nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); position: relative; }
+.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+  background: var(--coral); transition: width var(--t-base); }
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-right { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
+.menu-toggle { display: none; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border-color);
+  background: var(--bg-secondary); align-items: center; justify-content: center; cursor: pointer;
+  transition: all var(--t-fast); color: var(--text-primary); font-size: 1.2rem; }
+.menu-toggle:hover { background: var(--coral); border-color: var(--coral); color: white; }
+.theme-toggle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color);
+  background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--t-fast); color: var(--text-primary); font-size: 1.1rem; flex-shrink: 0; }
+.theme-toggle:hover { background: var(--coral); border-color: var(--coral); color: white; transform: rotate(180deg); }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.5rem; font-family: var(--font-body);
+  font-size: 0.875rem; font-weight: 600; border-radius: 10px; cursor: pointer; transition: all var(--t-fast); border: none; white-space: nowrap; }
+.btn-primary { background: var(--coral); color: white; }
+.btn-primary:hover { background: var(--coral-dark); transform: translateY(-2px); box-shadow: 0 8px 20px var(--coral-glow); }
+.btn-outline { background: transparent; color: var(--text-primary); border: 1.5px solid var(--border-color); }
+.btn-outline:hover { border-color: var(--coral); color: var(--coral); background: var(--coral-bg); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+
+/* Mobile Nav */
+.mobile-nav { position: fixed; top: 72px; left: 0; right: 0; bottom: 0; background: var(--glass-bg);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 2rem; transform: translateX(-100%);
+  transition: transform var(--t-base); z-index: 999; overflow-y: auto; }
+.mobile-nav.active { transform: translateX(0); }
+.mobile-nav .nav-links { flex-direction: column; align-items: stretch; gap: 0; }
+.mobile-nav .nav-links a { padding: 1rem; border-radius: 10px; transition: background var(--t-fast); }
+.mobile-nav .nav-links a::after { display: none; }
+.mobile-nav .nav-links a:hover, .mobile-nav .nav-links a.active { background: var(--coral-bg); color: var(--coral); }
+.mobile-nav-actions { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);
+  display: flex; flex-direction: column; gap: 0.75rem; }
+
+/* Messages */
+.messages { position: fixed; top: 88px; right: 2rem; z-index: 999; display: flex; flex-direction: column;
+  gap: 0.75rem; max-width: 400px; }
+.alert { padding: 1rem 1.25rem; border-radius: 12px; border: 1px solid; background: var(--glass-bg);
+  backdrop-filter: blur(12px); display: flex; align-items: center; gap: 0.75rem; box-shadow: var(--shadow-md);
+  animation: slideIn 0.3s var(--ease); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.alert-success { border-color: var(--success); color: var(--success); }
+.alert-error, .alert-danger { border-color: var(--danger); color: var(--danger); }
+.alert-warning { border-color: var(--warning); color: var(--warning); }
+.alert-info { border-color: var(--coral); color: var(--coral); }
+
+/* Footer */
+.footer { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 3rem 2rem 1.5rem; margin-top: auto; }
+.footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 2rem; }
+.footer-brand { max-width: 320px; }
+.footer-logo { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--text-primary);
+  margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.25rem; }
+.footer-logo-dot { width: 6px; height: 6px; background: var(--coral); border-radius: 50%; }
+.footer-brand p { font-size: 0.875rem; line-height: 1.6; color: var(--text-secondary); }
+.footer-col h5 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-primary); margin-bottom: 1rem; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.6rem; }
+.footer-col ul a { font-size: 0.875rem; color: var(--text-secondary); }
+.footer-col ul a:hover { color: var(--coral); }
+.footer-bottom { max-width: 1280px; margin: 0 auto; padding-top: 2rem; border-top: 1px solid var(--border-color);
+  display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-size: 0.8rem; color: var(--text-tertiary); }
+
+/* Responsive */
+@media (max-width: 1024px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 768px) {
-    .dropdown-submenu > .dropdown-menu {
-        position: static;
-        left: 0;
-        width: 100%;
-        margin-top: 0.5rem;
-        box-shadow: none;
-    }
+  .nav-links { display: none; }
+  .menu-toggle { display: flex; }
+  .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+  .messages { right: 1rem; left: 1rem; max-width: none; }
 }
-
-        .dropdown-item:hover {
-            background-color: rgba(102, 126, 234, 0.1);
-            transform: translateX(5px);
-        }
-
-        /* Pro Features Badge */
-        .pro-badge {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pro-badge::after {
-            content: 'POPULAR';
-            position: absolute;
-            top: 0.5rem;
-            right: -1rem;
-            background: #ffd700;
-            color: #000;
-            padding: 0.2rem 2rem;
-            transform: rotate(45deg);
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-
-        /* Button & Card Styles - Standardized via buttons.css */
-        .event-card {
-            transition: transform 0.3s ease;
-            border: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .event-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        /* Sidebar Styles */
-        .offcanvas {
-            width: 280px !important;
-        }
-
-        .offcanvas-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 1rem;
-        }
-
-        .offcanvas-title {
-            font-size: 1.25rem;
-            margin: 0;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .offcanvas-title .fas {
-            font-size: 1.1rem;
-            margin-right: 0.4rem;
-            background: linear-gradient(
-                300deg,
-                #008000 0%,    /* Kenya - Green */
-                #FF0000 12%,   /* Kenya - Red */
-                #FFFFFF 24%,   /* Kenya - White */
-                #000000 36%,   /* Kenya - Black */
-                #FF0000 48%,   /* South Africa - Red */
-                #0000FF 60%,   /* South Africa - Blue */
-                #FFB90F 72%,   /* Ghana - Gold */
-                #008000 84%,   /* Ghana - Green */
-                #FFFFFF 96%    /* Nigeria - White */
-            );
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: kenyanGlitter 6s ease infinite;
-            display: inline-block;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
-        }
-
-        .offcanvas-title .brand-text {
-            background: linear-gradient(
-                300deg,
-                #008000 0%,    /* Kenya - Green */
-                #FF0000 12%,   /* Kenya - Red */
-                #FFFFFF 24%,   /* Kenya - White */
-                #000000 36%,   /* Kenya - Black */
-                #FF0000 48%,   /* South Africa - Red */
-                #0000FF 60%,   /* South Africa - Blue */
-                #FFB90F 72%,   /* Ghana - Gold */
-                #008000 84%,   /* Ghana - Green */
-                #FFFFFF 96%    /* Nigeria - White */
-            );
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: kenyanGlitter 6s ease infinite;
-            font-weight: 900;
-            position: relative;
-        }
-
-        .btn-close-white {
-            filter: brightness(0) invert(1);
-        }
-
-        .offcanvas-nav .nav-link {
-            padding: 0.8rem 1rem;
-            color: #000000 !important;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            margin-bottom: 0.25rem;
-            font-weight: 500;
-        }
-
-        .offcanvas-nav .nav-link:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-            transform: translateX(5px);
-            color: #000000 !important;
-        }
-
-        .offcanvas-nav .nav-link .fas {
-            color: #000000 !important;
-        }
-
-        /* Version Info */
-        .version-info {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 280px;
-            padding: 1rem;
-            background: rgba(0,0,0,0.03);
-            border-top: 1px solid rgba(0,0,0,0.1);
-            font-size: 0.875rem;
-            color: #333;
-            text-align: center;
-            z-index: 1030;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .dropdown-submenu .dropdown-menu {
-                left: 0;
-                top: 100%;
-                margin-top: 0;
-                width: 100%;
-            }
-
-            .version-info {
-                display: none;
-            }
-        }
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <!-- Sidebar Toggle Button -->
-            <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-                <i class="fas fa-bars"></i>
-            </button>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-ring"></div>
+        <div class="loading-logo">iZoza<span class="dot">.</span></div>
+    </div>
 
-            <!-- Brand Logo -->
-            <a class="navbar-brand glitter-text" href="{% url 'home' %}">
-                <i class="fas fa-ticket-alt me-2"></i>
-                <span class="kenya-glitter">VibeNinjas</span>
-            </a>
-            <!-- User Dropdown - Hidden on mobile, visible on larger screens -->
-            <ul class="navbar-nav d-none d-lg-flex">
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{% url 'home' %}" class="logo">iZoza<span class="logo-dot"></span></a>
+            
+            <ul class="nav-links">
+                <li><a href="{% url 'event_list' %}">Events</a></li>
+                <li><a href="{% url 'public_merchandise_list' %}">Shop</a></li>
                 {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i> {{ user.username }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                {% if user.is_seller %}
-                                    <!-- Seller Navigation -->
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'dashboard' %}">
-                                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'seller_merchandise_dashboard' %}">
-                                            <i class="fas fa-box me-2"></i>My Merchandise
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'seller_merchandise_add' %}">
-                                            <i class="fas fa-plus me-2"></i>Add Merchandise
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'seller_dashboard' %}">
-                                            <i class="fas fa-store me-2"></i>Merchandise Dashboard
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'create_event' %}">
-                                            <i class="fas fa-plus-circle me-2"></i>Create Event
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'profile_view' %}">
-                                            <i class="fas fa-user me-2"></i>Profile
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-
-                                    <!-- Pro Features Section for Sellers -->
-                                    <li class="dropdown-submenu">
-                                        <a class="dropdown-item dropdown-toggle d-flex justify-content-between align-items-center" href="#" role="button">
-                                            <span>
-                                                <i class="fas fa-crown me-2 text-warning"></i>TazamoXM
-                                            </span>
-                                            {% if not user.is_pro %}
-                                                <span class="badge bg-warning text-dark ms-2">Upgrade</span>
-                                            {% endif %}
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 300px;">
-                                            {% if not user.is_pro %}
-                                                <li class="text-center mb-3">
-                                                    <h6 class="mb-1">Upgrade to Pro</h6>
-                                                    <small class="text-muted">Choose your perfect plan</small>
-                                                </li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li>
-                                                    <a class="dropdown-item rounded mb-2" href="{% url 'subscribe' plan='daily' %}">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                                <i class="fas fa-calendar-day me-2 text-primary"></i>
-                                                                <strong>Daily Plan</strong>
-                                                                <div class="small text-muted">Perfect for quick access</div>
-                                                            </div>
-                                                            <span class="badge bg-primary">Ksh.500/day</span>
-                                                        </div>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item rounded mb-2 pro-badge" href="{% url 'subscribe' plan='monthly' %}">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                                <i class="fas fa-calendar-alt me-2 text-success"></i>
-                                                                <strong>Monthly Plan</strong>
-                                                                <div class="small text-muted">Most popular choice</div>
-                                                            </div>
-                                                            <span class="badge bg-success">Ksh.4999/mo</span>
-                                                        </div>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item rounded" href="{% url 'subscribe' plan='yearly' %}">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                                <i class="fas fa-calendar-check me-2 text-danger"></i>
-                                                                <strong>Yearly Plan</strong>
-                                                                <div class="small text-muted">Best value (Save 32%)</div>
-                                                            </div>
-                                                            <span class="badge bg-danger">Ksh.39999/yr</span>
-                                                        </div>
-                                                    </a>
-                                                </li>
-                                            {% else %}
-                                                <li>
-                                                    <a class="dropdown-item rounded mb-2" href="{% url 'pro_features' %}">
-                                                        <i class="fas fa-star me-2 text-warning"></i>Pro Features
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item rounded" href="{% url 'subscription_settings' %}">
-                                                        <i class="fas fa-cog me-2"></i>Subscription Settings
-                                                    </a>
-                                                </li>
-                                            {% endif %}
-                                        </ul>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'logout' %}">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                        </a>
-                                    </li>
-                                {% elif user.is_buyer %}
-                                    <!-- Buyer Navigation - Simplified -->
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'profile_view' %}">
-                                            <i class="fas fa-user me-2"></i>Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'event_list' %}">
-                                            <i class="fas fa-calendar-alt me-2"></i>My Events
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'my_tickets' %}">
-                                            <i class="fas fa-ticket-alt me-2"></i>My Tickets
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'public_merchandise_list' %}">
-                                            <i class="fas fa-tshirt me-2"></i>Shop
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'buyer_merchandise_order_list' %}">
-                                            <i class="fas fa-shopping-bag me-2"></i>My Orders
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'logout' %}">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                        </a>
-                                    </li>
-                                {% else %}
-                                    <!-- Default navigation for users without specific roles -->
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'home' %}">
-                                            <i class="fas fa-home me-2"></i>Home
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'profile_view' %}">
-                                            <i class="fas fa-user me-2"></i>Profile
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'logout' %}">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item" style="color: black;">
-                            <a class="nav-link" href="{% url 'login' %}">
-                                <i class="fas fa-sign-in-alt me-1"></i> Login
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-plus me-2"></i> Signup
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'signup_buyer' %}">
-                                        <i class="fas fa-user me-2"></i>Buyer
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'signup_seller' %}">
-                                        <i class="fas fa-store me-2"></i>Seller
-                                    </a>
-                                </li>
+                    {% if user.is_seller %}
+                        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'create_event' %}">Create Event</a></li>
+                    {% elif user.is_buyer %}
+                        <li><a href="{% url 'my_tickets' %}">My Tickets</a></li>
+                        <li><a href="{% url 'buyer_merchandise_order_list' %}">Orders</a></li>
                     {% endif %}
-                </ul>
+                {% endif %}
+            </ul>
+            
+            <div class="nav-right">
+                <button class="theme-toggle" id="themeToggle"><i class="bi bi-sun-fill" id="themeIcon"></i></button>
+                <button class="menu-toggle" id="menuToggle"><i class="bi bi-list"></i></button>
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline">Sign Out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-ghost">Sign In</a>
+                    <a href="{% url 'signup_buyer' %}" class="btn btn-primary">Get Started</a>
+                {% endif %}
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Sidebar -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">
-                <i class="fas fa-ticket-alt me-2"></i><span class="brand-text"></span>VibeNinjas</span>
-            </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="navbar-nav offcanvas-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">
-                        <i class="fas fa-home me-2"></i>Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'event_list' %}">
-                        <i class="fas fa-calendar-alt me-2"></i>Events
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'public_merchandise_list' %}">
-                        <i class="fas fa-shopping-bag me-2"></i>Shop
-                    </a>
-                </li>
-                {% if user.is_authenticated %}
-                    <li><hr class="nav-divider"></li>
-                    {% if user.is_seller %}
-                        <!-- Seller Mobile Navigation -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard' %}">
-                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'seller_merchandise_dashboard' %}">
-                                <i class="fas fa-box me-2"></i>My Merchandise
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'seller_merchandise_add' %}">
-                                <i class="fas fa-plus me-2"></i>Add Merchandise
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'seller_dashboard' %}">
-                                <i class="fas fa-store me-2"></i>Merchandise Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'create_event' %}">
-                                <i class="fas fa-plus-circle me-2"></i>Create Event
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile_view' %}">
-                                <i class="fas fa-user me-2"></i>Profile
-                            </a>
-                        </li>
-                        <li><hr class="nav-divider"></li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle d-flex justify-content-between align-items-center" href="#" role="button">
-                                <span>
-                                    <i class="fas fa-crown me-2 text-warning"></i>TazamoXM
-                                </span>
-                                {% if not user.is_pro %}
-                                    <span class="badge bg-warning text-dark ms-2">Upgrade</span>
-                                {% endif %}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 300px;">
-                                {% if not user.is_pro %}
-                                    <li class="text-center mb-3">
-                                        <h6 class="mb-1">Upgrade to Pro</h6>
-                                        <small class="text-muted">Choose your perfect plan</small>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item rounded mb-2" href="{% url 'subscribe' plan='daily' %}">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <i class="fas fa-calendar-day me-2 text-primary"></i>
-                                                    <strong>Daily Plan</strong>
-                                                    <div class="small text-muted">Perfect for quick access</div>
-                                                </div>
-                                                <span class="badge bg-primary">Ksh.500/day</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item rounded mb-2 pro-badge" href="{% url 'subscribe' plan='monthly' %}">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <i class="fas fa-calendar-alt me-2 text-success"></i>
-                                                    <strong>Monthly Plan</strong>
-                                                    <div class="small text-muted">Most popular choice</div>
-                                                </div>
-                                                <span class="badge bg-success">Ksh.4999/mo</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item rounded" href="{% url 'subscribe' plan='yearly' %}">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <i class="fas fa-calendar-check me-2 text-danger"></i>
-                                                    <strong>Yearly Plan</strong>
-                                                    <div class="small text-muted">Best value (Save 32%)</div>
-                                                </div>
-                                                <span class="badge bg-danger">Ksh.39999/yr</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                {% else %}
-                                    <li>
-                                        <a class="dropdown-item rounded mb-2" href="{% url 'pro_features' %}">
-                                            <i class="fas fa-star me-2 text-warning"></i>Pro Features
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item rounded" href="{% url 'subscription_settings' %}">
-                                            <i class="fas fa-cog me-2"></i>Subscription Settings
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </li>
-                    {% elif user.is_buyer %}
-                        <!-- Buyer Mobile Navigation - Simplified -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile_view' %}">
-                                <i class="fas fa-user me-2"></i>Profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'my_tickets' %}">
-                                <i class="fas fa-ticket-alt me-2"></i>My Tickets
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'buyer_merchandise_order_list' %}">
-                                <i class="fas fa-shopping-bag me-2"></i>My Orders
-                            </a>
-                        </li>
-                    {% else %}
-                        <!-- Default mobile navigation for users without specific roles -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile_view' %}">
-                                <i class="fas fa-user me-2"></i>Profile
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li><hr class="nav-divider"></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a>
-                    </li>
-                {% else %}
-                    <li><hr class="nav-divider"></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">
-                            <i class="fas fa-sign-in-alt me-2"></i> Login
-                        </a>
-                    </li>
-                   
-                     <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-plus me-2"></i> Signup
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'signup_buyer' %}">
-                                        <i class="fas fa-user me-2"></i>Buyer
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'signup_seller' %}">
-                                        <i class="fas fa-store me-2"></i>Seller
-                                    </a>
-                                </li>
+    <div class="mobile-nav" id="mobileNav">
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}"><i class="bi bi-house-door me-2"></i>Home</a></li>
+            <li><a href="{% url 'event_list' %}"><i class="bi bi-calendar-event me-2"></i>Events</a></li>
+            <li><a href="{% url 'public_merchandise_list' %}"><i class="bi bi-shop me-2"></i>Shop</a></li>
+            {% if user.is_authenticated %}
+                {% if user.is_seller %}
+                    <li><a href="{% url 'dashboard' %}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                    <li><a href="{% url 'create_event' %}"><i class="bi bi-plus-circle me-2"></i>Create Event</a></li>
+                    <li><a href="{% url 'seller_merchandise_dashboard' %}"><i class="bi bi-box-seam me-2"></i>My Merch</a></li>
+                {% elif user.is_buyer %}
+                    <li><a href="{% url 'my_tickets' %}"><i class="bi bi-ticket-perforated me-2"></i>My Tickets</a></li>
+                    <li><a href="{% url 'buyer_merchandise_order_list' %}"><i class="bi bi-bag me-2"></i>Orders</a></li>
+                    <li><a href="{% url 'profile_view' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
                 {% endif %}
-            </ul>
+            {% endif %}
+        </ul>
+        {% if not user.is_authenticated %}
+        <div class="mobile-nav-actions">
+            <a href="{% url 'login' %}" class="btn btn-outline" style="width:100%; justify-content:center;">Sign In</a>
+            <a href="{% url 'signup_buyer' %}" class="btn btn-primary" style="width:100%; justify-content:center;">Get Started</a>
         </div>
-        {% if user.is_authenticated %}
-            <div class="version-info">
-                <small>
-                    <i class="fas fa-code-branch me-1"></i>
-                    Version 1.1.0 - Updated on 2025-05-20
-                </small>
-            </div>
         {% endif %}
     </div>
 
-    <!-- Main Content -->
-    <main>
-        {% if messages %}
-            <div class="container mt-3">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="bi bi-check-circle-fill"></i>{{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-        {% block content %}{% endblock %}
-    </main>
+    <main>{% block content %}{% endblock %}</main>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <p class="mb-0">&copy; <span id="current-year"></span> TazamoEXP. All Rights Reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <a href="{% url 'privacy_policy' %}" class="text-white text-decoration-none me-3">
-                        <i class="fas fa-shield-alt me-1"></i>Privacy Policy
-                    </a>
-                    <a href="#" class="text-white text-decoration-none me-3" onclick="showCookieSettings()">
-                        <i class="fas fa-cookie-bite me-1"></i>Cookie Settings
-                    </a>
-                    <a href="{% url 'home' %}" class="text-white text-decoration-none">
-                        <i class="fas fa-home me-1"></i>Home
-                    </a>
-                </div>
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">iZoza<span class="footer-logo-dot"></span></div>
+                <p>Kenya's premier platform for live events, concerts, festivals, and unforgettable experiences.</p>
             </div>
-            <div class="row mt-3">
-                <div class="col-12 text-center">
-                    <small class="text-muted">
-                        <i class="fas fa-lock me-1"></i>
-                        Your data is protected and secure. 
-                        <a href="{% url 'privacy_policy' %}" class="text-white-50">Learn more about our privacy practices.</a>
-                    </small>
-                </div>
+            <div class="footer-col">
+                <h5>Platform</h5>
+                <ul>
+                    <li><a href="{% url 'event_list' %}">Browse Events</a></li>
+                    <li><a href="{% url 'create_event' %}">Sell Tickets</a></li>
+                    <li><a href="{% url 'public_merchandise_list' %}">Shop Merch</a></li>
+                </ul>
             </div>
+            <div class="footer-col">
+                <h5>Company</h5>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="{% url 'privacy_policy' %}">Privacy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Support</h5>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="{% url 'login' %}">Sign In</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="year"></span> iZoza. All rights reserved.</p>
+            <p>Made with ❤️ in Nairobi</p>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Set current year in footer
-    const currentYearElement = document.getElementById('current-year');
-    if (currentYearElement) {
-        currentYearElement.textContent = new Date().getFullYear();
-    }
-    
-    const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu');
-    
-    dropdownSubmenus.forEach(function(submenu) {
-        const toggle = submenu.querySelector('.dropdown-toggle');
-        const menu = submenu.querySelector('.dropdown-menu');
-        
-        toggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Close all other submenus
-            dropdownSubmenus.forEach(function(other) {
-                if (other !== submenu) {
-                    other.querySelector('.dropdown-menu').classList.remove('show');
-                }
-            });
-            
-            // Toggle current submenu
-            menu.classList.toggle('show');
-        });
-    });
-    
-    // Close submenus when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown-submenu')) {
-            dropdownSubmenus.forEach(function(submenu) {
-                submenu.querySelector('.dropdown-menu').classList.remove('show');
-            });
-        }
-    });
+window.addEventListener('load', () => setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 1000));
+const html = document.documentElement, themeToggle = document.getElementById('themeToggle'), themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
+themeIcon.className = savedTheme === 'dark' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
+themeToggle.addEventListener('click', () => {
+    const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeIcon.className = newTheme === 'dark' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
 });
-</script>
-
-<!-- WhatsApp Floating Button -->
-{% include 'whatsapp_button.html' %}
-
-<!-- Cookie Consent -->
-{% include 'cookie_consent.html' %}
-
-    {% block scripts %}{% endblock %}
+const menuToggle = document.getElementById('menuToggle'), mobileNav = document.getElementById('mobileNav');
+menuToggle.addEventListener('click', () => {
+    mobileNav.classList.toggle('active');
+    menuToggle.querySelector('i').className = mobileNav.classList.contains('active') ? 'bi bi-x-lg' : 'bi bi-list';
+});
+document.querySelectorAll('.mobile-nav a').forEach(link => link.addEventListener('click', () => {
+    mobileNav.classList.remove('active');
+    menuToggle.querySelector('i').className = 'bi bi-list';
+}));
+const currentPath = window.location.pathname;
+document.querySelectorAll('.nav-links a').forEach(link => {
+    if (link.getAttribute('href') === currentPath) link.classList.add('active');
+});
+document.getElementById('year').textContent = new Date().getFullYear();
+document.querySelectorAll('.alert').forEach(alert => setTimeout(() => {
+    alert.style.animation = 'slideOut 0.3s ease forwards';
+    setTimeout(() => alert.remove(), 300);
+}, 5000));
+    </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
