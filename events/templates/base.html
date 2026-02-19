@@ -264,7 +264,7 @@ img { max-width: 100%; display: block; }
     <script>
 window.addEventListener('load', () => setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 1000));
 const html = document.documentElement, themeToggle = document.getElementById('themeToggle'), themeIcon = document.getElementById('themeIcon');
-const savedTheme = localStorage.getItem('theme') || 'light';
+const savedTheme = localStorage.getItem('theme') || 'dark';
 html.setAttribute('data-theme', savedTheme);
 themeIcon.className = savedTheme === 'dark' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
 themeToggle.addEventListener('click', () => {

@@ -1,256 +1,344 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Login - TazamoExp{% endblock %}
+{% block title %}Sign In — iZoza{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
-body {
-   background-image: url('{% static "images/background.jpg" %}');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+/* Auth Page Layout */
+.auth-page {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.minimalist-login-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(4px);
-    transition: all 0.2s ease;
+.auth-page::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, var(--coral-glow) 0%, transparent 70%);
+  opacity: 0.15;
+  animation: float 20s ease-in-out infinite;
 }
 
-.minimalist-login-card:hover {
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, 50px) scale(1.1); }
 }
 
-.minimalist-login-header {
-    background: rgba(250, 251, 252, 0.9);
-    border-bottom: 1px solid #e5e7eb;
-    border-radius: 12px 12px 0 0;
-    padding: 2rem;
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: fadeUp 0.6s var(--ease);
 }
 
-.minimalist-form-control {
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    background: #ffffff;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.minimalist-form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    outline: none;
+.auth-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 2.5rem 2rem;
+  text-align: center;
 }
 
-.minimalist-form-control:hover {
-    border-color: #9ca3af;
+.auth-icon {
+  width: 72px;
+  height: 72px;
+  background: var(--coral-bg);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--coral);
+  font-size: 1.8rem;
+  animation: pulse-icon 2s ease-in-out infinite;
 }
 
-.minimalist-form-label {
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
+@keyframes pulse-icon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
-.minimalist-btn-primary {
-    background: #3b82f6;
-    border: 1px solid #3b82f6;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    color: white;
+.auth-header h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
-.minimalist-btn-primary:hover {
-    background: #2563eb;
-    border-color: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+.auth-header p {
+  color: var(--text-secondary);
 }
 
-.minimalist-btn-outline {
-    background: #ffffff;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 0.375rem 0.75rem;
-    transition: all 0.2s ease;
-    color: #6b7280;
+.auth-body {
+  padding: 2.5rem 2rem;
 }
 
-.minimalist-btn-outline:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-    color: #374151;
+.form-group {
+  margin-bottom: 1.75rem;
 }
 
-.minimalist-alert {
-    border: 1px solid #fecaca;
-    background: #fef2f2;
-    color: #dc2626;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
-.minimalist-link {
-    color: #3b82f6;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
+.form-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all var(--t-base);
 }
 
-.minimalist-link:hover {
-    color: #2563eb;
-    text-decoration: underline;
+.form-input::placeholder {
+  color: var(--text-tertiary);
 }
 
-.min-vh-75 {
-    min-height: 75vh;
+.form-input:focus {
+  outline: none;
+  background: var(--bg-tertiary);
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px var(--coral-glow);
 }
 
-.input-group {
-    position: relative;
+.password-wrapper {
+  position: relative;
 }
 
-.input-group .minimalist-form-control {
-    padding-right: 3rem;
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color var(--t-fast);
 }
 
-.input-group .minimalist-btn-outline {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    border-left: none;
-    border-radius: 0 8px 8px 0;
-    width: auto;
+.password-toggle:hover {
+  color: var(--coral);
 }
 
-@media (max-width: 768px) {
-    .minimalist-login-card {
-        margin: 1rem;
-    }
-    
-    .minimalist-login-header {
-        padding: 1.5rem;
-    }
+.btn-submit {
+  width: 100%;
+  padding: 1rem;
+  background: var(--coral);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-submit:hover {
+  background: var(--coral-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--coral-glow);
+}
+
+.auth-alert {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--danger);
+  font-size: 0.875rem;
+}
+
+.auth-footer {
+  border-top: 1px solid var(--glass-border);
+  padding: 1.75rem 2rem;
+  text-align: center;
+  background: var(--bg-secondary);
+}
+
+.auth-footer p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.auth-link {
+  color: var(--coral);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--t-fast);
+}
+
+.auth-link:hover {
+  color: var(--coral-light);
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    border-radius: 16px;
+  }
+  .auth-header, .auth-body, .auth-footer {
+    padding: 2rem 1.5rem;
+  }
 }
 </style>
+{% endblock %}
 
-<div class="container py-8" style="margin-top: 8vh;">
-    <div class="row justify-content-center align-items-center min-vh-75">
-        <div class="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-4">
-            <div class="minimalist-login-card">
-                <div class="minimalist-login-header text-center">
-                    <div class="mb-3">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-blue-50 mb-3" style="width: 50px; height: 50px;">
-                            <i class="fas fa-user-lock fa-lg text-blue-600"></i>
-                        </div>
-                    </div>
-                    <h4 class="mb-2 fw-light text-gray-800">Welcome Back</h4>
-                    <p class="text-muted-light mb-0">Sign in to your account</p>
-                </div>
-                <div class="card-body p-4 p-md-5">
-                    <form method="post" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        
-                        <div class="mb-4">
-                            <label for="{{ form.username.id_for_label }}" class="minimalist-form-label">
-                                Username
-                            </label>
-                            <div class="input-group">
-                                <input type="text" 
-                                       name="{{ form.username.name }}" 
-                                       id="{{ form.username.id_for_label }}" 
-                                       class="minimalist-form-control w-100" 
-                                       placeholder="Enter your username"
-                                       required>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="{{ form.password.id_for_label }}" class="minimalist-form-label">
-                                Password
-                            </label>
-                            <div class="input-group">
-                                <input type="password" 
-                                       name="{{ form.password.name }}" 
-                                       id="passwordInput" 
-                                       class="minimalist-form-control w-100" 
-                                       placeholder="Enter your password"
-                                       required>
-                                <button class="minimalist-btn-outline" type="button" id="togglePassword">
-                                    <i class="fas fa-eye" id="toggleIcon"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        {% if form.errors %}
-                            <div class="minimalist-alert mb-4">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                {% for field, errors in form.errors.items %}
-                                    {{ errors|join:", " }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        
-                        <div class="d-grid mb-4">
-                            <button type="submit" class="minimalist-btn-primary w-100">
-                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                            </button>
-                        </div>
-                    </form>
-                    
-                    <div class="text-center pt-3 border-top border-light">
-                        <p class="text-muted-light mb-0">
-                            New to TazamoExp? 
-                            <a href="{% url 'signup_buyer' %}" class="minimalist-link">Create an account</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">
+        <i class="bi bi-box-arrow-in-right"></i>
+      </div>
+      <h1>Welcome Back</h1>
+      <p>Sign in to your iZoza account</p>
     </div>
+    
+    <div class="auth-body">
+      <form method="post">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="auth-alert">
+          <i class="bi bi-exclamation-circle"></i>
+          <span>Invalid username or password</span>
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+          <label for="id_username" class="form-label">Username</label>
+          <input 
+            type="text" 
+            name="username" 
+            id="id_username" 
+            class="form-input" 
+            placeholder="Enter your username"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="id_password" class="form-label">Password</label>
+          <div class="password-wrapper">
+            <input 
+              type="password" 
+              name="password" 
+              id="id_password" 
+              class="form-input" 
+              placeholder="Enter your password"
+              required
+            >
+            <button type="button" class="password-toggle" id="togglePassword">
+              <i class="bi bi-eye" id="toggleIcon"></i>
+            </button>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-submit">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Sign In</span>
+        </button>
+      </form>
+    </div>
+    
+ <div class="auth-footer">
+  <p class="mb-3">
+    New to iZoza?
+  </p>
+  <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+    <a href="{% url 'signup_buyer' %}" class="btn" style="
+      padding: 0.7rem 1.5rem;
+      background: var(--coral);
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    ">
+      <i class="bi bi-person-plus"></i>
+      Join as Buyer
+    </a>
+    <a href="{% url 'signup_seller' %}" class="btn" style="
+      padding: 0.7rem 1.5rem;
+      background: transparent;
+      color: var(--coral);
+      border: 1.5px solid var(--coral);
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    ">
+      <i class="bi bi-shop"></i>
+      Become a Seller
+    </a>
+  </div>
+</div>
+
+  </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const toggleBtn = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('passwordInput');
-    const toggleIcon = document.getElementById('toggleIcon');
-    
-    if (toggleBtn && passwordInput && toggleIcon) {
-        toggleBtn.addEventListener('click', function() {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.className = 'fas fa-eye-slash';
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.className = 'fas fa-eye';
-            }
-        });
-    }
-    
-    // Form validation
-    const form = document.querySelector('.needs-validation');
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-        }, false);
-    }
+  const toggleBtn = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('id_password');
+  const toggleIcon = document.getElementById('toggleIcon');
+  
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function() {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.className = 'bi bi-eye-slash';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.className = 'bi bi-eye';
+      }
+    });
+  }
 });
 </script>
 {% endblock %}

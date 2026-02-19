@@ -175,141 +175,75 @@
 </div>
 
 {% block extra_css %}
+/* Dark Mode Event Detail */
 <style>
-.event-image {
-    width: 100%;
-    max-height: 500px;
-    object-fit: cover;
+.card {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--shadow-lg);
 }
 
 .ticket-category-card {
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border) !important;
+  transition: all 0.3s var(--ease);
+  cursor: pointer;
 }
 
-.ticket-category-card:not(.bg-light):not(.border-primary):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+.ticket-category-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--coral) !important;
+  box-shadow: var(--shadow-lg);
 }
 
 .ticket-category-card.border-primary {
-    border-width: 2px !important;
-    background-color: rgba(13, 110, 253, 0.05) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 .5rem 1rem rgba(13, 110, 253, 0.25) !important;
+  border: 2px solid var(--coral) !important;
+  background: var(--coral-bg) !important;
+  box-shadow: 0 8px 20px var(--coral-glow);
 }
 
-.ticket-category-card.border-primary:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 .75rem 1.5rem rgba(13, 110, 253, 0.35) !important;
+.event-image {
+  border-radius: 20px 20px 0 0;
+}
+
+.btn-primary {
+  background: var(--coral) !important;
+  border-color: var(--coral) !important;
+}
+
+.btn-primary:hover {
+  background: var(--coral-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--coral-glow);
+}
+
+.badge {
+  background: var(--coral) !important;
+  border-radius: 100px;
+}
+
+.badge.bg-success { background: var(--success) !important; }
+.badge.bg-danger { background: var(--danger) !important; }
+.badge.bg-info { background: var(--coral-light) !important; }
+
+.bg-light {
+  background: var(--bg-secondary) !important;
+}
+
+.text-primary {
+  color: var(--coral) !important;
 }
 
 .progress {
-    background-color: rgba(0,0,0,0.05);
+  background: var(--bg-tertiary);
 }
 
 .progress-bar {
-    background-color: var(--bs-primary);
+  background: var(--coral) !important;
 }
-
-/* Only apply hover effects to non-ticket cards */
-.card:not(.ticket-category-card):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
-}
-
-.bg-light {
-    background-color: rgba(0,0,0,0.02) !important;
-}
-
-.rounded-circle {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-    .container.py-6 {
-        padding-top: 60px !important;
-        padding-bottom: 2rem !important;
-    }
-    
-    .ticket-category-card {
-        margin-bottom: 1rem !important;
-        border-radius: 0.5rem !important;
-    }
-    
-    .ticket-category-card .card-body {
-        padding: 1rem !important;
-    }
-    
-    .ticket-category-card .h5 {
-        font-size: 1.1rem !important;
-        margin-bottom: 0.25rem !important;
-    }
-    
-    .ticket-category-card h6 {
-        font-size: 0.95rem !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .ticket-category-card .small {
-        font-size: 0.8rem !important;
-    }
-    
-    .badge {
-        font-size: 0.7rem !important;
-        padding: 0.25rem 0.5rem !important;
-    }
-    
-    .btn-lg {
-        padding: 0.75rem 1.5rem !important;
-        font-size: 1rem !important;
-    }
-    
-    .position-sticky {
-        position: relative !important;
-        top: 0 !important;
-    }
-    
-    .event-image {
-        max-height: 250px !important;
-    }
-    
-    .display-5 {
-        font-size: 1.75rem !important;
-    }
-    
-    .lead {
-        font-size: 1rem !important;
-    }
-}
-
-@media (max-width: 576px) {
-    .ticket-category-card .d-flex {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-    }
-    
-    .ticket-category-card .text-end {
-        text-align: left !important;
-        margin-top: 0.5rem !important;
-    }
-    
-    .ticket-category-card .h5 {
-        font-size: 1rem !important;
-    }
-    
-    .container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-}
-</style>
+<style>
 {% endblock %}
 {% block extra_js %}
 <script>

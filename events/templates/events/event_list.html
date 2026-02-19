@@ -1,229 +1,277 @@
 {% extends 'base.html' %}
-{% load form_filters %}
+{% load static %}
 
-{% block title %}All Events - Event Management{% endblock %}
+{% block title %}Explore Events — iZoza{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Section Layout */
+    .events-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+    }
+
+    /* Glass Filter Bar */
+    .filter-shelf {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 3rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .search-group {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .izoza-input {
+        background: var(--bg-primary);
+        border: 1.5px solid var(--border-color);
+        padding: 0.8rem 1.25rem;
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        width: 100%;
+        transition: var(--t-fast);
+    }
+
+    .izoza-input:focus {
+        border-color: var(--coral);
+        outline: none;
+        box-shadow: 0 0 0 4px var(--coral-glow);
+    }
+
+    /* Headings */
+    .page-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .page-title {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+    }
+
+    /* Events Grid */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    /* The iZoza Card */
+    .event-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        overflow: hidden;
+        transition: var(--t-base);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    .event-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--coral);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Image Wrapper & Overlay */
+    .image-wrapper {
+        position: relative;
+        aspect-ratio: 16/10;
+        overflow: hidden;
+    }
+
+    .event-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s var(--ease);
+    }
+
+    .event-card:hover .event-img {
+        transform: scale(1.05);
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .badge-available { background: rgba(16, 185, 129, 0.9); color: white; }
+    .badge-sold { background: rgba(239, 68, 68, 0.9); color: white; }
+
+    /* Card Content */
+    .card-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .category-label {
+        color: var(--coral);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .event-name {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-row i { color: var(--coral); }
+
+    .price-tag {
+        margin-top: auto;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .amount {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-primary);
+    }
+
+    .amount span { font-size: 0.8rem; color: var(--text-tertiary); font-weight: 500; }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .search-group { grid-template-columns: 1fr; }
+        .page-title { font-size: 2rem; }
+        .events-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-4 py-lg-5" style="margin-top: 50px;">
-    <!-- Search and Filter Section -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <form method="get" class="row g-3">
-                <!-- Search Input -->
-                <div class="col-12 col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input type="text" 
-                               name="search" 
-                               class="form-control" 
-                               placeholder="Search events..."
-                               value="{{ search_query }}">
-                    </div>
-                </div>
-                
-                <!-- Category Filter -->
-                <div class="col-12 col-md-4">
-                    <select name="category" class="form-select">
-                        <option value="">All Categories</option>
-                        {% for category in categories %}
-                            <option value="{{ category.slug }}" 
-                                    {% if selected_category == category.slug %}selected{% endif %}>
-                                {{ category.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <!-- Submit Button -->
-                <div class="col-12 col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-filter me-2"></i>Filter
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+<div class="events-container">
+    
+    <header class="page-header">
+        <h1 class="page-title">Discover Experiences<span style="color: var(--coral);">.</span></h1>
+    </header>
 
-    <!-- Active Filters Section -->
-    {% if search_query or selected_category %}
-    <div class="mb-4">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <span class="text-muted">Active filters:</span>
-            {% if search_query %}
-            <span class="badge bg-primary d-flex align-items-center">
-                Search: {{ search_query }}
-                <a href="?{% if selected_category %}category={{ selected_category }}{% endif %}" 
-                   class="ms-2 text-white text-decoration-none">
-                    <i class="fas fa-times"></i>
-                </a>
-            </span>
-            {% endif %}
-            {% if selected_category %}
-            <span class="badge bg-secondary d-flex align-items-center">
-                Category: {{ selected_category|title }}
-                <a href="?{% if search_query %}search={{ search_query }}{% endif %}" 
-                   class="ms-2 text-white text-decoration-none">
-                    <i class="fas fa-times"></i>
-                </a>
-            </span>
-            {% endif %}
-            <a href="{% url 'event_list' %}" class="btn btn-sm btn-primary">
-                Clear All
-            </a>
-        </div>
-    </div>
-    {% endif %}
+    <section class="filter-shelf">
+        <form method="get" class="search-group">
+            <input type="text" name="search" class="izoza-input" 
+                   placeholder="Search concerts, festivals, or artists..." value="{{ search_query }}">
+            
+            <select name="category" class="izoza-input" style="width: auto; min-width: 200px;">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.slug }}" {% if selected_category == category.slug %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
 
-    <!-- Events Grid -->
-    <div class="row g-3 g-md-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-filter"></i> Filter
+            </button>
+        </form>
+
+        {% if search_query or selected_category %}
+        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.8rem; color: var(--text-tertiary);">Active Filters:</span>
+            {% if search_query %}<span class="btn btn-outline" style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">"{{ search_query }}"</span>{% endif %}
+            <a href="{% url 'event_list' %}" style="font-size: 0.8rem; color: var(--coral); margin-left: auto;">Clear All</a>
+        </div>
+        {% endif %}
+    </section>
+
+    <div class="events-grid">
         {% for event in events %}
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100 shadow-sm hover-shadow transition-all">
-                <!-- Event Image -->
-                <div class="event-image-wrapper">
-                    {% if event.image %}
-                        <img src="{{ event.image.url }}" 
-                            class="card-img-top event-image" 
-                            alt="{{ event.title }}">
-                    {% else %}
-                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center h-100">
-                            <i class="fas fa-calendar-alt fa-3x text-muted"></i>
-                        </div>
-                    {% endif %}
-                </div>
-                    
-                    <div class="card-body d-flex flex-column p-3 p-md-4">
-                        <!-- Event Title and Status -->
-                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                            <h5 class="card-title mb-0 text-truncate">{{ event.title }}</h5>
-                            {% if event.is_sold_out %}
-                                <span class="badge bg-danger flex-shrink-0">Sold Out</span>
-                            {% else %}
-                                <span class="badge bg-success flex-shrink-0">Available</span>
-                            {% endif %}
-                        </div>
-
-                        <!-- Category Badge -->
-                        <div class="mb-2">
-                            <span class="badge bg-light text-dark">
-                                <i class="fas fa-tag me-1"></i>{{ event.category.name }}
-                            </span>
-                        </div>
-                        
-                        <!-- Event Description -->
-                        <p class="card-text text-muted small">{{ event.description|truncatewords:15 }}</p>
-                        
-                        <!-- Event Details -->
-                        <div class="mt-auto">
-                            <div class="list-group list-group-flush mb-3">
-                                <div class="list-group-item border-0 px-0 py-1 d-flex align-items-center">
-                                    <i class="fas fa-calendar-alt text-primary me-2 flex-shrink-0"></i>
-                                    <span class="small">{{ event.date|date:"M d, Y g:i A" }}</span>
-                                </div>
-                                <div class="list-group-item border-0 px-0 py-1 d-flex align-items-center">
-                                    <i class="fas fa-map-marker-alt text-primary me-2 flex-shrink-0"></i>
-                                    <span class="small text-truncate">{{ event.location }}</span>
-                                </div>
-                                <div class="list-group-item border-0 px-0 py-1">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-ticket-alt text-primary me-2 flex-shrink-0"></i>
-                                        <span class="small">
-                                            {% if event.available_tickets > 0 %}
-                                                {{ event.available_tickets }} tickets left
-                                            {% else %}
-                                                <span class="text-danger">Sold Out</span>
-                                            {% endif %}
-                                        </span>
-                                    </div>
-                                    {% if event.available_tickets > 0 %}
-                                        <div class="progress mt-2" style="height: 4px;">
-                                            <div class="progress-bar bg-primary" role="progressbar" 
-                                                 style="width: {% if event.tickets_sold and event.total_tickets %}{% widthratio event.tickets_sold event.total_tickets 100 %}{% else %}0{% endif %}%">
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                            <!-- Price and Action Button -->
-                            <div class="d-flex justify-content-between align-items-center gap-3">
-                                 <span class="h6 mb-0">
-                                    <i class="fas fa-tag text-primary small"></i>
-                                    {% if event.lowest_ticket_price %}
-                                        {% if event.highest_ticket_price == event.lowest_ticket_price %}
-                                            <span class="ms-1">Ksh {{ event.lowest_ticket_price|floatformat:0 }}</span>
-                                        {% else %}
-                                            <span class="ms-1">Ksh {{ event.lowest_ticket_price|floatformat:0 }} - {{ event.highest_ticket_price|floatformat:0 }}</span>
-                                        {% endif %}
-                                    {% else %}
-                                        <span class="ms-1">Free</span>
-                                    {% endif %}
-                                </span>
-                                <a href="{% url 'event_detail' event.pk %}" 
-                                   class="btn btn-primary btn-sm {% if event.is_sold_out %}disabled{% endif %}">
-                                    {% if event.is_sold_out %}
-                                        <i class="fas fa-ticket-alt me-1"></i> Sold Out
-                                    {% else %}
-                                        <i class="fas fa-shopping-cart me-1"></i> Buy Tickets
-                                    {% endif %}
-                                </a>
-                            </div>
-                        </div>
+        <a href="{% url 'event_detail' event.pk %}" class="event-card">
+            <div class="image-wrapper">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-img">
+                {% else %}
+                    <div style="width:100%; height:100%; background: var(--bg-tertiary); display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-calendar4-event" style="font-size: 3rem; color: var(--text-tertiary);"></i>
                     </div>
-                </div>
+                {% endif %}
+                
+                <span class="status-badge {% if event.is_sold_out %}badge-sold{% else %}badge-available{% endif %}">
+                    {% if event.is_sold_out %}Sold Out{% else %}Available{% endif %}
+                </span>
             </div>
-        {% empty %}
-            <!-- Empty State -->
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-search fa-4x text-muted mb-3"></i>
-                        <h3 class="h4 text-muted">No Events Found</h3>
-                        {% if search_query or selected_category %}
-                            <p class="text-muted mb-4">Try adjusting your search criteria</p>
-                            <a href="{% url 'event_list' %}" class="btn btn-primary">
-                                <i class="fas fa-times me-1"></i> Clear Filters
-                            </a>
+
+            <div class="card-content">
+                <span class="category-label">{{ event.category.name|upper }}</span>
+                <h3 class="event-name">{{ event.title }}</h3>
+                
+                <div class="info-row">
+                    <i class="bi bi-calendar3"></i>
+                    {{ event.date|date:"D, M d • g:i A" }}
+                </div>
+                
+                <div class="info-row">
+                    <i class="bi bi-geo-alt"></i>
+                    {{ event.location|truncatechars:30 }}
+                </div>
+
+                <div class="price-tag">
+                    <div class="amount">
+                        {% if event.lowest_ticket_price %}
+                            <span>Ksh</span> {{ event.lowest_ticket_price|floatformat:0 }}
                         {% else %}
-                            <p class="text-muted mb-4">Check back later for upcoming events!</p>
-                            <a href="{% url 'home' %}" class="btn btn-primary">
-                                <i class="fas fa-home me-1"></i> Return Home
-                            </a>
+                            Free
                         {% endif %}
                     </div>
+                    <div class="btn btn-ghost" style="padding: 0.5rem; border-radius: 50%;">
+                        <i class="bi bi-arrow-right-short" style="font-size: 1.5rem;"></i>
+                    </div>
                 </div>
             </div>
+        </a>
+        {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 5rem 0;">
+            <i class="bi bi-search" style="font-size: 4rem; color: var(--text-tertiary); margin-bottom: 1.5rem; display: block;"></i>
+            <h2 style="font-family: var(--font-display); color: var(--text-secondary);">No events found</h2>
+            <p style="color: var(--text-tertiary); margin-bottom: 2rem;">Try adjusting your filters or search terms.</p>
+            <a href="{% url 'event_list' %}" class="btn btn-primary">Refresh List</a>
+        </div>
         {% endfor %}
     </div>
 </div>
-
-<style>
-    .hover-shadow {
-        will-change: transform;
-    }
-    
-    .hover-shadow:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-    
-    .transition-all {
-        transition: all .2s ease-in-out;
-    }
-    
-    @media (max-width: 768px) {
-        .hover-shadow:hover {
-            transform: translateY(-2px);
-        }
-    }
-    
-    .text-truncate {
-        max-width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-</style>
 {% endblock %}

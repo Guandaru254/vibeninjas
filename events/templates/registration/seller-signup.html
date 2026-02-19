@@ -1,287 +1,317 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Seller Signup - TazamoExp{% endblock %}
+{% block title %}Sell Tickets — iZoza{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
-body {
-    background-image: url('{% static "images/background.jpg" %}');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+.auth-page {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
 }
 
-.minimalist-signup-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    transition: all 0.2s ease;
+.auth-page::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -20%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, var(--coral-glow) 0%, transparent 70%);
+  opacity: 0.15;
+  animation: float 20s ease-in-out infinite;
 }
 
-.minimalist-signup-card:hover {
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(50px, -50px); }
 }
 
-.minimalist-signup-header {
-    background: rgba(250, 251, 252, 0.9);
-    border-bottom: 1px solid #e5e7eb;
-    border-radius: 12px 12px 0 0;
-    padding: 2rem;
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: fadeUp 0.6s var(--ease);
 }
 
-.minimalist-form-control {
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    background: #ffffff;
-    width: 100%;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.minimalist-form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    outline: none;
+.auth-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 2.5rem 2rem;
+  text-align: center;
 }
 
-.minimalist-form-control:hover {
-    border-color: #9ca3af;
+.auth-icon {
+  width: 72px;
+  height: 72px;
+  background: var(--coral-bg);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--coral);
+  font-size: 1.8rem;
 }
 
-/* Style all form inputs in the signup forms */
-form input[type="text"],
-form input[type="email"],
-form input[type="password"] {
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    background: #ffffff;
-    width: 100%;
+.auth-header h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
-form input[type="text"]:focus,
-form input[type="email"]:focus,
-form input[type="password"]:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    outline: none;
+.auth-header p {
+  color: var(--text-secondary);
 }
 
-form input[type="text"]:hover,
-form input[type="email"]:hover,
-form input[type="password"]:hover {
-    border-color: #9ca3af;
+.auth-body {
+  padding: 2.5rem 2rem;
 }
 
-.input-group {
-    position: relative;
+.form-group {
+  margin-bottom: 1.5rem;
 }
 
-.input-group .minimalist-form-control {
-    padding-right: 3rem;
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
-.input-group .minimalist-btn-outline {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    border-left: none;
-    border-radius: 0 8px 8px 0;
-    width: auto;
-    padding: 0.375rem 0.75rem;
-    background: #ffffff;
-    border: 1px solid #d1d5db;
-    border-left: none;
+.form-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all var(--t-base);
 }
 
-.minimalist-form-label {
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
+.form-input::placeholder {
+  color: var(--text-tertiary);
 }
 
-.minimalist-btn-primary {
-    background: #3b82f6;
-    border: 1px solid #3b82f6;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    color: white;
+.form-input:focus {
+  outline: none;
+  background: var(--bg-tertiary);
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px var(--coral-glow);
 }
 
-.minimalist-btn-primary:hover {
-    background: #2563eb;
-    border-color: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+.password-wrapper {
+  position: relative;
 }
 
-.minimalist-alert {
-    border: 1px solid #fecaca;
-    background: #fef2f2;
-    color: #dc2626;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color var(--t-fast);
 }
 
-.minimalist-link {
-    color: #3b82f6;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
+.password-toggle:hover {
+  color: var(--coral);
 }
 
-.minimalist-link:hover {
-    color: #2563eb;
-    text-decoration: underline;
+.btn-submit {
+  width: 100%;
+  padding: 1rem;
+  background: var(--coral);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.min-vh-75 {
-    min-height: 75vh;
+.btn-submit:hover {
+  background: var(--coral-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--coral-glow);
 }
 
-@media (max-width: 768px) {
-    .minimalist-signup-card {
-        margin: 1rem;
-    }
-    
-    .minimalist-signup-header {
-        padding: 1.5rem;
-    }
+.auth-alert {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: var(--danger);
+  font-size: 0.875rem;
+}
+
+.auth-footer {
+  border-top: 1px solid var(--glass-border);
+  padding: 1.75rem 2rem;
+  text-align: center;
+  background: var(--bg-secondary);
+}
+
+.auth-footer p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.auth-link {
+  color: var(--coral);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link:hover {
+  color: var(--coral-light);
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    border-radius: 16px;
+  }
+  .auth-header, .auth-body, .auth-footer {
+    padding: 2rem 1.5rem;
+  }
 }
 </style>
+{% endblock %}
 
-<div class="container py-8">
-    <div class="row justify-content-center align-items-center min-vh-75">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-            <div class="minimalist-signup-card">
-                <div class="minimalist-signup-header text-center">
-                    <div class="mb-3">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-green-50 mb-3" style="width: 60px; height: 60px;">
-                            <i class="fas fa-store fa-2x text-green-600"></i>
-                        </div>
-                    </div>
-                    <h4 class="mb-2 fw-light text-gray-800">Create Seller Account</h4>
-                    <p class="text-muted-light mb-0">Start organizing amazing events</p>
-                </div>
-                <div class="card-body p-4 p-md-5">
-                    <form method="post" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        
-                        <div class="mb-4">
-                            <label for="{{ form.username.id_for_label }}" class="minimalist-form-label">
-                                Username
-                            </label>
-                            {{ form.username }}
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="{{ form.email.id_for_label }}" class="minimalist-form-label">
-                                Email Address
-                            </label>
-                            {{ form.email }}
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="{{ form.business_name.id_for_label }}" class="minimalist-form-label">
-                                Business Name
-                            </label>
-                            {{ form.business_name }}
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="{{ form.password1.id_for_label }}" class="minimalist-form-label">
-                                Password
-                            </label>
-                            <div class="input-group">
-                                {{ form.password1 }}
-                                <button type="button" class="minimalist-btn-outline" onclick="togglePassword('id_password1')">
-                                    <i class="fas fa-eye" id="toggle-id_password1"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="{{ form.password2.id_for_label }}" class="minimalist-form-label">
-                                Confirm Password
-                            </label>
-                            <div class="input-group">
-                                {{ form.password2 }}
-                                <button type="button" class="minimalist-btn-outline" onclick="togglePassword('id_password2')">
-                                    <i class="fas fa-eye" id="toggle-id_password2"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        {% if form.errors %}
-                            <div class="minimalist-alert mb-4">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                {% for field, errors in form.errors.items %}
-                                    {{ errors|join:", " }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        
-                        <div class="d-grid mb-4">
-                            <button type="submit" class="minimalist-btn-primary w-100">
-                                <i class="fas fa-store me-2"></i>Create Seller Account
-                            </button>
-                        </div>
-                    </form>
-                    
-                    <div class="text-center pt-3 border-top border-light">
-                        <p class="text-muted-light mb-0">
-                            Already have an account? 
-                            <a href="{% url 'login' %}" class="minimalist-link">Sign in</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">
+        <i class="bi bi-shop"></i>
+      </div>
+      <h1>Become a Seller</h1>
+      <p>Start organizing amazing events</p>
     </div>
+    
+    <div class="auth-body">
+      <form method="post">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="auth-alert">
+          {% for field, errors in form.errors.items %}
+            {{ errors|join:", " }}
+          {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+          <label for="id_username" class="form-label">Username</label>
+          {{ form.username }}
+        </div>
+
+        <div class="form-group">
+          <label for="id_email" class="form-label">Email Address</label>
+          {{ form.email }}
+        </div>
+
+        <div class="form-group">
+          <label for="id_business_name" class="form-label">Business Name</label>
+          {{ form.business_name }}
+        </div>
+        
+        <div class="form-group">
+          <label for="id_password1" class="form-label">Password</label>
+          <div class="password-wrapper">
+            {{ form.password1 }}
+            <button type="button" class="password-toggle" onclick="togglePassword('id_password1')">
+              <i class="bi bi-eye" id="toggle-id_password1"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_password2" class="form-label">Confirm Password</label>
+          <div class="password-wrapper">
+            {{ form.password2 }}
+            <button type="button" class="password-toggle" onclick="togglePassword('id_password2')">
+              <i class="bi bi-eye" id="toggle-id_password2"></i>
+            </button>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-submit">
+          <i class="bi bi-shop"></i>
+          <span>Create Seller Account</span>
+        </button>
+      </form>
+    </div>
+    
+<div class="auth-footer">
+  <p>
+    Already have an account? 
+    <a href="{% url 'login' %}" class="auth-link">Sign in</a>
+  </p>
+  <p class="mt-3 mb-0" style="padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+    Just want to buy tickets? 
+    <a href="{% url 'signup_buyer' %}" class="auth-link">Join as buyer</a>
+  </p>
+</div>
+
+
+  </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
-    const form = document.querySelector('.needs-validation');
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-        }, false);
-    }
-});
-
-// Password visibility toggle function
 function togglePassword(fieldId) {
-    const passwordField = document.getElementById(fieldId);
-    const toggleIcon = document.getElementById('toggle-' + fieldId);
-    
-    if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordField.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
-    }
+  const field = document.getElementById(fieldId);
+  const icon = document.getElementById('toggle-' + fieldId);
+  
+  if (field.type === 'password') {
+    field.type = 'text';
+    icon.className = 'bi bi-eye-slash';
+  } else {
+    field.type = 'password';
+    icon.className = 'bi bi-eye';
+  }
 }
+
+// Apply styling to Django form inputs
+document.addEventListener('DOMContentLoaded', function() {
+  const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+  inputs.forEach(input => {
+    input.classList.add('form-input');
+    const label = input.previousElementSibling;
+    if (label) {
+      input.setAttribute('placeholder', 'Enter ' + label.textContent.toLowerCase().replace(':', ''));
+    }
+  });
+});
 </script>
 {% endblock %}

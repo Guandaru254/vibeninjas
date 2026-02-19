@@ -5,6 +5,115 @@
 
 {% block extra_css %}
 <style>
+    /* Dark Mode Base */
+.form-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+}
+
+.form-section:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--coral);
+}
+
+.form-section h5 {
+  color: var(--text-primary);
+  border-bottom-color: var(--glass-border);
+}
+
+.form-section h5 i {
+  color: var(--coral);
+}
+
+.form-label {
+  color: var(--text-primary);
+}
+
+.form-control, .form-select {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px var(--coral-glow);
+  background-color: var(--bg-tertiary);
+}
+
+.form-control::placeholder {
+  color: var(--text-tertiary);
+}
+
+.input-group-text {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.ticket-category {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+}
+
+.ticket-category .card-header {
+  background: var(--bg-secondary);
+  border-bottom-color: var(--glass-border);
+}
+
+.ticket-category .card-body {
+  background: var(--glass-bg);
+}
+
+.btn-add-category {
+  background: var(--coral);
+}
+
+.btn-add-category:hover {
+  background: var(--coral-dark);
+  box-shadow: 0 8px 20px var(--coral-glow);
+}
+
+.btn-submit {
+  background: var(--coral);
+}
+
+.btn-submit:hover {
+  background: var(--coral-dark);
+  box-shadow: 0 8px 20px var(--coral-glow);
+}
+
+.image-preview {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.image-preview:hover {
+  border-color: var(--coral);
+  background-color: var(--bg-tertiary);
+}
+
+.image-upload-text i {
+  color: var(--text-tertiary);
+}
+
+.image-preview:hover .image-upload-text i {
+  color: var(--coral);
+}
+
+.back-button {
+  color: var(--text-secondary);
+}
+
+.back-button:hover {
+  color: var(--coral);
+}
+
+.form-text {
+  color: var(--text-tertiary);
+}
     .form-section {
         background: #fff;
         border-radius: 12px;
