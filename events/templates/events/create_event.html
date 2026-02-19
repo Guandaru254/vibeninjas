@@ -602,23 +602,22 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize datetime pickers for sales start/end
+        // 1. Initialize datetime pickers
         function initDateTimePickers() {
             const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+            const now = new Date();
+            // Offset for local time string formatting
+            const localISOTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000))
+                                .toISOString()
+                                .slice(0, 16);
+
             datetimeInputs.forEach(input => {
-                // Set min date to current date/time
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                input.min = `${year}-${month}-${day}T${hours}:${minutes}`;
+                input.min = localISOTime;
             });
         }
         initDateTimePickers();
 
-        // Image preview functionality
+        // 2. Image preview functionality
         const imageInput = document.querySelector('input[type="file"]');
         const imagePreview = document.getElementById('imagePreview');
         
@@ -628,143 +627,69 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        imagePreview.innerHTML = `<img src="${e.target.result}" class="img-fluid" alt="Event preview">`;
+                        imagePreview.innerHTML = `<img src="${e.target.result}" class="img-fluid" alt="Event preview" style="max-height: 300px; width: 100%; object-fit: cover;">`;
                     }
                     reader.readAsDataURL(file);
                 }
             });
-            
-            // Make the preview area clickable
             imagePreview.addEventListener('click', () => imageInput.click());
         }
 
-        // Dynamic ticket categories
+        // 3. Dynamic ticket categories
         const ticketCategories = document.getElementById('ticket-categories');
         const addCategoryBtn = document.getElementById('add-category');
         const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-        let formCount = ticketCategories.children.length;
-
-        // Add new ticket category
-        if (addCategoryBtn) {
+        
+        if (addCategoryBtn && ticketCategories) {
             addCategoryBtn.addEventListener('click', function() {
-                const newForm = ticketCategories.children[0].cloneNode(true);
-                const formRegex = /form-(\d+)-/g;
-                const newFormNum = formCount++;
+                let formCount = ticketCategories.querySelectorAll('.ticket-category').length;
+                const newForm = ticketCategories.querySelector('.ticket-category').cloneNode(true);
                 
-                // Update form IDs and names
+                const formRegex = /form-(\d+)-/g;
+                const newFormNum = formCount; // Use current length as index
+                
+                // Update HTML and remove validation states from the clone
                 newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${newFormNum}-`);
                 newForm.id = `category-${newFormNum}`;
+                newForm.classList.remove('was-validated');
                 
-                // Update remove button
+                // Reset inputs
+                const inputs = newForm.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.classList.remove('is-invalid', 'is-valid');
+                    if (input.type === 'checkbox') input.checked = false;
+                    else if (input.type === 'select-one') input.selectedIndex = 0;
+                    else input.value = '';
+                });
+
+                // Setup Remove Button
                 const removeBtn = newForm.querySelector('.btn-remove-category');
                 if (removeBtn) {
                     removeBtn.style.display = 'block';
                     removeBtn.setAttribute('data-index', newFormNum);
                 }
-                
-                // Clear input values
-                const inputs = newForm.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    if (input.type === 'checkbox') {
-                        input.checked = false;
-                    } else if (input.type === 'select-one') {
-                        input.selectedIndex = 0;
-                    } else {
-                        input.value = '';
-                    }
-                });
-                
-                // Update category title
-                const title = newForm.querySelector('.category-title');
-                if (title) {
-                    title.textContent = `Ticket Category ${newFormNum + 1}`;
-                }
-                
-                // Append to container
+
                 ticketCategories.appendChild(newForm);
-                
-                // Update total form count
-                totalForms.setAttribute('value', formCount);
-                
-                // Re-initialize datetime pickers for the new form
+                totalForms.value = formCount + 1; // Update Django's management form
                 initDateTimePickers();
-                
-                // Scroll to the new category
-                newForm.scrollIntoView({ behavior: 'smooth' });
             });
         }
-        
-        // Remove ticket category
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.btn-remove-category')) {
-                const button = e.target.closest('.btn-remove-category');
-                const index = button.getAttribute('data-index');
-                const categoryDiv = document.getElementById(`category-${index}`);
-                
-                if (categoryDiv) {
-                    // If this is an existing form (not just added client-side), mark it for deletion
-                    const deleteInput = categoryDiv.querySelector('input[type="checkbox"][name$="-DELETE"]');
-                    if (deleteInput) {
-                        deleteInput.checked = true;
-                        categoryDiv.style.display = 'none';
-                    } else {
-                        // If it's a new form, just remove it
-                        categoryDiv.remove();
-                        formCount--;
-                        totalForms.setAttribute('value', formCount);
-                        
-                        // Renumber remaining forms
-                        const categories = ticketCategories.children;
-                        for (let i = 0; i < categories.length; i++) {
-                            const category = categories[i];
-                            const formId = i;
-                            const formPrefix = `form-${formId}-`;
-                            
-                            // Update form IDs and names
-                            const formRegex = /form-\d+-/g;
-                            category.innerHTML = category.innerHTML.replace(formRegex, formPrefix);
-                            category.id = `category-${formId}`;
-                            
-                            // Update remove button data-index
-                            const removeBtn = category.querySelector('.btn-remove-category');
-                            if (removeBtn) {
-                                removeBtn.setAttribute('data-index', formId);
-                            }
-                            
-                            // Update category title
-                            const title = category.querySelector('.category-title');
-                            if (title) {
-                                title.textContent = `Ticket Category ${formId + 1}`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Update category title when name changes
-        document.addEventListener('input', function(e) {
-            if (e.target.classList.contains('category-name')) {
-                const categoryDiv = e.target.closest('.ticket-category');
-                if (categoryDiv) {
-                    const title = categoryDiv.querySelector('.category-title');
-                    if (title && e.target.value) {
-                        title.textContent = e.target.value;
-                    } else {
-                        const index = categoryDiv.id.split('-')[1];
-                        title.textContent = `Ticket Category ${parseInt(index) + 1}`;
-                    }
-                }
-            }
-        });
-        
-        // Form validation
+
+        // 4. Form validation with DEBUGGING
         const form = document.querySelector('form.needs-validation');
         if (form) {
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                    
+                    // FIND THE ERROR: This identifies exactly which field stopped the submit
+                    const invalidField = form.querySelector(':invalid');
+                    console.error("Submission blocked by field:", invalidField);
+                    
+                    // Optional: Scroll to the error so you can see it
+                    invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    invalidField.focus();
                 }
                 form.classList.add('was-validated');
             }, false);
