@@ -262,14 +262,16 @@ img { max-width: 100%; display: block; }
             <!-- Desktop Navigation -->
             <ul class="nav-links">
                 <li><a href="{% url 'event_list' %}">Events</a></li>
-                <li><a href="{% url 'public_merchandise_list' %}">Shop</a></li>
+                <li><a href="{% url 'public_merchandise_list' %}">Vendors</a></li>
                 {% if user.is_authenticated %}
                     {% if user.is_seller %}
                         <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
                         <li><a href="{% url 'create_event' %}">Create Event</a></li>
                     {% elif user.is_buyer %}
                         <li><a href="{% url 'my_tickets' %}">My Tickets</a></li>
+                        <li><a href="#">Wishlist</a></li>
                         <li><a href="{% url 'buyer_merchandise_order_list' %}">Orders</a></li>
+                        <li><a href="{% url 'profile_view' %}">Profile</a></li>
                     {% endif %}
                 {% endif %}
             </ul>
@@ -299,7 +301,7 @@ img { max-width: 100%; display: block; }
         <ul class="nav-links">
             <li><a href="{% url 'home' %}"><i class="bi bi-house-door"></i>Home</a></li>
             <li><a href="{% url 'event_list' %}"><i class="bi bi-calendar-event"></i>Events</a></li>
-            <li><a href="{% url 'public_merchandise_list' %}"><i class="bi bi-shop"></i>Shop</a></li>
+            <li><a href="{% url 'public_merchandise_list' %}"><i class="bi bi-shop"></i>Vendors</a></li>
             {% if user.is_authenticated %}
                 {% if user.is_seller %}
                     <li><a href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
@@ -307,6 +309,7 @@ img { max-width: 100%; display: block; }
                     <li><a href="{% url 'seller_merchandise_dashboard' %}"><i class="bi bi-box-seam"></i>My Merch</a></li>
                 {% elif user.is_buyer %}
                     <li><a href="{% url 'my_tickets' %}"><i class="bi bi-ticket-perforated"></i>My Tickets</a></li>
+                    <li><a href="#"><i class="bi bi-heart"></i>Wishlist</a></li>
                     <li><a href="{% url 'buyer_merchandise_order_list' %}"><i class="bi bi-bag"></i>Orders</a></li>
                     <li><a href="{% url 'profile_view' %}"><i class="bi bi-person"></i>Profile</a></li>
                 {% endif %}
@@ -368,7 +371,7 @@ img { max-width: 100%; display: block; }
                 <ul>
                     <li><a href="{% url 'event_list' %}">Browse Events</a></li>
                     <li><a href="{% url 'create_event' %}">Sell Tickets</a></li>
-                    <li><a href="{% url 'public_merchandise_list' %}">Shop Merch</a></li>
+                    <li><a href="{% url 'public_merchandise_list' %}">Checkout Vendors</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -384,7 +387,6 @@ img { max-width: 100%; display: block; }
                 <ul>
                     <li><a href="#">Help Center</a></li>
                     <li><a href="#">Contact</a></li>
-                    <li><a href="{% url 'login' %}">Sign In</a></li>
                 </ul>
             </div>
         </div>

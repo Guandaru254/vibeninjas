@@ -5,12 +5,20 @@
 
 {% block extra_css %}
 <style>
-    /* Dark Mode Base */
+/* Dark Mode Form Styles */
+.container {
+  max-width: 1200px;
+}
+
 .form-section {
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
   box-shadow: var(--shadow-md);
+  transition: all var(--t-base);
 }
 
 .form-section:hover {
@@ -19,366 +27,208 @@
 }
 
 .form-section h5 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-primary);
-  border-bottom-color: var(--glass-border);
+  border-bottom: 2px solid var(--glass-border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .form-section h5 i {
   color: var(--coral);
 }
 
+/* Form Labels */
 .form-label {
+  font-weight: 600;
   color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  display: block;
 }
 
-.form-control, .form-select {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-color);
-  color: var(--text-primary);
+/* Form Inputs - CRITICAL FOR DARK MODE */
+.form-control,
+.form-select {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: 12px;
+  padding: 0.875rem 1.25rem;
+  font-size: 1rem;
+  transition: all var(--t-base);
 }
 
-.form-control:focus, .form-select:focus {
-  border-color: var(--coral);
+.form-control:focus,
+.form-select:focus {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--coral) !important;
+  color: var(--text-primary) !important;
   box-shadow: 0 0 0 3px var(--coral-glow);
-  background-color: var(--bg-tertiary);
+  outline: none;
 }
 
 .form-control::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-tertiary) !important;
 }
 
+/* Textarea */
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Input Groups */
 .input-group-text {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-color);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   color: var(--text-secondary);
+  border-radius: 12px 0 0 12px;
 }
 
+.input-group .form-control {
+  border-radius: 0 12px 12px 0;
+}
+
+/* Form Text */
+.form-text {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-top: 0.5rem;
+}
+
+/* Ticket Categories */
 .ticket-category {
-  background: var(--glass-bg);
-  border-color: var(--glass-border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  transition: all var(--t-base);
+}
+
+.ticket-category:hover {
+  border-color: var(--coral);
+  box-shadow: var(--shadow-md);
 }
 
 .ticket-category .card-header {
-  background: var(--bg-secondary);
-  border-bottom-color: var(--glass-border);
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 1.5rem;
 }
 
 .ticket-category .card-body {
-  background: var(--glass-bg);
+  padding: 2rem;
 }
 
-.btn-add-category {
-  background: var(--coral);
-}
-
-.btn-add-category:hover {
-  background: var(--coral-dark);
-  box-shadow: 0 8px 20px var(--coral-glow);
-}
-
+/* Buttons */
+.btn-primary,
 .btn-submit {
-  background: var(--coral);
+  background: var(--coral) !important;
+  border: none !important;
+  color: white !important;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all var(--t-base);
+  cursor: pointer;
 }
 
+.btn-primary:hover,
 .btn-submit:hover {
-  background: var(--coral-dark);
+  background: var(--coral-dark) !important;
+  transform: translateY(-2px);
   box-shadow: 0 8px 20px var(--coral-glow);
 }
 
+.btn-outline-primary {
+  background: transparent;
+  border: 1.5px solid var(--coral) !important;
+  color: var(--coral) !important;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all var(--t-fast);
+}
+
+.btn-outline-primary:hover {
+  background: var(--coral-bg);
+}
+
+/* Image Upload */
 .image-preview {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-color);
+  width: 100%;
+  height: 250px;
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t-base);
+  overflow: hidden;
 }
 
 .image-preview:hover {
   border-color: var(--coral);
-  background-color: var(--bg-tertiary);
+  background: var(--bg-tertiary);
+}
+
+.image-upload-text {
+  text-align: center;
+  padding: 2rem;
 }
 
 .image-upload-text i {
+  font-size: 3rem;
   color: var(--text-tertiary);
+  margin-bottom: 1rem;
 }
 
 .image-preview:hover .image-upload-text i {
   color: var(--coral);
 }
 
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Back Button */
 .back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  transition: color var(--t-fast);
 }
 
 .back-button:hover {
   color: var(--coral);
 }
 
-.form-text {
-  color: var(--text-tertiary);
+/* Responsive */
+@media (max-width: 768px) {
+  .form-section {
+    padding: 1.5rem;
+  }
+  
+  .form-section h5 {
+    font-size: 1.25rem;
+  }
 }
-    .form-section {
-        background: #fff;
-        border-radius: 12px;
-        padding: 2.5rem;
-        margin-bottom: 2.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-        border: 1px solid #eef2f7;
-        transition: all 0.3s ease;
-    }
-    
-    .form-section:hover {
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-        border-color: #e0e6ed;
-    }
-    
-    .form-section h5 {
-        color: #1a365d;
-        font-weight: 700;
-        font-size: 1.4rem;
-        border-bottom: 2px solid #f0f4f8;
-        padding-bottom: 1rem;
-        margin: -0.5rem 0 2rem 0;
-        display: flex;
-        align-items: center;
-        letter-spacing: -0.3px;
-    }
-    
-    .form-section h5 i {
-        margin-right: 10px;
-        color: #4361ee;
-    }
-    
-    .form-label {
-        font-weight: 600;
-        color: #2d3748;
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
-        letter-spacing: -0.2px;
-    }
-    
-    .form-control, .form-select {
-        border-radius: 8px;
-        padding: 0.7rem 1rem;
-        border: 1px solid #e2e8f0;
-        transition: all 0.25s ease;
-        font-size: 0.95rem;
-        color: #2d3748;
-        background-color: #f8fafc;
-    }
-    
-    .form-control:focus, .form-select:focus {
-        border-color: #ff6b00;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        background-color: #fff;
-    }
-    
-    .input-group-text {
-        background-color: #f8f9fa;
-        border: 1px solid #e0e0e0;
-    }
-    
-    .ticket-category {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 1.75rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: #fff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    }
-    
-    .ticket-category:hover {
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
-        border-color: #cbd5e1;
-        transform: translateY(-2px);
-    }
-    
-    .ticket-category .card-header {
-        background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
-        border-bottom: 1px solid #e2e8f0;
-        padding: 1.25rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .ticket-category .card-body {
-        padding: 1.5rem;
-    }
-    
-    .btn-add-category {
-        background: #ff6b00;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.6rem 1.5rem;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 5px rgba(255, 107, 0, 0.2);
-    }
-    
-    .btn-add-category:hover {
-        background: #e05d00;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(255, 107, 0, 0.3);
-    }
-    
-    .btn-add-category:active {
-        transform: translateY(0);
-        box-shadow: 0 1px 3px rgba(255, 107, 0, 0.2);
-    }
-    
-    .btn-remove-category {
-        color: #dc3545;
-        background: none;
-        border: none;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-    }
-    
-    .btn-remove-category:hover {
-        background-color: #f8d7da;
-    }
-    
-    .btn-submit {
-        background: #ff6b00;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 1rem 2.5rem;
-        font-weight: 600;
-        font-size: 1.1rem;
-        transition: all 0.25s ease;
-        width: 100%;
-        max-width: 300px;
-        display: block;
-        margin: 2.5rem auto 0;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
-    }
-    
-    .btn-submit:hover {
-        background: #e05d00;
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
-    }
-    
-    .btn-submit:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 10px rgba(255, 107, 0, 0.3);
-    }
-    
-    .btn-submit::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 5px;
-        height: 5px;
-        background: rgba(255, 255, 255, 0.5);
-        opacity: 0;
-        border-radius: 100%;
-        transform: scale(1, 1) translate(-50%, -50%);
-        transform-origin: 50% 50%;
-    }
-    
-    .btn-submit:focus:not(:active)::after {
-        animation: ripple 1s ease-out;
-    }
-    
-    @keyframes ripple {
-        0% {
-            transform: scale(0, 0);
-            opacity: 0.5;
-        }
-        100% {
-            transform: scale(100, 100);
-            opacity: 0;
-        }
-    }
-    
-    .form-text {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-top: 0.5rem;
-        line-height: 1.5;
-    }
-    
-    .form-text.small {
-        font-size: 0.8rem;
-        color: #94a3b8;
-    }
-    
-    .image-preview {
-        width: 100%;
-        height: 220px;
-        border: 2px dashed #cbd5e1;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        margin-top: 0.75rem;
-        background-color: #f8fafc;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    
-    .image-preview:hover {
-        border-color: #94a3b8;
-        background-color: #f1f5f9;
-    }
-    
-    .image-preview img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-    
-    .image-upload-label {
-        cursor: pointer;
-        display: block;
-    }
-    
-    .image-upload-text {
-        text-align: center;
-        padding: 2rem;
-    }
-    
-    .image-upload-text i {
-        font-size: 2.5rem;
-        color: #cbd5e1;
-        margin-bottom: 1rem;
-        display: block;
-        transition: all 0.3s ease;
-    }
-    
-    .image-preview:hover .image-upload-text i {
-        color: #94a3b8;
-        transform: translateY(-3px);
-    }
-    
-    .invalid-feedback {
-        font-size: 0.85rem;
-    }
-    
-    .back-button {
-        display: inline-flex;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        color: #6c757d;
-        text-decoration: none;
-        transition: color 0.2s;
-    }
-    
-    .back-button:hover {
-        color: #4361ee;
-    }
-    
-    .back-button i {
-        margin-right: 0.5rem;
-    }
 </style>
 {% endblock %}
 
