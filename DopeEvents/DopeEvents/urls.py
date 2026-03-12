@@ -3,18 +3,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-# Admin site configuration
 admin.site.site_header = 'Vibeninjas Admin'
 admin.site.site_title = 'Vibeninjas Administration'
 admin.site.index_title = 'Site Administration'
 
-# Make sure the admin site is properly registered
-admin.autodiscover()
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('events.urls')),
-    path('', include('payments.urls')),
+    path('payments/', include('payments.urls')), # Prefix added to avoid root conflict
     path('analytics/', include('analytics.urls')),
 ]
 
