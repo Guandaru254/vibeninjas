@@ -7,10 +7,10 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ─── SECURITY ─────────────────────────────────────────────────────────────────
-SECRET_KEY = config('SECRET_KEY')
+# Added a default for SECRET_KEY to prevent startup crashes
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-fallback-key-for-dev')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# This setup allows izoza.co.ke, all subdomains, and Render's internal URL
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS', 
     default='izoza.co.ke,www.izoza.co.ke,.izoza.co.ke,vibeninjas-jbqi.onrender.com'
@@ -86,52 +86,48 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 _static_dir = BASE_DIR / 'static'
 STATICFILES_DIRS = [_static_dir] if _static_dir.exists() else []
 
-# ─── CLOUDINARY ───────────────────────────────────────────────────────────────
+# ─── CLOUDINARY (CRASH-PROOFED) ───────────────────────────────────────────────
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY':    config('CLOUDINARY_API_KEY'),
-    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY':    config('CLOUDINARY_API_KEY',    default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ─── PRODUCTION SECURITY (ENFORCED) ──────────────────────────────────────────
 if not DEBUG:
-    # This allows M-Pesa callbacks and Subdomains to pass CSRF checks
     CSRF_TRUSTED_ORIGINS = [
         "https://izoza.co.ke",
         "https://www.izoza.co.ke",
-        "https://*.izoza.co.ke",  # Essential for organizer subdomains
+        "https://*.izoza.co.ke",
         "https://vibeninjas-jbqi.onrender.com"
     ]
     
-    # Render-specific HTTPS settings
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT     = True
     SESSION_COOKIE_SECURE   = True
     CSRF_COOKIE_SECURE      = True
     
-    # HSTS settings
-    SECURE_HSTS_SECONDS = 31536000 # 1 year
+    SECURE_HSTS_SECONDS = 31536000 
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-# ─── EMAIL ────────────────────────────────────────────────────────────────────
+# ─── EMAIL (CRASH-PROOFED) ────────────────────────────────────────────────────
 EMAIL_BACKEND       = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST          = config('EMAIL_HOST', default='smtp.gmail.com')
-EMAIL_PORT          = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_HOST          = config('EMAIL_HOST',          default='smtp.gmail.com')
+EMAIL_PORT          = config('EMAIL_PORT',          default=587, cast=int)
 EMAIL_USE_TLS       = True
-EMAIL_HOST_USER     = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL  = config('DEFAULT_FROM_EMAIL', default='noreply@izoza.co.ke')
+EMAIL_HOST_USER     = config('EMAIL_HOST_USER',     default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL  = config('DEFAULT_FROM_EMAIL',  default='noreply@izoza.co.ke')
 
-# ─── PAYMENTS (MPESA PRODUCTION) ──────────────────────────────────────────────
-MPESA_CONSUMER_KEY    = config('CONSUMER_KEY')
-MPESA_CONSUMER_SECRET = config('CONSUMER_SECRET')
-MPESA_SHORTCODE       = config('SHORTCODE')
-MPESA_PASSKEY         = config('PASSKEY')
-# Switched to production URL
-MPESA_BASE_URL        = config('BASE_URL', default='https://api.safaricom.co.ke')
-MPESA_CALLBACK_URL    = config('CALLBACK_URL')
+# ─── PAYMENTS (MPESA PRODUCTION - CRASH-PROOFED) ──────────────────────────────
+MPESA_CONSUMER_KEY    = config('CONSUMER_KEY',    default='')
+MPESA_CONSUMER_SECRET = config('CONSUMER_SECRET', default='')
+MPESA_SHORTCODE       = config('SHORTCODE',       default='')
+MPESA_PASSKEY         = config('PASSKEY',         default='')
+MPESA_BASE_URL        = config('BASE_URL',        default='https://api.safaricom.co.ke')
+MPESA_CALLBACK_URL    = config('CALLBACK_URL',    default='')
 
 # ─── AUTH ─────────────────────────────────────────────────────────────────────
 LOGIN_URL           = '/login/'
