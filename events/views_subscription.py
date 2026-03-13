@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.conf import settings
 import stripe
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+#stripe.api_key = settings.STRIPE_SECRET_KEY
 
 SUBSCRIPTION_PLANS = {
     'daily': {

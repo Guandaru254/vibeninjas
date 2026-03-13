@@ -129,6 +129,10 @@ MPESA_PASSKEY         = config('PASSKEY',         default='')
 MPESA_BASE_URL        = config('BASE_URL',        default='https://api.safaricom.co.ke')
 MPESA_CALLBACK_URL    = config('CALLBACK_URL',    default='')
 
+# settings.py
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY', default='sk_test_dummy')
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY', default='pk_test_dummy')
+
 # ─── AUTH ─────────────────────────────────────────────────────────────────────
 LOGIN_URL           = '/login/'
 LOGIN_REDIRECT_URL  = '/home/'
