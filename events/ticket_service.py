@@ -258,7 +258,6 @@ def generate_ticket_image(ticket, qr_buffer=None):
         logger.error(f"[TICKET IMG] Generation error: {str(e)}")
         return None
 
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # EMAIL DELIVERY
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -280,21 +279,30 @@ def send_ticket_email(ticket):
         bool: True if email sent successfully, False otherwise
     """
     try:
-        # Generate QR code
+        # 1. Generate QR and Ticket Assets
         qr_data = generate_ticket_qr_data(ticket)
         qr_buffer = generate_qr_image(qr_data)
         
         # Generate branded ticket image with QR embedded
         ticket_image = generate_ticket_image(ticket, qr_buffer)
         
-        # Get category name safely
+        # 2. Extract Data for Email Formatting
+        # We pre-format dates and strings here to avoid backslash issues in f-strings
         cat_name = 'General'
         if ticket.ticket_category:
             cat_name = ticket.ticket_category.name
+            
+        formatted_date = ticket.event.date.strftime('%B %d, %Y at %I:%M %p')
+        formatted_amount = f"{ticket.total_amount:,.0f}"
         
-        subject = f"\U0001F3AB Your Ticket \u2014 {ticket.event.title}"
+        # Explicitly define emojis as variables to ensure encoding safety
+        ticket_emoji = "\U0001F3AB"
+        check_emoji = "\u2705"
+        fail_emoji = "\u274C"
         
-        # ── Plain text version (for email clients that don't support HTML) ──
+        subject = f"{ticket_emoji} Your Ticket \u2014 {ticket.event.title}"
+        
+        # 3. Create Plain Text Version
         text_body = f"""Hey {ticket.buyer_name}!
 
 Your ticket for {ticket.event.title} is confirmed!
@@ -302,11 +310,11 @@ Your ticket for {ticket.event.title} is confirmed!
 EVENT DETAILS
 -----------------------
 Event:    {ticket.event.title}
-Date:     {ticket.event.date.strftime('%B %d, %Y at %I:%M %p')}
+Date:     {formatted_date}
 Venue:    {ticket.event.location}
 Ticket:   {cat_name}
 Quantity: {ticket.quantity}
-Amount:   KES {ticket.total_amount:,.0f}
+Amount:   KES {formatted_amount}
 Code:     {ticket.ticket_code}
 
 IMPORTANT
@@ -322,23 +330,19 @@ See you there!
 zozaprime.com
 """
         
-        # ── HTML version (branded ZOZAPRIME design) ──
+        # 4. Create HTML Version (Branded ZOZAPRIME design)
         html_body = f"""
 <div style="max-width:600px;margin:0 auto;background:#0A0A0A;font-family:Arial,Helvetica,sans-serif;color:#FFFFFF;">
   
-  <!-- Header -->
   <div style="padding:24px 32px;border-bottom:3px solid #F05252;">
     <span style="font-size:22px;font-weight:bold;color:#F05252;">ZOZAPRIME</span>
   </div>
   
-  <!-- Body -->
   <div style="padding:32px;">
     
-    <!-- Success message -->
     <h1 style="font-size:24px;font-weight:bold;margin:0 0 8px;color:#FFFFFF;">Payment Successful!</h1>
     <p style="color:#999999;margin:0 0 24px;font-size:14px;">Your tickets have been confirmed</p>
     
-    <!-- Event Details Card -->
     <div style="background:#1A1A1A;border-radius:12px;padding:24px;margin-bottom:20px;">
       <h3 style="color:#F05252;margin:0 0 16px;font-size:14px;text-transform:uppercase;letter-spacing:1px;">Event Details</h3>
       <table style="width:100%;font-size:14px;border-collapse:collapse;">
@@ -348,7 +352,7 @@ zozaprime.com
         </tr>
         <tr>
           <td style="padding:8px 0;color:#888888;">Date</td>
-          <td style="padding:8px 0;text-align:right;color:#FFFFFF;">{ticket.event.date.strftime('%B %d, %Y \u2022 %I:%M %p')}</td>
+          <td style="padding:8px 0;text-align:right;color:#FFFFFF;">{formatted_date}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;color:#888888;">Venue</td>
@@ -365,19 +369,16 @@ zozaprime.com
       </table>
     </div>
     
-    <!-- Ticket Code Card -->
     <div style="background:#1A1A1A;border-radius:12px;padding:24px;margin-bottom:20px;text-align:center;">
       <p style="color:#888888;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;">Your Ticket Code</p>
       <p style="font-size:28px;font-weight:bold;color:#F05252;letter-spacing:3px;margin:0;font-family:'Courier New',monospace;">{ticket.ticket_code}</p>
     </div>
     
-    <!-- Total Amount -->
     <div style="background:#F05252;border-radius:12px;padding:20px;text-align:center;margin-bottom:20px;">
       <span style="font-size:14px;color:rgba(255,255,255,0.8);">Total Paid</span>
-      <div style="font-size:28px;font-weight:bold;color:#FFFFFF;">KES {ticket.total_amount:,.0f}</div>
+      <div style="font-size:28px;font-weight:bold;color:#FFFFFF;">KES {formatted_amount}</div>
     </div>
     
-    <!-- Important Info -->
     <div style="background:#1A1A1A;border-radius:12px;padding:20px;margin-bottom:20px;">
       <p style="color:#F05252;font-weight:bold;margin:0 0 12px;font-size:14px;">Important Information</p>
       <ul style="color:#999999;font-size:13px;padding-left:20px;margin:0;line-height:2;">
@@ -391,7 +392,6 @@ zozaprime.com
     
   </div>
   
-  <!-- Footer -->
   <div style="padding:20px 32px;background:#141414;text-align:center;">
     <p style="font-size:12px;color:#444444;margin:0;">
       zozaprime.com \u2022 Kenya's #1 Ticketing Platform
@@ -401,7 +401,7 @@ zozaprime.com
 </div>
 """
         
-        # ── Create and send email ──
+        # 5. Build Email Object
         email = EmailMultiAlternatives(
             subject=subject,
             body=text_body,
@@ -410,7 +410,7 @@ zozaprime.com
         )
         email.attach_alternative(html_body, "text/html")
         
-        # Attach ticket image (branded, with QR embedded)
+        # Attach ticket image
         if ticket_image:
             ticket_image.seek(0)
             email.attach(
@@ -419,7 +419,7 @@ zozaprime.com
                 "image/jpeg"
             )
         
-        # Attach standalone QR code (so fans can save just the QR)
+        # Attach standalone QR code
         if qr_buffer:
             qr_buffer.seek(0)
             email.attach(
@@ -428,13 +428,17 @@ zozaprime.com
                 "image/png"
             )
         
+        # 6. Dispatch Email
         email.send(fail_silently=False)
         
         logger.info(f"[EMAIL] Ticket email sent to {ticket.buyer_email}")
-        print(f"[EMAIL] \u2705 Sent to {ticket.buyer_email}")
+        print(f"[EMAIL] {check_emoji} Sent to {ticket.buyer_email}")
         return True
         
     except Exception as e:
-        logger.error(f"[EMAIL] Failed to send ticket email: {str(e)}")
-        print(f"[EMAIL] \u274C Failed: {str(e)}")
+        # CRITICAL FIX: Extract error message as a plain string first
+        # This prevents the backslash/formatting crash inside the f-string logger
+        error_str = str(e)
+        logger.error(f"[EMAIL] Failed to send ticket email: {error_str}")
+        print(f"[EMAIL] {fail_emoji} Failed: {error_str}")
         return False
