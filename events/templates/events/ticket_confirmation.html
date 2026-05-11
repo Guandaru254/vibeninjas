@@ -1,0 +1,399 @@
+{% extends 'base.html' %}
+
+{% block title %}Ticket Confirmed — {{ event.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.conf-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: 6rem;
+}
+
+.conf-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.conf-icon {
+  font-size: 5rem;
+  color: var(--success, #10b981);
+  animation: popIn 0.5s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.conf-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 900;
+  color: var(--text-primary, #fff);
+  margin: 1rem 0 0.5rem;
+}
+
+.conf-sub {
+  color: var(--text-secondary, #999);
+  font-size: 1rem;
+}
+
+/* QR Section */
+.qr-section {
+  text-align: center;
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.qr-code {
+  display: inline-block;
+  background: #FFFFFF;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.qr-code img {
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+
+.qr-label {
+  font-size: 0.85rem;
+  color: var(--text-tertiary, #666);
+  margin-bottom: 0.5rem;
+}
+
+.ticket-code-display {
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--coral, #F05252);
+  background: var(--bg-tertiary, rgba(255,255,255,0.05));
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* Info Cards */
+.info-card {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-heading {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-heading i {
+  color: var(--coral, #F05252);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: var(--text-secondary, #999);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-label i {
+  color: var(--coral, #F05252);
+  width: 20px;
+}
+
+.info-value {
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  text-align: right;
+}
+
+/* Total */
+.total-box {
+  background: var(--coral-bg, rgba(240,82,82,0.1));
+  border: 2px solid rgba(240, 82, 82, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 1rem;
+  color: var(--text-secondary, #999);
+}
+
+.total-amount {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--coral, #F05252);
+}
+
+/* Alert */
+.info-alert {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-alert .alert-title {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #818cf8;
+}
+
+.info-alert ul {
+  margin: 0.75rem 0 0 1.25rem;
+  padding: 0;
+  color: var(--text-secondary, #999);
+  font-size: 0.9rem;
+}
+
+.info-alert li {
+  margin-bottom: 0.5rem;
+}
+
+.info-alert strong {
+  color: var(--text-primary, #fff);
+}
+
+/* Buttons */
+.action-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.btn-action {
+  flex: 1;
+  min-width: 180px;
+  padding: 1.15rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-coral {
+  background: var(--coral, #F05252);
+  color: white;
+}
+
+.btn-coral:hover {
+  background: var(--coral-dark, #d93b3b);
+  transform: translateY(-2px);
+  color: white;
+}
+
+.btn-outline {
+  background: var(--bg-secondary, #1a1a1a);
+  color: var(--text-primary, #fff);
+  border: 2px solid var(--border-color, #333);
+}
+
+.btn-outline:hover {
+  border-color: var(--coral, #F05252);
+  color: var(--coral, #F05252);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .conf-page { padding-top: 5rem; }
+  .info-row { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+  .info-value { text-align: left; }
+  .action-row { flex-direction: column; }
+  .btn-action { width: 100%; }
+  .qr-code img { width: 160px; height: 160px; }
+}
+
+@media print {
+  .action-row, nav, footer { display: none !important; }
+  .conf-page { padding-top: 1rem; }
+  .info-card { box-shadow: none; border: 1px solid #ddd; }
+  body { background: white !important; color: black !important; }
+  .conf-title, .card-heading, .info-value { color: black !important; }
+  .info-label { color: #666 !important; }
+  .total-amount { color: #F05252 !important; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="conf-page">
+
+  <!-- Success Header -->
+  <div class="conf-header">
+    <i class="bi bi-check-circle conf-icon"></i>
+    <h1 class="conf-title">Payment Successful!</h1>
+    <p class="conf-sub">Your tickets have been confirmed</p>
+  </div>
+
+  <!-- QR Code Section -->
+  <div class="qr-section">
+    {% if qr_code %}
+    <div class="qr-code">
+      <img src="{{ qr_code }}" alt="Ticket QR Code">
+    </div>
+    <p class="qr-label">Show this QR code at the entrance</p>
+    {% else %}
+    <div style="padding: 1rem;">
+      <i class="bi bi-qr-code" style="font-size: 4rem; color: var(--text-tertiary, #666);"></i>
+      <p class="qr-label">QR code will be sent to your email</p>
+    </div>
+    {% endif %}
+    <div class="ticket-code-display">{{ ticket.ticket_code }}</div>
+  </div>
+
+  <!-- Event Details -->
+  <div class="info-card">
+    <h2 class="card-heading">
+      <i class="bi bi-calendar-event"></i>
+      Event Details
+    </h2>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-ticket-perforated"></i> Event</span>
+      <span class="info-value">{{ event.title }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-calendar3"></i> Date</span>
+      <span class="info-value">{{ event.date|date:"D, M d, Y • g:i A" }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-geo-alt"></i> Location</span>
+      <span class="info-value">{{ event.location }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-tag"></i> Category</span>
+      <span class="info-value">{{ ticket_category.name }}</span>
+    </div>
+  </div>
+
+  <!-- Ticket Details -->
+  <div class="info-card">
+    <h2 class="card-heading">
+      <i class="bi bi-person"></i>
+      Ticket Information
+    </h2>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-person-badge"></i> Name</span>
+      <span class="info-value">{{ ticket.buyer_name }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-envelope"></i> Email</span>
+      <span class="info-value">{{ ticket.buyer_email }}</span>
+    </div>
+    {% if ticket.buyer_phone %}
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-phone"></i> Phone</span>
+      <span class="info-value">{{ ticket.buyer_phone }}</span>
+    </div>
+    {% endif %}
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-tag"></i> Ticket Type</span>
+      <span class="info-value">{{ ticket.ticket_category.name }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-hash"></i> Quantity</span>
+      <span class="info-value">{{ ticket.quantity }} ticket{{ ticket.quantity|pluralize }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-qr-code"></i> Ticket Code</span>
+      <span class="info-value" style="color: var(--coral, #F05252); font-family: monospace; letter-spacing: 2px;">{{ ticket.ticket_code }}</span>
+    </div>
+  </div>
+
+  <!-- Transaction -->
+  <div class="info-card">
+    <h2 class="card-heading">
+      <i class="bi bi-receipt"></i>
+      Transaction
+    </h2>
+    {% if transaction.receipt_number %}
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-credit-card"></i> M-Pesa Receipt</span>
+      <span class="info-value">{{ transaction.receipt_number }}</span>
+    </div>
+    {% endif %}
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-clock-history"></i> Transaction ID</span>
+      <span class="info-value">{{ transaction.transaction_id }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="bi bi-currency-exchange"></i> Unit Price</span>
+      <span class="info-value">Ksh {{ ticket.unit_price|floatformat:0 }}</span>
+    </div>
+    <div class="total-box">
+      <span class="total-label">Total Paid</span>
+      <span class="total-amount">Ksh {{ ticket.total_amount|floatformat:0 }}</span>
+    </div>
+  </div>
+
+  <!-- Important Info -->
+  <div class="info-alert">
+    <div class="alert-title">
+      <i class="bi bi-info-circle"></i> Important
+    </div>
+    <ul>
+      <li>A confirmation email has been sent to <strong>{{ ticket.buyer_email }}</strong></li>
+      <li>Save your ticket code: <strong>{{ ticket.ticket_code }}</strong></li>
+      <li>Show the QR code at the venue entrance on event day</li>
+      <li>Screenshot this page as backup</li>
+    </ul>
+  </div>
+
+  <!-- Actions -->
+  <div class="action-row">
+    <a href="{% url 'my_tickets' %}" class="btn-action btn-coral">
+      <i class="bi bi-ticket-perforated"></i> My Tickets
+    </a>
+    <a href="{% url 'event_list' %}" class="btn-action btn-outline">
+      <i class="bi bi-calendar-event"></i> Browse Events
+    </a>
+    <button onclick="window.print()" class="btn-action btn-outline">
+      <i class="bi bi-printer"></i> Print Ticket
+    </button>
+  </div>
+</div>
+{% endblock %}

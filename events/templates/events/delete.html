@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Event — ZOZAPRIME{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Delete Confirmation Page - ZOZAPRIME Design */
+
+.delete-page {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  margin-top: 72px;
+  position: relative;
+}
+
+.delete-page::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+  opacity: 0.5;
+  animation: pulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+  50% { transform: translateX(-50%) scale(1.1); opacity: 0.7; }
+}
+
+.delete-card {
+  width: 100%;
+  max-width: 540px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  animation: fadeUp 0.5s var(--ease);
+  position: relative;
+  z-index: 10;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.delete-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.delete-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--danger);
+  font-size: 2rem;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.delete-header h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.delete-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.delete-body {
+  padding: 2.5rem 2rem;
+}
+
+.event-preview {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.event-preview-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--coral-bg);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--coral);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.event-preview-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-preview-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-preview-meta {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+}
+
+.warning-box {
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.warning-icon {
+  width: 24px;
+  height: 24px;
+  background: var(--danger);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.warning-title {
+  font-weight: 700;
+  color: var(--danger);
+  font-size: 0.95rem;
+}
+
+.warning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.warning-list li {
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.warning-list li::before {
+  content: '•';
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-delete {
+  flex: 1;
+  padding: 1rem;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-cancel:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--coral);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.btn-cancel:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .delete-card {
+    border-radius: 16px;
+  }
+  
+  .delete-header, .delete-body {
+    padding: 2rem 1.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column-reverse;
+  }
+  
+  .event-preview {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .event-preview-title {
+    white-space: normal;
+  }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-page">
+  <div class="delete-card">
+    <div class="delete-header">
+      <div class="delete-icon">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <h1>Delete Event?</h1>
+      <p>This action cannot be undone</p>
+    </div>
+    
+    <div class="delete-body">
+      <!-- Event Preview -->
+      <div class="event-preview">
+        <div class="event-preview-icon">
+          <i class="bi bi-calendar-event"></i>
+        </div>
+        <div class="event-preview-content">
+          <div class="event-preview-title">{{ event.title }}</div>
+          <div class="event-preview-meta">
+            {% if event.date %}
+              {{ event.date|date:"D, M d, Y • g:i A" }}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Warning Box -->
+      <div class="warning-box">
+        <div class="warning-header">
+          <div class="warning-icon">
+            <i class="bi bi-exclamation"></i>
+          </div>
+          <div class="warning-title">Warning: This will permanently delete</div>
+        </div>
+        <ul class="warning-list">
+          <li>The event and all its details</li>
+          <li>All ticket categories and pricing</li>
+          <li>Event images and assets</li>
+          <li>Analytics and sales data</li>
+        </ul>
+      </div>
+      
+      <!-- Action Buttons -->
+      <form method="post">
+        {% csrf_token %}
+        <div class="action-buttons">
+          <a href="{% url 'dashboard' %}" class="btn-cancel">
+            <i class="bi bi-x-circle"></i>
+            <span>Cancel</span>
+          </a>
+          <button type="submit" class="btn-delete">
+            <i class="bi bi-trash3"></i>
+            <span>Yes, Delete Event</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

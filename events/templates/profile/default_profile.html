@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - TazamoExp{% endblock %}
+
+{% block content %}
+<style>
+.minimalist-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+}
+
+.minimalist-header {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem;
+}
+
+.minimalist-avatar {
+    border: 2px solid #e5e7eb;
+    background: #f3f4f6;
+}
+
+.minimalist-info {
+    background: #fafbfc;
+    border-radius: 6px;
+    padding: 1.5rem;
+}
+
+.minimalist-table td {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.minimalist-table td:last-child {
+    border-bottom: none;
+}
+
+.minimalist-btn {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.minimalist-btn-primary {
+    background: #3b82f6;
+    border: 1px solid #3b82f6;
+    color: white;
+}
+
+.minimalist-btn-primary:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.minimalist-btn-danger {
+    background: #ffffff;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+}
+
+.minimalist-btn-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.text-muted-light {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.minimalist-alert {
+    border: 1px solid #dbeafe;
+    background: #f0f9ff;
+    border-radius: 6px;
+    padding: 1rem;
+}
+</style>
+
+<div class="container py-8">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="minimalist-card">
+                <div class="minimalist-header">
+                    <h4 class="mb-0 fw-light">
+                        <i class="fas fa-user me-2 text-muted-light"></i>User Profile
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" 
+                                     class="img-fluid rounded-circle mb-3 minimalist-avatar" style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mb-3 mx-auto minimalist-avatar" 
+                                     style="width: 120px; height: 120px;">
+                                    <i class="fas fa-user fa-3x text-muted-light"></i>
+                                </div>
+                            {% endif %}
+                            <h5 class="fw-light mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                            <p class="text-muted-light mb-0">User Account</p>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="minimalist-info">
+                                <h6 class="mb-3 fw-light text-muted-light">Account Information</h6>
+                                <table class="table table-borderless minimalist-table">
+                                    <tr>
+                                        <td class="text-muted-light" style="width: 140px;">Username</td>
+                                        <td class="fw-light">{{ user.username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted-light">First Name</td>
+                                        <td class="fw-light">{{ user.first_name|default:"Not provided" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted-light">Last Name</td>
+                                        <td class="fw-light">{{ user.last_name|default:"Not provided" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted-light">Email</td>
+                                        <td class="fw-light">{{ user.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted-light">Phone Number</td>
+                                        <td class="fw-light">{{ user.phone_number|default:"Not provided" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted-light">Member Since</td>
+                                        <td class="fw-light">{{ user.date_joined|date:"F d, Y" }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="minimalist-alert mt-4">
+                        <h6 class="mb-2 fw-light">
+                            <i class="fas fa-info-circle me-2 text-blue-500"></i>Account Type Not Set
+                        </h6>
+                        <p class="mb-0 text-muted-light">Your account type (Buyer or Seller) hasn't been set yet. Please contact support to update your account type.</p>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 p-4">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'profile_edit' %}" class="btn minimalist-btn-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                        <button type="button" class="btn minimalist-btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash me-2"></i>Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content minimalist-card">
+            <div class="modal-header minimalist-header border-0">
+                <h5 class="modal-title fw-light">Delete Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-light">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p class="text-danger fw-light"><strong>Warning:</strong> All your account data will be permanently deleted.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="{% url 'profile_delete' %}" class="btn btn-danger">Delete Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

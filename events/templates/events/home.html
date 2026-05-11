@@ -1,0 +1,839 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ZOZAPRIME — Kenya's Smartest Event Ticketing Platform - Fast M-PESA & Card Payouts & Tickets in Kenya{% endblock %}
+{% block meta_description %}Zozaprime is Kenya's smartest event ticketing platform — M-Pesa native, International payments & audience analytics built in. Sell tickets faster. Know your audience.{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════════════
+   HOME PAGE — CLOUDINARY OPTIMIZED + HERO BG IMAGE
+   ══════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════
+   HERO SECTION — WITH BG IMAGE
+   ══════════════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  padding: 140px 2rem 80px;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(
+      135deg, 
+      rgba(0, 0, 0, 0.78) 0%, 
+      rgba(0, 0, 0, 0.45) 50%, 
+      rgba(0, 0, 0, 0.72) 100%
+    ),
+    url("{% static 'img/bg.png' %}");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  animation: kenBurns 25s ease-in-out infinite alternate;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, var(--coral-glow) 0%, transparent 70%);
+  opacity: 0.4;
+  animation: float 20s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes kenBurns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.1) translate(-1%, -1%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, 50px) scale(1.1); }
+}
+
+.hero-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.hero-content {
+  max-width: 680px;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background: rgba(255, 77, 77, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 77, 77, 0.4);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ff8888;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s var(--ease) 0.2s backwards;
+}
+
+.hero-tag-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--coral);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.hero-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s var(--ease) 0.3s backwards;
+}
+
+.hero-h1 .gradient-text {
+  background: linear-gradient(135deg, var(--coral) 0%, var(--coral-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 540px;
+  margin-bottom: 2.5rem;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  animation: fadeUp 0.6s var(--ease) 0.4s backwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+  animation: fadeUp 0.6s var(--ease) 0.5s backwards;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 540px;
+  animation: fadeUp 0.6s var(--ease) 0.6s backwards;
+}
+
+.hero-stat {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  transition: all var(--t-base);
+}
+
+.hero-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255, 77, 77, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hero-stat-val {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.hero-stat-lbl {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Outline button override for dark hero */
+.hero .btn-outline {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hero .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.7);
+  color: #ffffff;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SECTION SPACING
+   ══════════════════════════════════════════════════════════ */
+.section {
+  padding: 5rem 2rem;
+}
+
+.section:last-of-type {
+  padding-bottom: 6rem;
+}
+
+.bg-alt {
+  background: var(--bg-secondary);
+}
+
+/* Section Headers */
+.section-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 4rem;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  background: var(--coral-bg);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.section-sub {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* ══════════════════════════════════════════════════════════
+   EVENT CARDS
+   ══════════════════════════════════════════════════════════ */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.event-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--t-base);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.event-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255, 77, 77, 0.4);
+}
+
+.event-img {
+  position: relative;
+  height: 220px;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.event-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+
+.event-card:hover .event-img img {
+  transform: scale(1.08);
+}
+
+.event-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.status-available {
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.status-sold {
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.event-date {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 0.5rem 0.7rem;
+  text-align: center;
+  min-width: 56px;
+}
+
+.event-month {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 0.15rem;
+}
+
+.event-day {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.event-body {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.event-cat {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+
+.event-time {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 500;
+}
+
+.event-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.event-loc {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.event-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+  margin-top: auto;
+}
+
+.event-price {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.price-from {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-right: 0.3rem;
+}
+
+.event-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background: var(--coral);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all var(--t-fast);
+}
+
+.event-card:hover .event-btn {
+  background: var(--coral-dark);
+  transform: translateX(4px);
+}
+
+/* ══════════════════════════════════════════════════════════
+   FEATURES GRID
+   ══════════════════════════════════════════════════════════ */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.feature-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: center;
+  transition: all var(--t-base);
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255, 77, 77, 0.3);
+}
+
+.feature-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--coral-bg);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--coral);
+  font-size: 1.8rem;
+  transition: all var(--t-base);
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.feature-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CTA SECTION
+   ══════════════════════════════════════════════════════════ */
+.cta-section {
+  background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dark) 100%);
+  border-radius: 24px;
+  padding: 4rem 3rem;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cta-content {
+  position: relative;
+  z-index: 2;
+}
+
+.cta-section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  margin-bottom: 1rem;
+}
+
+.cta-section p {
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.95;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-white {
+  background: white;
+  color: var(--coral);
+  font-weight: 700;
+}
+
+.btn-white:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.btn-outline-white {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-outline-white:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ══════════════════════════════════════════════════════════
+   EMPTY STATE
+   ══════════════════════════════════════════════════════════ */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 5rem 2rem;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .events-grid,
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: auto;
+    padding: 120px 1.5rem 60px;
+  }
+  
+  .hero::after {
+    animation: none; /* Disable Ken Burns on mobile for performance */
+  }
+  
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .section {
+    padding: 3.5rem 1.5rem;
+  }
+  
+  .events-grid,
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .cta-section {
+    padding: 3rem 2rem;
+  }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-content">
+            
+            <h1 class="hero-h1">
+                More Vibes<br> <span class="gradient-text">More Life</span>
+            </h1>
+            
+            <p class="hero-sub">
+                Discover concerts, festivals, sports events and live experiences across Kenya.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="{% url 'event_list' %}" class="btn btn-primary">
+                    Explore Events
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                <a href="#events" class="btn btn-outline">
+                    <i class="bi bi-calendar-event"></i>
+                    What's On Tonight
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- EVENTS SECTION -->
+<section id="events" class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">
+                Featured Events
+            </span>
+            <h2 class="section-title">Upcoming Events</h2>
+            <p class="section-sub">The hottest events happening across Kenya right now</p>
+        </div>
+        
+        <div class="events-grid">
+            {% for event in events %}
+            <a href="{% url 'event_detail' event.slug %}" class="event-card">
+                <div class="event-img">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" 
+                             alt="{{ event.title }} - {{ event.category.name }} event" 
+                             loading="lazy"
+                             width="700"
+                             height="425">
+                    {% endif %}
+                    
+                    <span class="event-status {% if event.is_sold_out %}status-sold{% else %}status-available{% endif %}">
+                        {% if event.is_sold_out %}Sold Out{% else %}Available{% endif %}
+                    </span>
+                    
+                    <div class="event-date">
+                        <span class="event-month">{{ event.date|date:"M" }}</span>
+                        <span class="event-day">{{ event.date|date:"d" }}</span>
+                    </div>
+                </div>
+                
+                <div class="event-body">
+                    <div class="event-meta">
+                        <span class="event-cat">{{ event.category.name|default:"Event" }}</span>
+                        <time class="event-time" datetime="{{ event.date|date:'c' }}">
+                            <i class="bi bi-clock"></i>
+                            {{ event.date|time:"g:i A" }}
+                        </time>
+                    </div>
+                    
+                    <h3 class="event-title">{{ event.title }}</h3>
+                    
+                    <div class="event-loc">
+                        <i class="bi bi-geo-alt"></i>
+                        {{ event.location }}
+                    </div>
+                    
+                    <div class="event-footer">
+                        <div class="event-price">
+                            {% with categories=event.ticket_categories.all %}
+                                {% if categories %}
+                                    {% with lowest=categories|dictsort:"price"|first %}
+                                        <span class="price-from">from</span>
+                                        Ksh {{ lowest.price|floatformat:0 }}
+                                    {% endwith %}
+                                {% else %}
+                                    Free
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        
+                        <span class="event-btn">
+                            Buy Ticket
+                            <i class="bi bi-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-calendar-x"></i>
+                </div>
+                <h3>No Events Yet</h3>
+                <p>Check back soon for upcoming events</p>
+                <a href="{% url 'home' %}" class="btn btn-primary">Refresh Page</a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if events %}
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{% url 'event_list' %}" class="btn btn-outline">
+                Explore All Events
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- WHY ZOZAPRIME -->
+<section class="section bg-alt">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">More Vibes. More Life</h2>
+            <p class="section-sub">Everything you need to discover, book, and experience live events in Kenya</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                </div>
+                <h3>Instant Booking</h3>
+                <p>Secure your tickets in under 60 seconds. No friction, no fuss.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-phone-fill"></i>
+                </div>
+                <h3>M-Pesa First</h3>
+                <p>Pay the Kenyan way. M-Pesa integrated natively, plus card options.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h3>100% Secure</h3>
+                <p>Bank-level encryption. Your tickets and payments are always protected.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="section">
+    <div class="container">
+        <div class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to Sell Out?</h2>
+                <p>Create your event in minutes. Powerful tools, simple setup, real results.</p>
+                <div class="cta-actions">
+                    <a href="{% url 'signup_seller' %}" class="btn btn-white">
+                        <i class="bi bi-plus-circle"></i>
+                        Create Free Seller Account
+                    </a>
+                    <a href="{% url 'event_list' %}" class="btn btn-outline-white">
+                        <i class="bi bi-arrow-right"></i>
+                        Browse Events
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

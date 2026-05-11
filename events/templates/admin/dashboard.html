@@ -1,0 +1,862 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Admin Dashboard — ZOZAPRIME{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.admin-header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.admin-header p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+/* Stats Grid - Responsive */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--coral);
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.icon-visitors { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+.icon-users { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.icon-tickets { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.icon-revenue { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.icon-events { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+.icon-mpesa { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.icon-avg { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+.icon-velocity { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
+.icon-conversion { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+.icon-active { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.icon-growth { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
+.icon-retention { background: rgba(217, 70, 239, 0.15); color: #d946ef; }
+.icon-sellers { background: rgba(6, 182, 212, 0.15); color: #06b6d4; }
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 0.3rem;
+}
+
+.stat-trend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.trend-up { color: #10b981; }
+.trend-down { color: #ef4444; }
+.trend-neutral { color: var(--text-tertiary); }
+
+/* Content Grid */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.content-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+}
+
+.card-link {
+  font-size: 0.85rem;
+  color: var(--coral);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.card-link:hover {
+  opacity: 0.8;
+}
+
+.card-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 280px;
+}
+
+/* User List */
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  transition: all 0.15s ease;
+}
+
+.user-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--coral-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--coral);
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.user-meta {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+.badge-sm {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-active { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.badge-paid { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+/* Data Table */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.data-table thead th {
+  padding: 0.875rem 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+  white-space: nowrap;
+}
+
+.data-table tbody td {
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.data-table tbody tr:hover {
+  background: var(--bg-secondary);
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-tertiary);
+}
+
+.empty-state i {
+  font-size: 2.5rem;
+  opacity: 0.3;
+  margin-bottom: 0.5rem;
+}
+
+/* Grid Spans */
+.col-span-12 { grid-column: span 12; }
+.col-span-8 { grid-column: span 8; }
+.col-span-6 { grid-column: span 6; }
+.col-span-4 { grid-column: span 4; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .col-span-8 { grid-column: span 12; }
+  .col-span-4 { grid-column: span 12; }
+}
+
+@media (max-width: 768px) {
+  .admin-container { 
+    padding: 1.5rem 1rem; 
+    margin-top: 0 !important;
+  }
+  
+  .stats-grid { 
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+  
+  .admin-header { 
+    padding: 1.5rem; 
+    margin-bottom: 1.5rem;
+  }
+  
+  .admin-header h1 { 
+    font-size: 1.75rem; 
+  }
+  
+  .admin-header p {
+    font-size: 0.95rem;
+  }
+  
+  .col-span-12,
+  .col-span-8,
+  .col-span-6,
+  .col-span-4 { 
+    grid-column: span 12; 
+  }
+  
+  .chart-wrapper {
+    height: 220px;
+  }
+  
+  .card-header {
+    padding: 1rem 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .card-body {
+    padding: 1rem 1.25rem;
+  }
+  
+  .data-table {
+    font-size: 0.8rem;
+  }
+  
+  .data-table thead th,
+  .data-table tbody td {
+    padding: 0.75rem 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { 
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-value {
+    font-size: 1.35rem;
+  }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container" style="margin-top: 92px;">
+
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <p>Platform overview and analytics</p>
+  </div>
+
+  <!-- ══════ STATS GRID - 13 METRICS ══════ -->
+  <div class="stats-grid">
+
+    <!-- Existing Metrics -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value">{{ total_users|default:0 }}</div>
+          <div class="stat-trend trend-up">
+            <i class="bi bi-arrow-up"></i>
+            {{ new_users_week|default:0 }} this week
+          </div>
+        </div>
+        <div class="stat-icon icon-users"><i class="bi bi-people"></i></div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Active Sellers</div>
+          <div class="stat-value">{{ active_sellers|default:0 }}</div>
+          <div class="stat-trend trend-neutral">Event organizers</div>
+        </div>
+        <div class="stat-icon icon-sellers"><i class="bi bi-shop"></i></div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Total Events</div>
+          <div class="stat-value">{{ total_events|default:0 }}</div>
+          <div class="stat-trend trend-up">{{ upcoming_events|default:0 }} upcoming</div>
+        </div>
+        <div class="stat-icon icon-events"><i class="bi bi-calendar-event"></i></div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Tickets Sold</div>
+          <div class="stat-value">{{ total_tickets|default:0 }}</div>
+          <div class="stat-trend trend-up">
+            <i class="bi bi-arrow-up"></i>
+            {{ tickets_today|default:0 }} today
+          </div>
+        </div>
+        <div class="stat-icon icon-tickets"><i class="bi bi-ticket-perforated"></i></div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value">Ksh {{ total_revenue|default:0|floatformat:0|intcomma }}</div>
+          <div class="stat-trend trend-neutral">All time</div>
+        </div>
+        <div class="stat-icon icon-revenue"><i class="bi bi-cash-stack"></i></div>
+      </div>
+    </div>
+
+    <!-- NEW METRIC 1: Conversion Rate -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Conversion Rate</div>
+          <div class="stat-value">{{ conversion_rate|default:0|floatformat:1 }}%</div>
+          <div class="stat-trend trend-neutral">Visitors to buyers</div>
+        </div>
+        <div class="stat-icon icon-conversion"><i class="bi bi-funnel"></i></div>
+      </div>
+    </div>
+
+    <!-- NEW METRIC 2: Active Users (30d) -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Active Users (30d)</div>
+          <div class="stat-value">{{ active_users_30d|default:0 }}</div>
+          <div class="stat-trend trend-up">{{ active_users_percent|default:0|floatformat:0 }}% of total</div>
+        </div>
+        <div class="stat-icon icon-active"><i class="bi bi-lightning"></i></div>
+      </div>
+    </div>
+
+    <!-- NEW METRIC 3: Revenue Growth -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Revenue Growth</div>
+          <div class="stat-value">{{ revenue_growth|default:0|floatformat:1 }}%</div>
+          <div class="stat-trend trend-up">
+            <i class="bi bi-graph-up"></i>
+            Month over month
+          </div>
+        </div>
+        <div class="stat-icon icon-growth"><i class="bi bi-trending-up"></i></div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Avg Ticket Price</div>
+          <div class="stat-value">Ksh {{ avg_ticket_price|default:0|floatformat:0|intcomma }}</div>
+          <div class="stat-trend trend-neutral">Per ticket</div>
+        </div>
+        <div class="stat-icon icon-avg"><i class="bi bi-tag"></i></div>
+      </div>
+    </div>
+
+    <!-- NEW METRIC 4: Repeat Buyers -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Repeat Buyers</div>
+          <div class="stat-value">{{ repeat_buyers|default:0 }}</div>
+          <div class="stat-trend trend-neutral">{{ repeat_buyer_rate|default:0|floatformat:0 }}% retention</div>
+        </div>
+        <div class="stat-icon icon-retention"><i class="bi bi-arrow-repeat"></i></div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">M-Pesa Success</div>
+          <div class="stat-value">{{ mpesa_success_rate|default:0 }}%</div>
+          <div class="stat-trend trend-neutral">{{ mpesa_total_attempts|default:0 }} attempts</div>
+        </div>
+        <div class="stat-icon icon-mpesa"><i class="bi bi-phone"></i></div>
+      </div>
+    </div>
+
+    <!-- NEW METRIC 5: Visitors (30d) -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Visitors (30d)</div>
+          <div class="stat-value">{{ total_visits|default:0|floatformat:0 }}</div>
+          <div class="stat-trend trend-up">{{ unique_visitors|default:0 }} unique</div>
+        </div>
+        <div class="stat-icon icon-visitors"><i class="bi bi-eye"></i></div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div style="flex: 1;">
+          <div class="stat-label">Sales Velocity</div>
+          <div class="stat-value">{{ tickets_this_week|default:0 }}</div>
+          <div class="stat-trend trend-neutral">Tickets / week</div>
+        </div>
+        <div class="stat-icon icon-velocity"><i class="bi bi-graph-up-arrow"></i></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════ CHARTS ══════ -->
+  <div class="content-grid">
+
+    <!-- User Signup Trend -->
+    <div class="content-card col-span-8">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">User Signup Trend</h3>
+          <span class="card-subtitle">Last 30 Days</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas id="signupChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier Breakdown -->
+    <div class="content-card col-span-4">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">Ticket Tiers</h3>
+          <span class="card-subtitle">Sales distribution</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas id="tierChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sales Overview -->
+    <div class="content-card col-span-6">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">Sales Overview</h3>
+          <span class="card-subtitle">Last 30 Days</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="content-card col-span-6">
+      <div class="card-header">
+        <h3 class="card-title">Recent Users</h3>
+        <a href="/admin/" class="card-link">View All</a>
+      </div>
+      <div class="card-body">
+        {% for user in recent_users|slice:":6" %}
+        <div class="user-item">
+          <div class="user-avatar">{{ user.username|first|upper }}</div>
+          <div style="flex:1; min-width: 0;">
+            <div class="user-name" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              {{ user.get_full_name|default:user.username }}
+            </div>
+            <div class="user-meta">{{ user.date_joined|date:"M d, Y" }}</div>
+          </div>
+          <span class="badge-sm badge-active">Active</span>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+          <i class="bi bi-people"></i>
+          <p>No users yet</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Recent Ticket Sales -->
+    <div class="content-card col-span-12">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">Recent Ticket Sales</h3>
+          <span class="card-subtitle">{{ total_tickets }} total tickets sold</span>
+        </div>
+      </div>
+      <div class="card-body" style="padding: 0;">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Buyer</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ticket in recent_tickets|slice:":10" %}
+              <tr>
+                <td style="font-weight: 600; color: var(--text-primary);">
+                  {{ ticket.event.title|truncatechars:30 }}
+                </td>
+                <td>
+                  {% if ticket.buyer_name %}
+                    {{ ticket.buyer_name|truncatechars:25 }}
+                  {% elif ticket.buyer %}
+                    {{ ticket.buyer.username }}
+                  {% else %}
+                    <span style="color: var(--text-tertiary);">Guest</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if ticket.ticket_category %}
+                    {{ ticket.ticket_category.name }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td>{{ ticket.quantity }}</td>
+                <td style="font-weight: 600; color: var(--text-primary);">
+                  Ksh {{ ticket.total_amount|floatformat:0|intcomma }}
+                </td>
+                <td style="white-space: nowrap;">{{ ticket.purchased_at|date:"M d, Y" }}</td>
+                <td><span class="badge-sm badge-paid">{{ ticket.get_status_display }}</span></td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <i class="bi bi-ticket-perforated"></i>
+                    <p>No ticket sales yet</p>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script>
+Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-tertiary') || '#888';
+Chart.defaults.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color') || 'rgba(255,255,255,0.08)';
+
+// Signup Chart - WITH BUYER/SELLER SPLIT
+const signupCtx = document.getElementById('signupChart');
+if (signupCtx) {
+  const signupData = JSON.parse('{{ user_signup_trend|safe|default:"[]" }}');
+  new Chart(signupCtx, {
+    type: 'bar',
+    data: {
+      labels: signupData.map(d => d.signup_date),
+      datasets: [
+        {
+          label: 'Buyers',
+          data: signupData.map(d => d.buyers || 0),
+          backgroundColor: 'rgba(16, 185, 129, 0.3)',
+          borderColor: '#10b981',
+          borderWidth: 2,
+          borderRadius: 6,
+          barThickness: 'flex',
+          maxBarThickness: 30,
+        },
+        {
+          label: 'Sellers',
+          data: signupData.map(d => d.sellers || 0),
+          backgroundColor: 'rgba(255, 77, 77, 0.3)',
+          borderColor: '#ff4d4d',
+          borderWidth: 2,
+          borderRadius: 6,
+          barThickness: 'flex',
+          maxBarThickness: 30,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { 
+          display: true,
+          position: 'top',
+          align: 'end',
+          labels: {
+            color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary') || '#999',
+            font: { size: 12 },
+            padding: 12,
+            usePointStyle: true
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          padding: 12,
+          titleFont: { size: 14, weight: 'bold' },
+          bodyFont: { size: 13 }
+        }
+      },
+      scales: {
+        x: { 
+          type: 'time', 
+          time: { unit: 'day', displayFormats: { day: 'MMM d' } }, 
+          grid: { display: false },
+          ticks: { maxRotation: 45, minRotation: 0 },
+          stacked: true
+        },
+        y: { 
+          beginAtZero: true, 
+          ticks: { precision: 0 },
+          grid: { color: 'rgba(255, 255, 255, 0.05)' },
+          stacked: true
+        }
+      }
+    }
+  });
+}
+
+// Sales Chart
+const salesCtx = document.getElementById('salesChart');
+if (salesCtx) {
+  const salesData = JSON.parse('{{ daily_sales|escapejs|default:"[]" }}');
+  new Chart(salesCtx, {
+    type: 'line',
+    data: {
+      labels: salesData.map(d => d.purchased_at__date),
+      datasets: [{
+        label: 'Revenue',
+        data: salesData.map(d => parseFloat(d.total_sales || 0)),
+        backgroundColor: 'rgba(255, 77, 77, 0.1)',
+        borderColor: '#ff4d4d',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#ff4d4d',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointHoverRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          padding: 12,
+          callbacks: {
+            label: function(context) {
+              return 'Revenue: Ksh ' + context.parsed.y.toLocaleString();
+            }
+          }
+        }
+      },
+      scales: {
+        x: { 
+          type: 'time', 
+          time: { unit: 'day', displayFormats: { day: 'MMM d' } }, 
+          grid: { display: false },
+          ticks: { maxRotation: 45, minRotation: 0 }
+        },
+        y: { 
+          beginAtZero: true, 
+          ticks: { callback: v => 'Ksh ' + v.toLocaleString() },
+          grid: { color: 'rgba(255, 255, 255, 0.05)' }
+        }
+      }
+    }
+  });
+}
+
+// Tier Breakdown Chart
+const tierCtx = document.getElementById('tierChart');
+if (tierCtx) {
+  const tierData = JSON.parse('{{ tier_breakdown_json|escapejs|default:"[]" }}');
+  if (tierData.length > 0) {
+    const colors = ['#ff4d4d', '#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+    new Chart(tierCtx, {
+      type: 'doughnut',
+      data: {
+        labels: tierData.map(d => d.name),
+        datasets: [{
+          data: tierData.map(d => d.sold),
+          backgroundColor: colors.slice(0, tierData.length),
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { 
+              color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary') || '#999', 
+              font: { size: 11 }, 
+              padding: 12, 
+              usePointStyle: true 
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            padding: 12
+          }
+        }
+      }
+    });
+  }
+}
+</script>
+{% endblock %}

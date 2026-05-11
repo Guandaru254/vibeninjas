@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Merchandise Orders - TazamoEXP{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-store me-2"></i>Seller Menu
+                    </h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'seller_merchandise_dashboard' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'seller_merchandise_list' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-box me-2"></i>My Products
+                        </a>
+                        <a href="{% url 'seller_merchandise_add' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus me-2"></i>Add Product
+                        </a>
+                        <a href="{% url 'seller_merchandise_order_list' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-shopping-cart me-2"></i>Orders
+                        </a>
+                        <a href="{% url 'seller_merchandise_category_add' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tags me-2"></i>Categories
+                        </a>
+                        <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar me-2"></i>Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>
+                    <i class="fas fa-shopping-cart me-2"></i>Merchandise Orders
+                </h4>
+            </div>
+
+            <!-- Orders List -->
+            {% if orders %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        <strong>#{{ order.id }}</strong>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>{{ order.buyer.get_full_name|default:order.buyer.username }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ order.buyer.email }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% for order_item in order.sellerorderitem_set.all %}
+                                        <div class="small mb-1">
+                                            {{ order_item.quantity }}x {{ order_item.merchandise.name }}
+                                            <br>
+                                            <small class="text-muted">Ksh {{ order_item.price }} each</small>
+                                        </div>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <strong class="text-primary">Ksh {{ order.total_amount }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            {{ order.get_payment_method_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ order.status|yesno:'success,warning,info,danger,secondary' }}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ order.created_at|date:"M d, Y" }}
+                                            <br>
+                                            <small class="text-muted">{{ order.created_at|time:"g:i A" }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'seller_merchandise_order_detail' order.pk %}" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye me-1"></i>View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">No orders yet</h5>
+                    <p class="text-muted">Your merchandise orders will appear here once customers start buying.</p>
+                    <a href="{% url 'seller_merchandise_list' %}" class="btn btn-primary">
+                        <i class="fas fa-box me-2"></i>Manage Products
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,499 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- DEBUG: USER AUTH STATUS -->
+<div style="position: fixed; top: 0; left: 0; background: red; color: white; padding: 10px; z-index: 9999;">
+  USER: {{ user }}<br>
+  IS_AUTHENTICATED: {{ user.is_authenticated }}<br>
+  USERNAME: {{ user.username }}<br>
+</div>
+<!-- END DEBUG -->
+
+{% block title %}Browse Events — ZOZAPRIME{% endblock %}
+{% block meta_description %}Discover and book tickets to concerts, festivals, sports events and live experiences across Kenya. Find amazing events near you.{% endblock %}
+{% block canonical %}https://www.zozaprime.com{% url 'event_list' %}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════════════
+   EVENTS PAGE - OPTIMIZED WITH CLOUDINARY
+   ══════════════════════════════════════════════════════════ */
+
+.events-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: 6rem;
+  min-height: 100vh;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 3rem;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+/* Search & Filter */
+.search-section {
+  margin-bottom: 3rem;
+}
+
+.search-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-form {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-input-group {
+  position: relative;
+  flex: 1;
+}
+
+.search-input-group i {
+  position: absolute;
+  left: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1.25rem 1rem 3.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid var(--glass-border);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.1);
+}
+
+.category-select {
+  padding: 1rem 1.25rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid var(--glass-border);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 200px;
+}
+
+.category-select:focus {
+  outline: none;
+  border-color: var(--coral);
+}
+
+.btn-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: var(--coral);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-search:hover {
+  background: var(--coral-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px var(--coral-glow);
+}
+
+/* Event Cards - OPTIMIZED */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.event-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--t-base);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.event-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255, 77, 77, 0.4);
+}
+
+.event-img {
+  position: relative;
+  height: 220px;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.event-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+
+.event-card:hover .event-img img {
+  transform: scale(1.08);
+}
+
+.event-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.status-available {
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.status-sold {
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.event-date {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 0.5rem 0.7rem;
+  text-align: center;
+  min-width: 56px;
+}
+
+.event-month {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 0.15rem;
+}
+
+.event-day {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.event-body {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.event-cat {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+
+.event-time {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 500;
+}
+
+.event-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.event-loc {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.event-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+  margin-top: auto;
+}
+
+.event-price {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.price-from {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-right: 0.3rem;
+}
+
+.event-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background: var(--coral);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all var(--t-fast);
+}
+
+.event-card:hover .event-btn {
+  background: var(--coral-dark);
+  transform: translateX(4px);
+}
+
+/* Empty State */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 5rem 2rem;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .events-page {
+    padding: 1.5rem 1rem;
+    padding-top: 5rem;
+  }
+  
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .search-form {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .category-select,
+  .btn-search {
+    width: 100%;
+  }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="events-page">
+  <header class="page-header">
+    <h1 class="page-title">Discover Events</h1>
+    <p class="page-subtitle">Find and book tickets to amazing events near you</p>
+  </header>
+  
+  <section class="search-section">
+    <div class="search-controls">
+      <form method="GET" class="search-form" role="search">
+        <div class="search-input-group">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input type="search" name="search" placeholder="Search events..." value="{{ search_query }}" class="search-input">
+        </div>
+        
+        <select name="category" class="category-select">
+          <option value="">All Categories</option>
+          {% for category in categories %}
+            <option value="{{ category.slug }}" {% if selected_category == category.slug %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+        
+        <button type="submit" class="btn-search">
+          <i class="bi bi-funnel" aria-hidden="true"></i> Filter
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="events-grid">
+    {% for event in upcoming_events %}
+    <a href="{% url 'event_detail' event.slug %}" class="event-card">
+      <div class="event-img">
+        {% if event.image %}
+          <img src="{{ event.image.url }}" alt="{{ event.title }}" loading="lazy">
+        {% endif %}
+        
+        <span class="event-status {% if event.is_sold_out %}status-sold{% else %}status-available{% endif %}">
+          {% if event.is_sold_out %}Sold Out{% else %}Available{% endif %}
+        </span>
+        
+        <div class="event-date">
+          <span class="event-month">{{ event.date|date:"M" }}</span>
+          <span class="event-day">{{ event.date|date:"d" }}</span>
+        </div>
+      </div>
+      
+      <div class="event-body">
+        <div class="event-meta">
+          <span class="event-cat">{{ event.category.name|default:"Event" }}</span>
+          <time class="event-time">
+            <i class="bi bi-clock"></i> {{ event.date|time:"g:i A" }}
+          </time>
+        </div>
+        <h2 class="event-title">{{ event.title }}</h2>
+        <div class="event-loc">
+          <i class="bi bi-geo-alt"></i> {{ event.location }}
+        </div>
+        <div class="event-footer">
+          <div class="event-price">
+            {% with categories=event.ticket_categories.all %}
+              {% if categories %}
+                {% with lowest=categories|dictsort:"price"|first %}
+                  <span class="price-from">from</span> Ksh {{ lowest.price|floatformat:0 }}
+                {% endwith %}
+              {% else %}
+                Free
+              {% endif %}
+            {% endwith %}
+          </div>
+          <span class="event-btn">Book Now <i class="bi bi-arrow-right"></i></span>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="bi bi-calendar-x"></i></div>
+      <h3>No Upcoming Events</h3>
+      <p>Check back soon for more vibes!</p>
+    </div>
+    {% endfor %}
+  </section>
+
+  {% if past_events %}
+  <header class="page-header" style="margin-top: 5rem; border-top: 1px solid var(--glass-border); padding-top: 3rem;">
+    <h2 class="page-title" style="font-size: 2rem; opacity: 0.8;">Past Memories</h2>
+    <p class="page-subtitle">The vibes we've already shared</p>
+  </header>
+
+  <section class="events-grid" style="opacity: 0.7; filter: grayscale(0.5);">
+    {% for event in past_events %}
+    <a href="{% url 'event_detail' event.slug %}" class="event-card">
+      <div class="event-img">
+        {% if event.image %}
+          <img src="{{ event.image.url }}" alt="{{ event.title }}">
+        {% endif %}
+        <div class="event-date">
+          <span class="event-month">{{ event.date|date:"M" }}</span>
+          <span class="event-day">{{ event.date|date:"d" }}</span>
+        </div>
+      </div>
+      <div class="event-body">
+        <h2 class="event-title">{{ event.title }}</h2>
+        <div class="event-loc">{{ event.location }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

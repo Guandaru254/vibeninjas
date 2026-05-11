@@ -1,0 +1,1080 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Dashboard — ZOZAPRIME{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Dashboard uses base.html theme variables - no duplicates needed */
+
+body {
+    overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.dashboard-wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    padding-top: 6rem;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+@media (min-width: 1600px) {
+    .dashboard-wrapper {
+        max-width: 1600px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════ */
+.dash-header {
+    margin-bottom: 3rem;
+}
+
+.dash-title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.dash-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTION BAR
+   ═══════════════════════════════════════════════════════════ */
+.action-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    position: relative;
+    min-width: 0;
+}
+
+.action-btn:hover {
+    border-color: var(--coral);
+    transform: translateY(-2px);
+}
+
+.action-btn.primary {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: white;
+}
+
+.action-btn.primary:hover {
+    background: var(--coral-dark);
+}
+
+.coming-soon {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   8 METRICS GRID
+   ═══════════════════════════════════════════════════════════ */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.metric-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.75rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    min-width: 0;
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--coral);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+}
+
+.metric-card:hover {
+    border-color: var(--coral);
+    transform: translateY(-4px);
+}
+
+.metric-card:hover::before {
+    transform: scaleX(1);
+}
+
+.metric-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.metric-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.metric-icon.green { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+.metric-icon.coral { background: rgba(255, 77, 77, 0.15); color: var(--coral); }
+.metric-icon.blue { background: rgba(99, 102, 241, 0.15); color: #6366F1; }
+.metric-icon.orange { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.metric-icon.purple { background: rgba(168, 85, 247, 0.15); color: #A855F7; }
+
+.metric-value {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.metric-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TIME PERIOD FILTER
+   ═══════════════════════════════════════════════════════════ */
+.time-filter {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    background: var(--bg-secondary);
+    padding: 0.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.time-btn {
+    padding: 0.625rem 1.25rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.time-btn.active {
+    background: var(--coral);
+    color: white;
+}
+
+.time-btn:hover:not(.active) {
+    background: rgba(255, 77, 77, 0.1);
+    color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CHARTS SECTION
+   ═══════════════════════════════════════════════════════════ */
+.charts-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.chart-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.chart-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.chart-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.chart-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* THIS IS THE FIX — the wrapper constrains Chart.js */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EVENTS SECTION
+   ═══════════════════════════════════════════════════════════ */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.event-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+    width: 100%;
+    min-width: 0;
+}
+
+.event-card:hover {
+    border-color: var(--coral);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(255, 77, 77, 0.15);
+}
+
+.event-poster {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: var(--border-color);
+}
+
+.event-body {
+    padding: 1.5rem;
+}
+
+.event-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.event-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.event-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.event-metric {
+    text-align: center;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.event-metric-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--coral);
+    display: block;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.event-metric-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.event-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.btn {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    background: rgba(255, 77, 77, 0.1);
+    border-color: var(--coral);
+    color: var(--coral);
+}
+
+.btn-delete {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #EF4444;
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #EF4444;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════════════ */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--bg-secondary);
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DELETE MODAL
+   ═══════════════════════════════════════════════════════════ */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+    margin: 1rem;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.modal-text {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-modal {
+    flex: 1;
+    padding: 0.875rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-cancel:hover {
+    background: var(--border-color);
+}
+
+.btn-confirm {
+    background: #EF4444;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #DC2626;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 1200px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-wrapper {
+        padding: 1rem;
+        padding-top: 5rem;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .dash-title {
+        font-size: 2rem;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .events-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .action-bar {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .time-filter {
+        width: 100%;
+    }
+
+    .event-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card {
+        padding: 1.5rem;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .metric-value {
+        font-size: 1.75rem;
+    }
+
+    .event-metric-value {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-wrapper {
+        padding: 0.75rem;
+        padding-top: 4.5rem;
+    }
+
+    .dash-title {
+        font-size: 1.75rem;
+    }
+
+    .metric-card {
+        padding: 1.25rem;
+    }
+
+    .chart-card {
+        padding: 1rem;
+    }
+
+    .chart-container {
+        height: 200px;
+    }
+
+    .event-body {
+        padding: 1rem;
+    }
+
+    .metric-value {
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <!-- ═══════════════════════════════════════════════════════════
+         HEADER
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="dash-header">
+        <h1 class="dash-title">My Dashboard</h1>
+        <p class="dash-subtitle">Revenue dashboard for African creatives</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         ACTION BAR
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="action-bar">
+        <a href="{% url 'create_event' %}" class="action-btn primary">
+            <i class="bi bi-plus-circle"></i>
+            Create Event
+        </a>
+        <button class="action-btn" onclick="alert('Reports feature coming soon! Download sales analytics & tax reports.')" style="position: relative;">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            Reports
+            <span class="coming-soon">Soon</span>
+        </button>
+        <button class="action-btn" onclick="alert('QR Scanner coming soon! Scan tickets at event entry.')" style="position: relative;">
+            <i class="bi bi-qr-code-scan"></i>
+            Scan QR
+            <span class="coming-soon">Soon</span>
+        </button>
+        <a href="{% url 'seller_merchandise_order_list' %}" class="action-btn">
+            <i class="bi bi-bag-check"></i>
+            Orders
+        </a>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         8 METRICS GRID
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Total Revenue</span>
+                <div class="metric-icon green">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+            </div>
+            <div class="metric-value">Ksh {{ total_revenue|floatformat:0|default:"0" }}</div>
+            <div class="metric-change">
+                <i class="bi bi-infinity"></i> All Time
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">This Month</span>
+                <div class="metric-icon green">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+            </div>
+            <div class="metric-value">Ksh {{ revenue_this_month|floatformat:0|default:"0" }}</div>
+            <div class="metric-change">
+                <i class="bi bi-calendar3"></i> Current Period
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Tickets Sold</span>
+                <div class="metric-icon coral">
+                    <i class="bi bi-ticket-perforated"></i>
+                </div>
+            </div>
+            <div class="metric-value">{{ total_tickets_sold|default:"0" }}</div>
+            <div class="metric-change">
+                <i class="bi bi-ticket"></i> {{ tickets_sold_today|default:"0" }} today
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Active Events</span>
+                <div class="metric-icon blue">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+            </div>
+            <div class="metric-value">{{ active_events_count|default:"0" }}</div>
+            <div class="metric-change">
+                <i class="bi bi-fire"></i> {{ total_events|default:"0" }} total
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Avg Ticket</span>
+                <div class="metric-icon orange">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+            </div>
+            <div class="metric-value">Ksh {{ avg_ticket_price|floatformat:0|default:"0" }}</div>
+            <div class="metric-change">
+                <i class="bi bi-percent"></i> Average Price
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Fill Rate</span>
+                <div class="metric-icon purple">
+                    <i class="bi bi-pie-chart"></i>
+                </div>
+            </div>
+            <div class="metric-value">{{ conversion_rate|floatformat:1|default:"0" }}%</div>
+            <div class="metric-change">
+                <i class="bi bi-bullseye"></i> Capacity Filled
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Total Seats</span>
+                <div class="metric-icon blue">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+            <div class="metric-value">{{ total_capacity|default:"0" }}</div>
+            <div class="metric-change">
+                <i class="bi bi-diagram-3"></i> All Events
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Sold Out</span>
+                <div class="metric-icon orange">
+                    <i class="bi bi-fire"></i>
+                </div>
+            </div>
+            <div class="metric-value">{{ sold_out_events|default:"0" }}</div>
+            <div class="metric-change">
+                <i class="bi bi-trophy"></i> Events
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TIME PERIOD FILTER
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="time-filter">
+        <button class="time-btn {% if period == '7d' %}active{% endif %}" onclick="filterPeriod('7d')">7 Days</button>
+        <button class="time-btn {% if period == '30d' or not period %}active{% endif %}" onclick="filterPeriod('30d')">30 Days</button>
+        <button class="time-btn {% if period == '90d' %}active{% endif %}" onclick="filterPeriod('90d')">90 Days</button>
+        <button class="time-btn {% if period == 'all' %}active{% endif %}" onclick="filterPeriod('all')">All Time</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CHARTS SECTION
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="charts-section">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Revenue Over Time</h3>
+                <p class="chart-subtitle">Track your earnings trend</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Sales by Tier</h3>
+                <p class="chart-subtitle">Top ticket categories</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         EVENTS SECTION
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="section-header">
+        <h2 class="section-title">My Events</h2>
+    </div>
+
+    {% if events %}
+    <div class="events-grid">
+        {% for event in events %}
+        <div class="event-card">
+            {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-poster">
+            {% else %}
+            <div class="event-poster"></div>
+            {% endif %}
+
+            <div class="event-body">
+                <h3 class="event-title">{{ event.title }}</h3>
+                <div class="event-date">
+                    <i class="bi bi-calendar"></i>
+                    {{ event.date|date:"M d, Y" }} • {{ event.date|time:"g:i A" }}
+                </div>
+
+                <div class="event-metrics">
+                    <div class="event-metric">
+                        <span class="event-metric-value">{{ event.tickets_count|default:"0" }}</span>
+                        <span class="event-metric-label">Sold</span>
+                    </div>
+                    <div class="event-metric">
+                        <span class="event-metric-value">{{ event.capacity|default:"0" }}</span>
+                        <span class="event-metric-label">Capacity</span>
+                    </div>
+                    <div class="event-metric">
+                        <span class="event-metric-value">Ksh {{ event.revenue|floatformat:0|default:"0" }}</span>
+                        <span class="event-metric-label">Revenue</span>
+                    </div>
+                </div>
+
+                <div class="event-actions">
+                    <a href="{% url 'event_detail' event.slug %}" class="btn">
+                        <i class="bi bi-eye"></i> View
+                    </a>
+                    <a href="{% url 'edit_event' event.slug %}" class="btn">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <button onclick="confirmDelete('{{ event.slug }}', '{{ event.title|escapejs }}')" class="btn btn-delete">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3 style="color: var(--text-primary); font-size: 1.5rem; margin-bottom: 0.5rem;">No Events Yet</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Create your first event to start earning revenue</p>
+        <a href="{% url 'create_event' %}" class="action-btn primary" style="display: inline-flex; width: auto;">
+            <i class="bi bi-plus-circle"></i> Create Event
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DELETE MODAL
+     ═══════════════════════════════════════════════════════════ -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3 class="modal-title">Delete Event?</h3>
+        <p class="modal-text" id="deleteMessage"></p>
+        <div class="modal-actions">
+            <button onclick="closeModal()" class="btn-modal btn-cancel">Cancel</button>
+            <button onclick="executeDelete()" class="btn-modal btn-confirm">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHART.JS & JAVASCRIPT
+     ═══════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+const isDark = currentTheme === 'dark';
+
+Chart.defaults.color = isDark ? '#9CA3AF' : '#525252';
+Chart.defaults.borderColor = isDark ? '#2A2A2A' : '#e5e5e5';
+
+// ═══════════════════════════════════════════════════════════
+// REVENUE CHART
+// ═══════════════════════════════════════════════════════════
+const revenueCtx = document.getElementById('revenueChart');
+if (revenueCtx) {
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: {{ revenue_labels|safe }},
+            datasets: [{
+                label: 'Revenue (Ksh)',
+                data: {{ revenue_data|safe }},
+                borderColor: '#FF4D4D',
+                backgroundColor: 'rgba(255, 77, 77, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 8,
+                pointBackgroundColor: '#FF4D4D',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+                    titleColor: isDark ? '#fff' : '#0a0a0a',
+                    bodyColor: isDark ? '#9CA3AF' : '#525252',
+                    borderColor: isDark ? '#2A2A2A' : '#e5e5e5',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Ksh ' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: isDark ? '#2A2A2A' : '#f0f0f0',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return 'Ksh ' + value.toLocaleString();
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CATEGORY CHART
+// ═══════════════════════════════════════════════════════════
+const categoryCtx = document.getElementById('categoryChart');
+if (categoryCtx) {
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_labels|safe }},
+            datasets: [{
+                data: {{ category_data|safe }},
+                backgroundColor: [
+                    '#FF4D4D',
+                    '#10B981',
+                    '#6366F1',
+                    '#F59E0B',
+                    '#8B5CF6'
+                ],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: { size: 11 },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+                    titleColor: isDark ? '#fff' : '#0a0a0a',
+                    bodyColor: isDark ? '#9CA3AF' : '#525252',
+                    borderColor: isDark ? '#2A2A2A' : '#e5e5e5',
+                    borderWidth: 1,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed + ' tickets';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// TIME PERIOD FILTER
+// ═══════════════════════════════════════════════════════════
+function filterPeriod(period) {
+    window.location.href = '?period=' + period;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DELETE EVENT
+// ═══════════════════════════════════════════════════════════
+let eventToDelete = null;
+
+function confirmDelete(eventId, eventTitle) {
+    eventToDelete = eventId;
+    document.getElementById('deleteMessage').textContent =
+        `Are you sure you want to delete "${eventTitle}"? This action cannot be undone.`;
+    document.getElementById('deleteModal').classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('deleteModal').classList.remove('show');
+    eventToDelete = null;
+}
+
+function executeDelete() {
+    if (!eventToDelete) return;
+
+    const confirmBtn = document.querySelector('.btn-confirm');
+    const originalText = confirmBtn.textContent;
+    confirmBtn.textContent = 'Deleting...';
+    confirmBtn.disabled = true;
+
+    fetch(`/dashboard/${eventToDelete}/delete/`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            return response.json().then(data => {
+                throw new Error(data.error || 'Failed to delete event');
+            });
+        }
+    })
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Delete error:', error);
+        alert(error.message || 'An error occurred while deleting the event');
+        confirmBtn.textContent = originalText;
+        confirmBtn.disabled = false;
+    });
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+{% endblock %}

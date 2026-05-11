@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}The ZOZAPRIME Ledger — Live Events & Tickets in Kenya{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Blog Specific Layout */
+    .blog-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 3rem;
+    }
+
+    .page-title {
+        font-family: var(--font-display);
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 1rem auto;
+        font-size: 1.1rem;
+    }
+
+    /* Grid for Blog Posts */
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2.5rem;
+    }
+
+    /* Blog Card */
+    .blog-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        overflow: hidden;
+        transition: all 0.3s var(--ease);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        text-decoration: none;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--coral);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .image-wrapper {
+        position: relative;
+        aspect-ratio: 16/9;
+        overflow: hidden;
+        background: var(--bg-tertiary);
+    }
+
+    .blog-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s var(--ease);
+    }
+
+    .blog-card:hover .blog-img {
+        transform: scale(1.1);
+    }
+
+    /* Category Badge - HIDDEN */
+    .category-badge {
+        display: none;
+    }
+
+    .card-content {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .post-date {
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+    }
+
+    .post-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .post-excerpt {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-footer {
+        margin-top: auto;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .author-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--coral-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--coral);
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .read-time {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        grid-column: 1/-1;
+        text-align: center;
+        padding: 5rem 0;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        color: var(--text-tertiary);
+        opacity: 0.3;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .empty-state-title {
+        font-family: var(--font-display);
+        color: var(--text-secondary);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-text {
+        color: var(--text-tertiary);
+    }
+
+    @media (max-width: 768px) {
+        .blog-container {
+            padding: 1.5rem 1.5rem;
+        }
+        
+        .page-title { 
+            font-size: 2.25rem; 
+        }
+        
+        .blog-grid { 
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="blog-container" style="margin-top: 40px;">
+    
+    <header class="page-header text-center">
+        <h1 class="page-title">The ZOZAPRIME Ledger<span style="color: var(--coral);">.</span></h1>
+    
+    </header>
+
+    <div class="blog-grid">
+        {% for post in posts %}
+        <a href="{% url 'blog:detail' post.slug %}" class="blog-card">
+            <div class="image-wrapper">
+                {% if post.featured_image %}
+                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="blog-img">
+                {% else %}
+                    <div style="width:100%; height:100%; background: linear-gradient(135deg, var(--coral-bg) 0%, var(--bg-tertiary) 100%); display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-image" style="font-size: 3rem; color: var(--text-tertiary); opacity: 0.3;"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="card-content">
+                <div class="post-date">{{ post.created_at|date:"M d, Y" }}</div>
+                <h2 class="post-title">{{ post.title }}</h2>
+                <p class="post-excerpt">
+                    {{ post.meta_description|default:post.content|striptags|truncatechars:120 }}
+                </p>
+
+                <div class="card-footer">
+                    <div class="author-info">
+                        <div class="author-avatar">
+                            {{ post.author.username|first|upper }}
+                        </div>
+                        {{ post.author.get_full_name|default:post.author.username }}
+                    </div>
+                    <div class="read-time">
+                        <i class="bi bi-eye"></i>
+                        <span>{{ post.views }} views</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <i class="bi bi-journal-x empty-state-icon"></i>
+            <h2 class="empty-state-title">The Ledger is being written...</h2>
+            <p class="empty-state-text">No posts published yet. Check back soon for fresh insights!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

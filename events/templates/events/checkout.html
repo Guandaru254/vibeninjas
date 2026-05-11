@@ -1,0 +1,934 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if all_free %}RSVP — {{ event.title }}{% else %}Checkout — {{ event.title }}{% endif %} — ZOZAPRIME
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════════════
+   CHECKOUT — ZOZAPRIME
+   Mobile-first: Info → Summary → Pay
+   ══════════════════════════════════════════════════════════ */
+
+.checkout-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: 6rem;
+}
+
+/* Desktop: form left, summary right */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* ── FORM CONTAINER ── */
+.checkout-form-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+}
+
+.checkout-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.checkout-subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+/* Free RSVP header variant */
+.checkout-title.free-title {
+  color: #10b981;
+}
+
+.free-badge-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 100px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: inline-flex;
+}
+
+/* ── FORM SECTIONS ── */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.section-title i { color: var(--coral); }
+
+.form-group { margin-bottom: 1.35rem; }
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--coral);
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--coral);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.form-input.error { border-color: var(--danger); }
+
+.field-hint {
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+  margin-top: 0.4rem;
+  display: block;
+}
+
+.error-message {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: none;
+}
+
+.error-message.show { display: block; }
+
+/* ── ORDER SUMMARY ── */
+.order-summary {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  position: sticky;
+  top: 100px;
+}
+
+.summary-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* Event preview */
+.event-preview {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.event-preview-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.event-preview-img-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-size: 1.5rem;
+}
+
+.event-preview-info h4 {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+
+.event-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.event-preview-meta span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Ticket items */
+.tickets-list { margin-bottom: 1.25rem; }
+
+.ticket-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.875rem 1rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  margin-bottom: 0.6rem;
+  gap: 0.5rem;
+}
+
+.ticket-item-info h5 {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.ticket-item-info p {
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.ticket-badge {
+  font-size: 0.68rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.badge-free {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badge-bundle {
+  background: var(--coral-bg, rgba(255, 77, 77, 0.08));
+  color: var(--coral);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+.ticket-subtotal {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ticket-subtotal.free-subtotal { color: #10b981; }
+.ticket-subtotal.paid-subtotal { color: var(--coral); }
+
+/* Price breakdown */
+.price-breakdown {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.price-row span:first-child {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.price-row span:last-child {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.price-row.total {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 2px solid var(--glass-border);
+}
+
+.price-row.total span:last-child {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.6rem;
+}
+
+.price-row.total span:last-child.free-total { color: #10b981; }
+.price-row.total span:last-child.paid-total { color: var(--coral); }
+
+/* ── PAYMENT BUTTON AREA ── */
+.payment-area {
+  margin-top: 2rem;
+}
+
+.payment-btn {
+  width: 100%;
+  padding: 1.2rem;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: var(--font-body);
+}
+
+.payment-btn.mpesa-btn {
+  background: linear-gradient(135deg, var(--coral), #ff6b6b);
+  color: white;
+}
+
+.payment-btn.rsvp-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.payment-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.payment-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.secure-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+}
+
+.secure-badge i { color: var(--success, #10b981); }
+
+/* ── STATUS MODAL ── */
+.status-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.status-modal.show { display: flex; }
+
+.status-content {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+}
+
+.status-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1.25rem;
+  line-height: 1;
+}
+
+.status-icon.pending { color: #f59e0b; }
+.status-icon.success { color: #10b981; }
+.status-icon.error   { color: var(--danger, #ef4444); }
+
+.status-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.status-message {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ── RESPONSIVE ── */
+
+/* Mobile: stack vertically — Info → Summary → Pay */
+@media (max-width: 1023px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* On mobile, summary comes AFTER the form fields */
+  .checkout-form-container { order: 1; }
+  .order-summary {
+    order: 2;
+    position: static;
+  }
+  /* Payment button area is inside the form container so it naturally falls after summary */
+}
+
+@media (max-width: 768px) {
+  .checkout-wrapper {
+    padding: 1.5rem 1rem;
+    padding-top: 5rem;
+  }
+
+  .checkout-form-container,
+  .order-summary {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .checkout-title { font-size: 1.6rem; }
+}
+
+@media (max-width: 480px) {
+  .checkout-wrapper {
+    padding: 1rem 0.75rem;
+    padding-top: 4.5rem;
+  }
+
+  .checkout-form-container,
+  .order-summary {
+    padding: 1.4rem 1rem;
+    border-radius: 16px;
+  }
+
+  .status-content {
+    padding: 2rem 1.5rem;
+  }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-wrapper">
+
+  <form id="checkoutForm" method="post">
+    {% csrf_token %}
+
+    <div class="checkout-grid">
+
+      <!-- ══ LEFT: CUSTOMER INFO FORM ══ -->
+      <div class="checkout-form-container">
+
+        {% if all_free %}
+          <div class="free-badge-header">
+            <i class="bi bi-gift"></i> Free Entry
+          </div>
+          <h1 class="checkout-title free-title">Confirm Your RSVP</h1>
+          <p class="checkout-subtitle">Just your details — no payment needed.</p>
+        {% else %}
+          <h1 class="checkout-title">Complete Your Purchase</h1>
+          <p class="checkout-subtitle">You're almost there — fill in your details to get your tickets.</p>
+        {% endif %}
+
+        <!-- Hidden routing fields -->
+        {% if ticket_selections %}
+          {% with first=ticket_selections.0 %}
+            <input type="hidden" name="category_id" id="categoryId" value="{{ first.category.id }}">
+            <input type="hidden" name="quantity" id="quantityField" value="{{ first.quantity }}">
+            <input type="hidden" name="promo_code_used" id="hiddenPromoInput" value="{{ active_promo|default:'' }}">
+          {% endwith %}
+        {% endif %}
+        <input type="hidden" name="event_pk" id="eventPk" value="{{ event.pk }}">
+
+        <!-- Customer Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="bi bi-person-circle"></i>
+            Your Information
+          </h3>
+
+          <div class="form-group">
+            <label class="form-label required">Full Name</label>
+            <input type="text"
+                   name="buyer_name"
+                   id="buyerName"
+                   class="form-input"
+                   placeholder="Your full name"
+                   value="{% if user.is_authenticated %}{{ user.get_full_name }}{% endif %}"
+                   autocomplete="name"
+                   required>
+            <div class="error-message" id="nameError"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Email Address</label>
+            <input type="email"
+                   name="buyer_email"
+                   id="buyerEmail"
+                   class="form-input"
+                   placeholder="your@email.com"
+                   value="{% if user.is_authenticated %}{{ user.email }}{% endif %}"
+                   autocomplete="email"
+                   required>
+            <span class="field-hint">Your ticket will be sent here</span>
+            <div class="error-message" id="emailError"></div>
+          </div>
+
+          {% if not all_free %}
+          <div class="form-group">
+            <label class="form-label required">M-Pesa Phone Number</label>
+            <input type="tel"
+                   name="buyer_phone"
+                   id="buyerPhone"
+                   class="form-input"
+                   placeholder="e.g. 0712 345 678"
+                   pattern="(254|0)[0-9]{9}"
+                   title="Format: 0712345678 or 254712345678"
+                   autocomplete="tel"
+                   required>
+            <span class="field-hint">Format: 0712 345 678 — you'll get an M-Pesa prompt</span>
+            <div class="error-message" id="phoneError"></div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Global form error -->
+        <div class="error-message" id="formError" style="text-align:center; margin-bottom:1rem; font-size:0.95rem;"></div>
+
+        <!-- ══ PAYMENT / RSVP BUTTON ══
+             Lives inside the form container so on mobile it renders AFTER
+             the order summary (which is order:2 via CSS grid ordering).
+             On desktop it shows below the form fields on the left. -->
+        <div class="payment-area">
+          {% if all_free %}
+            <button type="submit" class="payment-btn rsvp-btn" id="payBtn">
+              <i class="bi bi-gift"></i>
+              Confirm Free RSVP
+            </button>
+            <div class="secure-badge">
+              <i class="bi bi-check-circle"></i>
+              Free entry — no card or M-Pesa needed
+            </div>
+          {% else %}
+            <button type="submit" class="payment-btn mpesa-btn" id="payBtn">
+              <i class="bi bi-phone"></i>
+              Pay Ksh {{ total_amount|floatformat:0 }} with M-Pesa
+            </button>
+            <div class="secure-badge">
+              <i class="bi bi-shield-check"></i>
+              Secured by Safaricom M-Pesa
+            </div>
+          {% endif %}
+        </div>
+
+      </div><!-- /checkout-form-container -->
+
+      <!-- ══ RIGHT: ORDER SUMMARY ══ -->
+      <div class="order-summary">
+        <h2 class="summary-title">Order Summary</h2>
+
+        <!-- Event preview -->
+        <div class="event-preview">
+          {% if event.image %}
+            <img src="{{ event.image.url }}"
+                 alt="{{ event.title }}"
+                 class="event-preview-img">
+          {% else %}
+            <div class="event-preview-img-placeholder">
+              <i class="bi bi-calendar-event"></i>
+            </div>
+          {% endif %}
+          <div class="event-preview-info">
+            <h4>{{ event.title }}</h4>
+            <div class="event-preview-meta">
+              <span>
+                <i class="bi bi-calendar-event"></i>
+                {{ event.date|date:"D, M j, Y" }}
+              </span>
+              <span>
+                <i class="bi bi-clock"></i>
+                {{ event.date|time:"g:i A" }}
+              </span>
+              <span>
+                <i class="bi bi-geo-alt"></i>
+                {{ event.location }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ticket line items -->
+        <div class="tickets-list">
+          {% for selection in ticket_selections %}
+          <div class="ticket-item">
+            <div class="ticket-item-info">
+              <h5>
+                {{ selection.category.name }}
+                {% if selection.is_free %}
+                  <span class="ticket-badge badge-free">FREE</span>
+                {% endif %}
+                {% if selection.is_bundle and selection.bundle_label %}
+                  <span class="ticket-badge badge-bundle">{{ selection.bundle_label }}</span>
+                {% endif %}
+              </h5>
+              <p>
+                {{ selection.quantity }}
+                × {% if selection.is_free %}Free{% else %}Ksh {{ selection.unit_price|floatformat:0 }}{% endif %}
+                {% if selection.is_bundle and selection.total_people > 1 %}
+                  &nbsp;·&nbsp; {{ selection.total_people }} people
+                {% endif %}
+              </p>
+            </div>
+            <div class="ticket-subtotal {% if selection.is_free %}free-subtotal{% else %}paid-subtotal{% endif %}">
+              {% if selection.is_free %}Free{% else %}Ksh {{ selection.subtotal|floatformat:0 }}{% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="promo-section" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1.5px dashed var(--glass-border);">
+    <label class="form-label" style="font-size: 0.85rem; opacity: 0.8;">Have a promo code?</label>
+    <div class="promo-input-group" style="display: flex; gap: 10px; margin-top: 0.5rem;">
+        <input type="text" id="promoCodeInput" class="form-input" 
+               placeholder="e.g. MAGIK" 
+               value="{{ active_promo|default:'' }}" 
+               style="padding: 0.6rem; font-size: 0.9rem; text-transform: uppercase;">
+        <button type="button" onclick="applyPromoCode()" class="btn-search" style="padding: 0 1.2rem; height: 42px;">
+            Apply
+        </button>
+    </div>
+    <div id="promoMessage" style="font-size: 0.8rem; margin-top: 0.5rem; font-weight: 600;"></div>
+</div>
+
+        <!-- Price breakdown -->
+        <div class="price-breakdown">
+          {% if not all_free %}
+          <div class="price-row">
+            <span>Subtotal</span>
+            <span>Ksh {{ total_amount|floatformat:0 }}</span>
+          </div>
+          <div class="price-row">
+            <span>Service Fee</span>
+            <span>Ksh 0</span>
+          </div>
+          {% endif %}
+          <div class="price-row total">
+            <span>Total</span>
+            <span class="{% if all_free %}free-total{% else %}paid-total{% endif %}">
+              {% if all_free %}Free{% else %}Ksh {{ total_amount|floatformat:0 }}{% endif %}
+            </span>
+          </div>
+        </div>
+      </div><!-- /order-summary -->
+
+    </div><!-- /checkout-grid -->
+  </form>
+</div>
+
+<!-- ══ STATUS MODAL (M-Pesa only) ══ -->
+{% if not all_free %}
+<div class="status-modal" id="statusModal">
+  <div class="status-content">
+    <div class="status-icon pending" id="statusIcon">
+      <i class="bi bi-hourglass-split"></i>
+    </div>
+    <h2 class="status-title" id="statusTitle">Processing...</h2>
+    <p class="status-message" id="statusMessage">Please wait while we initiate your M-Pesa payment.</p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('checkoutForm');
+  const btn  = document.getElementById('payBtn');
+  const isFree = {{ all_free|yesno:"true,false" }};
+
+  // ── FREE RSVP: simple form POST, no AJAX ──
+  if (isFree) {
+    form.addEventListener('submit', function (e) {
+      const name  = document.getElementById('buyerName').value.trim();
+      const email = document.getElementById('buyerEmail').value.trim();
+      const formError = document.getElementById('formError');
+
+      if (!name || !email) {
+        e.preventDefault();
+        formError.textContent = 'Please enter your name and email to RSVP.';
+        formError.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Confirming RSVP...';
+    });
+    return; // Don't attach AJAX handler for free tickets
+  }
+
+  // ── PAID: AJAX M-Pesa flow ──
+  const modal        = document.getElementById('statusModal');
+  const statusIcon   = document.getElementById('statusIcon');
+  const statusTitle  = document.getElementById('statusTitle');
+  const statusMsg    = document.getElementById('statusMessage');
+  const formError    = document.getElementById('formError');
+  const eventPk      = document.getElementById('eventPk').value;
+
+  function setModal(type, title, message) {
+    statusIcon.className = `status-icon ${type}`;
+    const icons = { pending: 'bi-hourglass-split', success: 'bi-check-circle', error: 'bi-x-circle' };
+    statusIcon.innerHTML = `<i class="bi ${icons[type] || 'bi-hourglass-split'}"></i>`;
+    statusTitle.textContent  = title;
+    statusMsg.textContent    = message;
+  }
+
+  function resetBtn() {
+    // Dynamically get the price currently shown on the screen
+    const currentPrice = document.querySelector('.paid-total').innerText;
+    btn.disabled = false;
+    btn.innerHTML = `<i class="bi bi-phone"></i> Pay ${currentPrice} with M-Pesa`;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    formError.textContent = '';
+    formError.classList.remove('show');
+
+    // Phone format normalisation client-side
+    const rawPhone = document.getElementById('buyerPhone').value.trim();
+    let phone = rawPhone.replace(/[\s\-+]/g, '');
+    if (phone.startsWith('0')) phone = '254' + phone.slice(1);
+
+    if (!/^254[0-9]{9}$/.test(phone)) {
+      document.getElementById('phoneError').textContent = 'Use format: 0712345678';
+      document.getElementById('phoneError').classList.add('show');
+      document.getElementById('buyerPhone').classList.add('error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+
+    modal.classList.add('show');
+    setModal('pending', 'Initiating Payment...', 'Please wait a moment.');
+
+    // Always pull a fresh CSRF token from the DOM right before sending
+    const currentCsrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const formData = new FormData();
+    formData.append('buyer_name',  document.getElementById('buyerName').value.trim());
+    formData.append('buyer_email', document.getElementById('buyerEmail').value.trim());
+    formData.append('buyer_phone', phone);
+    formData.append('category_id', document.getElementById('categoryId').value);
+    formData.append('quantity',    document.getElementById('quantityField').value);
+    
+    // BRIDGE 1: Pass the promo code to M-Pesa flow
+    formData.append('promo_code_used', document.getElementById('hiddenPromoInput').value);
+    formData.append('csrfmiddlewaretoken', currentCsrfToken);
+
+    try {
+      const res  = await fetch(`/payments/initiate-mpesa-payment/{{ event.slug }}/`, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-CSRFToken': currentCsrfToken }
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setModal('pending', 'Wait for STK Push',
+          data.message || 'Enter your M-Pesa PIN.');
+
+        const transactionId = data.transaction_id;
+        let polls = 0;
+        const MAX_POLLS = 60; // 3 minutes max
+
+        const poll = setInterval(async () => {
+          polls++;
+          try {
+            const sr   = await fetch(`/payments/check-payment-status/${transactionId}/`);
+            const sd   = await sr.json();
+
+            if (sd.status === 'success') {
+              clearInterval(poll);
+              setModal('success', 'Payment Successful!', 'Redirecting to your ticket...');
+              setTimeout(() => {
+                window.location.href = `/payments/ticket-confirmation/${transactionId}/`;
+              }, 2000);
+
+            } else if (sd.status === 'failed' || sd.status === 'cancelled') {
+              clearInterval(poll);
+              const msg = sd.status === 'cancelled'
+                ? 'You cancelled the payment. Feel free to try again.'
+                : 'Payment was not successful. Please try again.';
+              setModal('error', 'Payment Failed', msg);
+              setTimeout(() => { modal.classList.remove('show'); resetBtn(); }, 3500);
+
+            } else if (polls >= MAX_POLLS) {
+              clearInterval(poll);
+              setModal('pending', 'Payment Pending',
+                'Your payment is still processing. Check "My Tickets" in a few minutes.');
+              setTimeout(() => { window.location.href = '/profile/tickets/'; }, 4000);
+            }
+          } catch (err) {
+            console.error('Poll error:', err);
+          }
+        }, 3000);
+
+      } else {
+        setModal('error', 'Payment Failed', data.error || 'Unable to initiate payment. Please try again.');
+        setTimeout(() => { modal.classList.remove('show'); resetBtn(); }, 3500);
+        formError.textContent = data.error || 'Payment failed. Please try again.';
+        formError.classList.add('show');
+      }
+
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setModal('error', 'Connection Error',
+        'Unable to reach payment server. Check your internet and try again.');
+      setTimeout(() => { modal.classList.remove('show'); resetBtn(); }, 3500);
+      formError.textContent = 'Connection error. Please try again.';
+      formError.classList.add('show');
+    }
+  });
+
+  // AUTO-APPLY: Run on page load if the Link Catcher found a code
+  const promoInputOnLoad = document.getElementById('promoCodeInput');
+  if (promoInputOnLoad && promoInputOnLoad.value !== "") {
+    console.log("Auto-applying stored promo...");
+    applyPromoCode();
+  }
+});
+
+function applyPromoCode() {
+  console.log("Apply button clicked...");
+  
+  const codeInput = document.getElementById('promoCodeInput');
+  const code = codeInput.value.trim().toUpperCase(); 
+  
+  if (!code) {
+    console.log("No code entered.");
+    return;
+  }
+
+  const eventId = "{{ event.slug }}";
+  const totalAmount = "{{ total_amount }}"; 
+  const messageDiv = document.getElementById('promoMessage');
+  
+  // Dynamic CSRF for the Promo AJAX call
+  const currentCsrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  console.log(`Validating ${code} for event ${eventId}...`);
+
+  fetch("{% url 'validate_promo_code' %}", {
+      method: "POST",
+      headers: {
+          "X-CSRFToken": currentCsrfToken,
+          "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `code=${code}&event_id=${eventId}&total=${totalAmount}`
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.valid) {
+          console.log("Promo valid! New total:", data.new_total);
+          
+          // BRIDGE 2: Sync the hidden input so the M-Pesa submission sees the code
+          document.getElementById('hiddenPromoInput').value = code;
+
+          // 1. Update the 'paid-total' spans (Subtotal and Total)
+          document.querySelectorAll('.paid-total').forEach(el => {
+              el.innerText = `Ksh ${Math.round(data.new_total)}`;
+          });
+
+          // 2. Update the M-Pesa Button Text
+          const payBtn = document.getElementById('payBtn');
+          if (payBtn) {
+              payBtn.innerHTML = `<i class="bi bi-phone"></i> Pay Ksh ${Math.round(data.new_total)} with M-Pesa`;
+          }
+
+          messageDiv.innerText = data.message;
+          messageDiv.style.color = "#10b981"; 
+      } else {
+          console.log("Promo invalid:", data.message);
+          messageDiv.innerText = data.message;
+          messageDiv.style.color = "#ef4444"; 
+          // Clear hidden input if code is invalid
+          document.getElementById('hiddenPromoInput').value = "";
+      }
+  })
+  .catch(error => {
+      console.error('Fetch Error:', error);
+      messageDiv.innerText = "Connection error. Refresh the page and try again.";
+  });
+}
+</script>
+{% endblock %}

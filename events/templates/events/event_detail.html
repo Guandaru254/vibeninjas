@@ -1,0 +1,546 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} — ZOZAPRIME{% endblock %}
+
+{% block extra_css %}
+<style>
+.event-hero {
+  position: relative; margin-top: 72px;
+  background: var(--bg-primary); padding: 2rem 0;
+}
+.event-hero-content { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+.hero-breadcrumb {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: var(--text-tertiary); font-size: 0.875rem; margin-bottom: 1.5rem;
+}
+.hero-breadcrumb a { color: var(--text-tertiary); text-decoration: none; transition: color var(--t-fast); }
+.hero-breadcrumb a:hover { color: var(--coral); }
+.event-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900; color: var(--text-primary);
+  margin-bottom: 1.5rem; line-height: 1.2;
+}
+.event-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
+.meta-item { display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem; }
+.meta-icon {
+  width: 48px; height: 48px; background: var(--coral-bg);
+  border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; color: var(--coral); font-size: 1.25rem;
+}
+.event-content { max-width: 1400px; margin: 0 auto; padding: 3rem 2rem; }
+.content-grid { display: grid; grid-template-columns: 1fr 420px; gap: 2rem; }
+.event-details { display: flex; flex-direction: column; gap: 2rem; }
+.detail-card {
+  background: var(--glass-bg); backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border); border-radius: 20px;
+  padding: 2rem; box-shadow: var(--shadow-md);
+}
+.event-image-card { padding: 0; overflow: hidden; }
+.event-image-card img {
+  width: 100%; height: auto; max-height: 500px;
+  object-fit: cover; display: block; border-radius: 20px;
+}
+.card-header-custom {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.5rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+.card-icon {
+  width: 48px; height: 48px; background: var(--coral-bg);
+  border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; color: var(--coral); font-size: 1.3rem;
+}
+.card-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin: 0; }
+.event-description { color: var(--text-secondary); line-height: 1.8; font-size: 1rem; white-space: pre-wrap; }
+.event-badges { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.badge-custom {
+  padding: 0.5rem 1rem; border-radius: 100px; font-size: 0.85rem;
+  font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.badge-primary { background: var(--coral-bg); color: var(--coral); }
+.badge-success { background: rgba(16,185,129,0.15); color: var(--success); }
+.badge-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+.booking-card {
+  background: var(--glass-bg); backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border); border-radius: 20px;
+  padding: 2rem; box-shadow: var(--shadow-lg);
+  position: sticky; top: 92px;
+  max-height: calc(100vh - 120px); overflow-y: auto;
+}
+.ticket-category {
+  background: var(--bg-secondary); border: 2px solid var(--glass-border);
+  border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; transition: all var(--t-base);
+}
+.ticket-category:hover:not(.unavailable) {
+  transform: translateY(-2px); border-color: rgba(255,77,77,0.4); box-shadow: var(--shadow-sm);
+}
+.ticket-category.unavailable { opacity: 0.5; cursor: not-allowed; }
+.ticket-category.free-tier { border-color: rgba(16,185,129,0.3); }
+.ticket-category.free-tier:hover:not(.unavailable) { border-color: #10b981; }
+.ticket-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem; }
+.ticket-name { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
+.ticket-desc { font-size: 0.85rem; color: var(--text-secondary); }
+.ticket-price { font-size: 1.75rem; font-weight: 800; font-family: var(--font-display); color: var(--text-primary); white-space: nowrap; }
+.ticket-price.is-free { color: #10b981; font-size: 1.4rem; }
+.bundle-badge {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: var(--coral-bg); color: var(--coral);
+  padding: 0.2rem 0.65rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700; margin-top: 0.3rem;
+}
+.per-person { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.2rem; }
+.ticket-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 0.75rem; border-top: 1px solid var(--glass-border); margin-top: 0.75rem;
+}
+.category-quantity-selector { display: flex; align-items: center; gap: 0.75rem; }
+.qty-btn-small {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid var(--border-color); background: var(--bg-tertiary);
+  color: var(--text-primary); font-size: 1.2rem; cursor: pointer;
+  transition: all var(--t-fast); display: flex; align-items: center; justify-content: center;
+}
+.qty-btn-small:hover:not(:disabled) { border-color: var(--coral); color: var(--coral); background: var(--coral-bg); }
+.qty-btn-small:disabled { opacity: 0.3; cursor: not-allowed; }
+.qty-display-small {
+  font-size: 1.25rem; font-weight: 700;
+  font-family: var(--font-display); color: var(--text-primary);
+  min-width: 40px; text-align: center;
+}
+.btn-book {
+  width: 100%; padding: 1.25rem; background: var(--coral); color: white;
+  border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem;
+  cursor: pointer; transition: all var(--t-base);
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1.5rem;
+}
+.btn-book:hover:not(:disabled) { background: var(--coral-dark); transform: translateY(-2px); box-shadow: 0 12px 24px var(--coral-glow); }
+.btn-book:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-book.free-btn { background: #10b981; }
+.btn-book.free-btn:hover:not(:disabled) { background: #059669; box-shadow: 0 12px 24px rgba(16,185,129,0.3); }
+.security-badge {
+  text-align: center; margin-top: 1.5rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
+  color: var(--text-tertiary); font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.action-buttons { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+.btn-action {
+  flex: 1; padding: 1rem; background: var(--bg-secondary);
+  border: 1px solid var(--glass-border); border-radius: 12px;
+  color: var(--text-primary); font-weight: 600; cursor: pointer;
+  transition: all var(--t-fast); display: flex; align-items: center;
+  justify-content: center; gap: 0.5rem; text-decoration: none;
+}
+.btn-action:hover { background: var(--coral-bg); border-color: var(--coral); color: var(--coral); }
+.checkout-summary {
+  background: var(--bg-secondary); border-radius: 14px;
+  padding: 1.5rem; margin-top: 1.5rem; border: 1px solid var(--glass-border);
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.75rem 0; color: var(--text-secondary); font-size: 0.95rem;
+}
+.summary-row.total {
+  border-top: 2px solid var(--glass-border); margin-top: 0.5rem;
+  padding-top: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);
+}
+.modal-content {
+  background: var(--glass-bg); backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border); border-radius: 20px;
+}
+.modal-header { border-bottom: 1px solid var(--glass-border); padding: 1.5rem 2rem; }
+.modal-title { font-family: var(--font-display); font-weight: 700; color: var(--text-primary); }
+.modal-body { padding: 2rem; }
+.share-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.share-btn {
+  display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
+  background: var(--bg-secondary); border: 1.5px solid var(--glass-border);
+  border-radius: 12px; cursor: pointer; transition: all var(--t-fast);
+  text-decoration: none; color: var(--text-primary);
+}
+.share-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); color: var(--text-primary); }
+.share-btn.whatsapp:hover { border-color: #25D366; }
+.share-btn.twitter:hover { border-color: #1DA1F2; }
+.share-btn.facebook:hover { border-color: #1877F2; }
+.share-btn.copy:hover { border-color: var(--coral); }
+.share-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.share-icon.whatsapp { background: rgba(37,211,102,0.15); color: #25D366; }
+.share-icon.twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
+.share-icon.facebook { background: rgba(24,119,242,0.15); color: #1877F2; }
+.share-icon.copy { background: var(--coral-bg); color: var(--coral); }
+@media (max-width: 1024px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .booking-card { position: relative; top: 0; max-height: none; }
+}
+@media (max-width: 768px) {
+  .event-title { font-size: 2rem; }
+  .event-hero-content, .event-content { padding-left: 1rem; padding-right: 1rem; }
+  .detail-card, .booking-card { padding: 1.5rem; }
+  .event-meta { gap: 1rem; }
+  .meta-icon { width: 40px; height: 40px; }
+  .share-options { grid-template-columns: 1fr; }
+  .event-image-card img { max-height: 300px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="event-hero">
+  <div class="event-hero-content">
+    <div class="hero-breadcrumb">
+      <a href="{% url 'home' %}">Home</a>
+      <i class="bi bi-chevron-right"></i>
+      <a href="{% url 'event_list' %}">Events</a>
+      <i class="bi bi-chevron-right"></i>
+      <span>{{ event.title }}</span>
+    </div>
+    <h1 class="event-title">{{ event.title }}</h1>
+    <div class="event-meta">
+      <div class="meta-item">
+        <div class="meta-icon"><i class="bi bi-calendar-event"></i></div>
+        <div>
+          <div style="font-weight:600;color:var(--text-primary);">{{ event.date|date:"l, F d, Y" }}</div>
+          <div>{{ event.date|date:"g:i A" }}</div>
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-icon"><i class="bi bi-geo-alt"></i></div>
+        <div>
+          <div style="font-weight:600;color:var(--text-primary);">Location</div>
+          <div>{{ event.location }}</div>
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-icon"><i class="bi bi-person"></i></div>
+        <div>
+          <div style="font-weight:600;color:var(--text-primary);">Organizer</div>
+          <div>{{ event.organizer.get_full_name|default:event.organizer.username }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="event-content">
+  <div class="content-grid">
+
+    <!-- LEFT -->
+    <div class="event-details">
+
+      <div class="event-badges">
+        <span class="badge-custom badge-primary">
+          <i class="bi bi-tag"></i> {{ event.category.name }}
+        </span>
+        {% if event.has_free_tickets %}
+          <span class="badge-custom" style="background:rgba(16,185,129,0.15);color:#10b981;">
+            <i class="bi bi-gift"></i> Free Entry 
+          </span>
+        {% endif %}
+        {% if event.date < now %}
+          <span class="badge-custom badge-danger"><i class="bi bi-calendar-x"></i> Past Event</span>
+        {% elif not event.get_available_categories.exists %}
+          <span class="badge-custom badge-danger"><i class="bi bi-x-circle"></i> Sold Out</span>
+        {% else %}
+          <span class="badge-custom badge-success"><i class="bi bi-check-circle"></i> Tickets Available</span>
+        {% endif %}
+      </div>
+
+      {% if event.image %}
+      <div class="detail-card event-image-card">
+        <img src="{{ event.image.url }}" alt="{{ event.title }}">
+      </div>
+      {% endif %}
+
+      <div class="detail-card">
+        <div class="card-header-custom">
+          <div class="card-icon"><i class="bi bi-info-circle"></i></div>
+          <h3 class="card-title">About This Event</h3>
+        </div>
+        <p class="event-description">{{ event.description }}</p>
+      </div>
+
+    </div>
+
+    <!-- RIGHT — BOOKING -->
+    <div>
+      <div class="booking-card">
+        <div class="card-header-custom">
+          <div class="card-icon"><i class="bi bi-ticket-perforated"></i></div>
+          <h3 class="card-title">Get Tickets</h3>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-action" data-bs-toggle="modal" data-bs-target="#shareModal">
+            <i class="bi bi-share"></i> Share
+          </button>
+          <button class="btn-action" onclick="addToWishlist()">
+            <i class="bi bi-heart"></i> Wishlist
+          </button>
+        </div>
+
+        <form id="booking-form" method="GET" action="{% url 'checkout' event.slug %}">
+          <input type="hidden" name="tickets" id="tickets-data">
+
+          {% for category in event.ticket_categories.all %}
+          {% with is_avail=category.is_available %}
+          <div class="ticket-category {% if not is_avail %}unavailable{% endif %} {% if category.is_free %}free-tier{% endif %}"
+               data-category-id="{{ category.id }}"
+               data-available="{{ category.available_tickets }}"
+               data-max="{{ category.max_tickets_per_purchase }}"
+               data-price="{{ category.effective_price }}"
+               data-is-free="{{ category.is_free|lower }}"
+               data-bundle-size="{{ category.bundle_size }}"
+               data-is-available="{{ is_avail|lower }}">
+
+            <div class="ticket-header">
+              <div>
+                <div class="ticket-name">{{ category.name }}</div>
+                {% if category.is_bundle and category.bundle_size > 1 %}
+                  <div class="bundle-badge">
+                    <i class="bi bi-people-fill"></i> {{ category.bundle_label|default:"Bundle" }}
+                  </div>
+                  {% if not category.is_free %}
+                  <div class="per-person">Ksh {{ category.per_person_price|floatformat:0 }} per person</div>
+                  {% endif %}
+                {% elif category.is_free %}
+                  <div class="ticket-desc"><i class="bi bi-gift-fill" style="color:#10b981;"></i> Free entry — RSVP required</div>
+                {% else %}
+                  <div class="ticket-desc">{{ category.description|default:"Standard ticket" }}</div>
+                {% endif %}
+              </div>
+              {% if category.is_free %}
+                <div class="ticket-price is-free">FREE</div>
+              {% else %}
+                <div class="ticket-price">Ksh {{ category.price|floatformat:0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="ticket-footer">
+              <div>
+                {% if is_avail %}
+                  <span class="badge-custom badge-success">{{ category.available_tickets }} Available</span>
+                {% elif category.available_tickets <= 0 %}
+                  <span class="badge-custom badge-danger">Sold Out</span>
+                {% elif category.sales_start and category.sales_start > now %}
+                  <span class="badge-custom badge-danger">Starts {{ category.sales_start|date:"M d" }}</span>
+                {% elif category.sales_end and category.sales_end < now %}
+                  <span class="badge-custom badge-danger">Sales Ended</span>
+                {% endif %}
+              </div>
+
+              {% if is_avail %}
+              <div class="category-quantity-selector">
+                <button type="button" class="qty-btn-small qty-minus" data-category="{{ category.id }}">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <div class="qty-display-small" id="qty-{{ category.id }}">0</div>
+                <button type="button" class="qty-btn-small qty-plus" data-category="{{ category.id }}">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+              {% endif %}
+            </div>
+
+          </div>
+          {% endwith %}
+          {% endfor %}
+
+          <!-- Summary -->
+          <div class="checkout-summary" id="checkout-summary" style="display:none;">
+            <div class="summary-row">
+              <span>Tickets Selected:</span>
+              <span id="total-tickets">0</span>
+            </div>
+            <div class="summary-row" id="people-row" style="display:none;">
+              <span>Total People:</span>
+              <span id="total-people">0</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span id="total-price">Ksh 0</span>
+            </div>
+          </div>
+
+          <!-- Book Button -->
+          {% if event.get_available_categories.exists and event.date >= now %}
+            <button type="submit" class="btn-book" id="book-btn" disabled>
+              <i class="bi bi-ticket-perforated"></i>
+              <span id="book-btn-text">Select tickets above</span>
+            </button>
+          {% elif event.date < now %}
+            <button type="button" class="btn-book" disabled>
+              <i class="bi bi-clock-history"></i> Event Has Passed
+            </button>
+          {% else %}
+            <button type="button" class="btn-book" disabled>
+              <i class="bi bi-x-circle"></i> Sold Out
+            </button>
+          {% endif %}
+
+        </form>
+
+        <div class="security-badge">
+          <i class="bi bi-shield-check"></i>
+          Secured by M-Pesa · ZOZAPRIME
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-share me-2"></i>Share this event</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="share-options">
+          <a href="#" class="share-btn whatsapp" onclick="shareToWhatsApp();return false;">
+            <div class="share-icon whatsapp"><i class="bi bi-whatsapp"></i></div>
+            <div style="font-weight:600;">WhatsApp</div>
+          </a>
+          <a href="#" class="share-btn twitter" onclick="shareToTwitter();return false;">
+            <div class="share-icon twitter"><i class="bi bi-twitter"></i></div>
+            <div style="font-weight:600;">Twitter / X</div>
+          </a>
+          <a href="#" class="share-btn facebook" onclick="shareToFacebook();return false;">
+            <div class="share-icon facebook"><i class="bi bi-facebook"></i></div>
+            <div style="font-weight:600;">Facebook</div>
+          </a>
+          <a href="#" class="share-btn copy" onclick="copyLink();return false;">
+            <div class="share-icon copy"><i class="bi bi-link-45deg"></i></div>
+            <div style="font-weight:600;">Copy Link</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const bookBtn = document.getElementById('book-btn');
+  const bookBtnText = document.getElementById('book-btn-text');
+  const ticketsInput = document.getElementById('tickets-data');
+  const summary = document.getElementById('checkout-summary');
+  const totalTicketsEl = document.getElementById('total-tickets');
+  const totalPeopleEl = document.getElementById('total-people');
+  const totalPriceEl = document.getElementById('total-price');
+  const peopleRow = document.getElementById('people-row');
+
+  const quantities = {};
+  document.querySelectorAll('.ticket-category[data-is-available="true"]').forEach(card => {
+    quantities[card.dataset.categoryId] = 0;
+  });
+
+  function updateCheckout() {
+    let totalTickets = 0, totalPrice = 0, totalPeople = 0;
+    const ticketsData = [];
+    let hasBundle = false, allFree = true;
+
+    Object.keys(quantities).forEach(id => {
+      const qty = quantities[id];
+      if (qty > 0) {
+        const card = document.querySelector(`[data-category-id="${id}"]`);
+        const price = parseFloat(card.dataset.price);
+        const bundleSize = parseInt(card.dataset.bundleSize) || 1;
+        const isFree = card.dataset.isFree === 'true';
+        totalTickets += qty;
+        totalPrice += price * qty;
+        totalPeople += qty * bundleSize;
+        if (bundleSize > 1) hasBundle = true;
+        if (!isFree) allFree = false;
+        ticketsData.push(`${id}:${qty}`);
+      }
+    });
+
+    totalTicketsEl.textContent = totalTickets;
+    totalPeopleEl.textContent = totalPeople;
+    peopleRow.style.display = hasBundle ? 'flex' : 'none';
+
+    if (allFree && totalTickets > 0) {
+      totalPriceEl.textContent = 'FREE';
+    } else {
+      totalPriceEl.textContent = `Ksh ${totalPrice.toLocaleString()}`;
+    }
+
+    if (totalTickets > 0) {
+      summary.style.display = 'block';
+      bookBtn.disabled = false;
+      ticketsInput.value = ticketsData.join(',');
+      if (allFree) {
+        bookBtn.className = 'btn-book free-btn';
+        bookBtnText.textContent = `RSVP Free — ${totalPeople} ${totalPeople === 1 ? 'Person' : 'People'}`;
+      } else {
+        bookBtn.className = 'btn-book';
+        bookBtnText.textContent = `Book Now — Ksh ${totalPrice.toLocaleString()}`;
+      }
+    } else {
+      summary.style.display = 'none';
+      bookBtn.disabled = true;
+      bookBtn.className = 'btn-book';
+      bookBtnText.textContent = 'Select tickets above';
+      ticketsInput.value = '';
+    }
+  }
+
+  document.querySelectorAll('.qty-plus').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const id = this.dataset.category;
+      const card = document.querySelector(`[data-category-id="${id}"]`);
+      const max = Math.min(parseInt(card.dataset.max) || 10, parseInt(card.dataset.available));
+      if (quantities[id] < max) {
+        quantities[id]++;
+        document.getElementById(`qty-${id}`).textContent = quantities[id];
+        updateCheckout();
+      }
+    });
+  });
+
+  document.querySelectorAll('.qty-minus').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const id = this.dataset.category;
+      if (quantities[id] > 0) {
+        quantities[id]--;
+        document.getElementById(`qty-${id}`).textContent = quantities[id];
+        updateCheckout();
+      }
+    });
+  });
+
+  document.getElementById('booking-form').addEventListener('submit', function (e) {
+    if (!ticketsInput.value) { e.preventDefault(); alert('Please select at least one ticket.'); }
+  });
+
+});
+
+function shareToWhatsApp() {
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent('{{ event.title }} — grab your tickets on ZOZAPRIME!');
+  window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+}
+function shareToTwitter() {
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent('{{ event.title }}')}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+function shareToFacebook() {
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'));
+}
+function addToWishlist() {
+  alert('Added to wishlist! (Coming soon)');
+}
+</script>
+{% endblock %}

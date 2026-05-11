@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+
+{% block title %}My Tickets — ZOZAPRIME{% endblock %}
+
+{% block extra_css %}
+<style>
+.tickets-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: 6rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 900;
+  color: var(--text-primary, #fff);
+  margin-bottom: 0.25rem;
+}
+
+.page-sub {
+  color: var(--text-secondary, #999);
+  font-size: 0.95rem;
+}
+
+/* Stats */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.stat-box {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-box .num {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--coral, #F05252);
+}
+
+.stat-box .lbl {
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #666);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Section headers */
+.sec-head {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sec-head i { color: var(--coral, #F05252); }
+
+.sec-count {
+  background: var(--coral, #F05252);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* Ticket Card */
+.tkt {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.tkt:hover { border-color: var(--coral, #F05252); }
+
+.tkt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+}
+
+.tkt-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-primary, #fff);
+}
+
+.tkt-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.b-confirmed { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.b-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.b-used { background: rgba(107, 114, 128, 0.15); color: #9ca3af; }
+.b-cancelled { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+.tkt-body {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.25rem;
+}
+
+.tkt-info { flex: 1; }
+
+.tkt-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #999);
+  margin-bottom: 0.6rem;
+}
+
+.tkt-row i {
+  color: var(--coral, #F05252);
+  width: 16px;
+  font-size: 0.85rem;
+}
+
+.tkt-row strong { color: var(--text-primary, #fff); }
+
+/* QR section */
+.tkt-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.qr-box {
+  background: #FFFFFF;
+  padding: 8px;
+  border-radius: 10px;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-box img {
+  width: 94px;
+  height: 94px;
+  display: block;
+}
+
+.qr-box .qr-placeholder {
+  font-size: 3rem;
+  color: #ccc;
+}
+
+.tkt-code {
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--coral, #F05252);
+  letter-spacing: 1.5px;
+}
+
+/* Actions */
+.tkt-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.tkt-btn {
+  flex: 1;
+  padding: 0.65rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.15s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.btn-coral {
+  background: var(--coral, #F05252);
+  color: white;
+}
+
+.btn-coral:hover {
+  background: var(--coral-dark, #d93b3b);
+  color: white;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary, #fff);
+  border: 1.5px solid var(--border-color, #333);
+}
+
+.btn-ghost:hover {
+  border-color: var(--coral, #F05252);
+  color: var(--coral, #F05252);
+}
+
+/* Ticket detail expansion */
+.tkt-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1.5rem;
+  padding: 0 1.25rem 1rem;
+  border-top: 1px solid var(--glass-border, rgba(255,255,255,0.06));
+  padding-top: 1rem;
+}
+
+.tkt-detail-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  padding: 0.3rem 0;
+}
+
+.tkt-detail-label {
+  color: var(--text-tertiary, #666);
+}
+
+.tkt-detail-value {
+  color: var(--text-primary, #fff);
+  font-weight: 600;
+}
+
+/* Empty */
+.empty-box {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  margin-bottom: 2rem;
+}
+
+.empty-box .icon { font-size: 3rem; color: var(--text-tertiary, #666); margin-bottom: 1rem; }
+.empty-box .title { font-weight: 700; color: var(--text-primary, #fff); margin-bottom: 0.5rem; }
+.empty-box .sub { color: var(--text-secondary, #999); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+.empty-box .cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: var(--coral, #F05252);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.empty-box .cta:hover { background: var(--coral-dark, #d93b3b); color: white; }
+
+.divider {
+  margin: 2.5rem 0 1.5rem;
+  border: none;
+  border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+}
+
+@media (max-width: 640px) {
+  .tickets-page { padding: 1.5rem 1rem; padding-top: 5rem; }
+  .tkt-body { flex-direction: column; }
+  .tkt-qr { flex-direction: row; justify-content: center; gap: 1rem; }
+  .tkt-actions { flex-direction: column; }
+  .tkt-detail-grid { grid-template-columns: 1fr; }
+}
+
+@media print {
+  nav, footer, .tkt-actions, .page-header, .stats-row, .sec-head, .divider { display: none !important; }
+  .tickets-page { padding: 0.5rem; }
+  .tkt { page-break-inside: avoid; border: 1px solid #ddd; }
+  body { background: white !important; color: black !important; }
+  .tkt-name, .tkt-row strong, .tkt-detail-value { color: black !important; }
+  .tkt-row, .tkt-detail-label { color: #666 !important; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tickets-page">
+
+  <div class="page-header">
+    <h1 class="page-title">My Tickets</h1>
+    <p class="page-sub">Your event tickets and history</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="num">{{ upcoming_tickets|length }}</div>
+      <div class="lbl">Upcoming</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">{{ past_tickets|length }}</div>
+      <div class="lbl">Past</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">{{ upcoming_tickets|length|add:past_tickets|length }}</div>
+      <div class="lbl">Total</div>
+    </div>
+  </div>
+
+  <!-- ══════ UPCOMING ══════ -->
+  <h2 class="sec-head">
+    <i class="bi bi-calendar-check"></i>
+    Upcoming Events
+    {% if upcoming_tickets %}<span class="sec-count">{{ upcoming_tickets|length }}</span>{% endif %}
+  </h2>
+
+  {% if upcoming_tickets %}
+    {% for ticket in upcoming_tickets %}
+    <div class="tkt">
+      <div class="tkt-header">
+        <span class="tkt-name">{{ ticket.event.title }}</span>
+        <span class="tkt-badge {% if ticket.status == 'confirmed' %}b-confirmed{% elif ticket.status == 'pending' %}b-pending{% elif ticket.status == 'used' %}b-used{% else %}b-cancelled{% endif %}">
+          {{ ticket.get_status_display }}
+        </span>
+      </div>
+
+      <div class="tkt-body">
+        <div class="tkt-info">
+          <div class="tkt-row">
+            <i class="bi bi-calendar3"></i>
+            {{ ticket.event.date|date:"D, M d, Y \u2022 g:i A" }}
+          </div>
+          <div class="tkt-row">
+            <i class="bi bi-geo-alt"></i>
+            {{ ticket.event.location }}
+          </div>
+          <div class="tkt-row">
+            <i class="bi bi-tag"></i>
+            {{ ticket.ticket_category.name }}
+          </div>
+          <div class="tkt-row">
+            <i class="bi bi-ticket-perforated"></i>
+            {{ ticket.quantity }} ticket{{ ticket.quantity|pluralize }} &bull;
+            <strong>KES {{ ticket.total_amount|floatformat:0 }}</strong>
+          </div>
+          <div class="tkt-row">
+            <i class="bi bi-person"></i>
+            {{ ticket.buyer_name }}
+          </div>
+        </div>
+
+        <div class="tkt-qr">
+          <div class="qr-box" id="qr-{{ ticket.ticket_code }}">
+            <i class="bi bi-qr-code qr-placeholder"></i>
+          </div>
+          <span class="tkt-code">{{ ticket.ticket_code }}</span>
+        </div>
+      </div>
+
+      <!-- Ticket details -->
+      <div class="tkt-detail-grid">
+        <div class="tkt-detail-item">
+          <span class="tkt-detail-label">Ticket Code</span>
+          <span class="tkt-detail-value" style="color: var(--coral); font-family: monospace; letter-spacing: 1px;">{{ ticket.ticket_code }}</span>
+        </div>
+        <div class="tkt-detail-item">
+          <span class="tkt-detail-label">Category</span>
+          <span class="tkt-detail-value">{{ ticket.ticket_category.name }}</span>
+        </div>
+        <div class="tkt-detail-item">
+          <span class="tkt-detail-label">Unit Price</span>
+          <span class="tkt-detail-value">KES {{ ticket.unit_price|floatformat:0 }}</span>
+        </div>
+        <div class="tkt-detail-item">
+          <span class="tkt-detail-label">Total Paid</span>
+          <span class="tkt-detail-value" style="color: var(--coral);">KES {{ ticket.total_amount|floatformat:0 }}</span>
+        </div>
+        <div class="tkt-detail-item">
+          <span class="tkt-detail-label">Purchased</span>
+          <span class="tkt-detail-value">{{ ticket.purchased_at|date:"M d, Y \u2022 g:i A" }}</span>
+        </div>
+        <div class="tkt-detail-item">
+          <span class="tkt-detail-label">Email</span>
+          <span class="tkt-detail-value">{{ ticket.buyer_email }}</span>
+        </div>
+      </div>
+
+      <div class="tkt-actions">
+        <a href="{% url 'event_detail' ticket.event.slug %}" class="tkt-btn btn-ghost">
+          <i class="bi bi-info-circle"></i> Event
+        </a>
+        <button onclick="window.print()" class="tkt-btn btn-ghost">
+          <i class="bi bi-printer"></i> Print
+        </button>
+        <a href="{% url 'event_detail' ticket.event.slug %}" class="tkt-btn btn-coral">
+          <i class="bi bi-eye"></i> View
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-box">
+      <div class="icon"><i class="bi bi-calendar-x"></i></div>
+      <div class="title">No Upcoming Events</div>
+      <div class="sub">You don't have tickets for any upcoming events yet.</div>
+      <a href="{% url 'event_list' %}" class="cta">
+        <i class="bi bi-search"></i> Browse Events
+      </a>
+    </div>
+  {% endif %}
+
+  <hr class="divider">
+
+  <!-- ══════ PAST ══════ -->
+  <h2 class="sec-head">
+    <i class="bi bi-clock-history"></i>
+    Past Events
+    {% if past_tickets %}<span class="sec-count" style="background: var(--text-tertiary, #666);">{{ past_tickets|length }}</span>{% endif %}
+  </h2>
+
+  {% if past_tickets %}
+    {% for ticket in past_tickets %}
+    <div class="tkt" style="opacity: 0.65;">
+      <div class="tkt-header">
+        <span class="tkt-name">{{ ticket.event.title }}</span>
+        <span class="tkt-badge {% if ticket.status == 'used' %}b-used{% elif ticket.status == 'cancelled' %}b-cancelled{% else %}b-confirmed{% endif %}">
+          {{ ticket.get_status_display }}
+        </span>
+      </div>
+      <div class="tkt-body">
+        <div class="tkt-info">
+          <div class="tkt-row">
+            <i class="bi bi-calendar3"></i>
+            {{ ticket.event.date|date:"D, M d, Y" }}
+          </div>
+          <div class="tkt-row">
+            <i class="bi bi-geo-alt"></i>
+            {{ ticket.event.location }}
+          </div>
+          <div class="tkt-row">
+            <i class="bi bi-tag"></i>
+            {{ ticket.ticket_category.name }} &bull;
+            {{ ticket.quantity }} ticket{{ ticket.quantity|pluralize }} &bull;
+            <strong>KES {{ ticket.total_amount|floatformat:0 }}</strong>
+          </div>
+        </div>
+        <div class="tkt-qr">
+          <span class="tkt-code">{{ ticket.ticket_code }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-box" style="opacity: 0.5;">
+      <div class="icon"><i class="bi bi-clock"></i></div>
+      <div class="title">No Past Events</div>
+      <div class="sub">Your event history will appear here.</div>
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- Generate QR codes client-side using a lightweight library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Find all QR placeholder containers and generate QR codes
+  document.querySelectorAll('[id^="qr-"]').forEach(function(el) {
+    const code = el.id.replace('qr-', '');
+    if (code) {
+      // Clear placeholder
+      el.innerHTML = '';
+      // Generate QR code
+      new QRCode(el, {
+        text: 'ZOZA:' + code,
+        width: 94,
+        height: 94,
+        colorDark: '#0A0A0A',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

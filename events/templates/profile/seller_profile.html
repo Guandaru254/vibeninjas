@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - TazamoExp{% endblock %}
+
+{% block content %}
+<style>
+.minimalist-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+}
+
+.minimalist-header {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem;
+}
+
+.minimalist-avatar {
+    border: 2px solid #e5e7eb;
+    background: #f3f4f6;
+}
+
+.minimalist-info {
+    background: #fafbfc;
+    border-radius: 6px;
+    padding: 1.5rem;
+}
+
+.minimalist-business-info {
+    background: #f0fdf4;
+    border-radius: 6px;
+    padding: 1.5rem;
+    border-left: 3px solid #22c55e;
+}
+
+.minimalist-table td {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.minimalist-table td:last-child {
+    border-bottom: none;
+}
+
+.minimalist-btn {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.minimalist-btn-primary {
+    background: #3b82f6;
+    border: 1px solid #3b82f6;
+    color: white;
+}
+
+.minimalist-btn-primary:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.minimalist-btn-danger {
+    background: #ffffff;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+}
+
+.minimalist-btn-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.text-muted-light {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.minimalist-stat-card {
+    background: #fafbfc;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.minimalist-stat-card:hover {
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+}
+
+.badge-minimalist {
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+</style>
+
+<div class="container py-8">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="minimalist-card">
+                <div class="minimalist-header">
+                    <h4 class="mb-0 fw-light">
+                        <i class="fas fa-store me-2 text-muted-light"></i>Seller Profile
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" 
+                                     class="img-fluid rounded-circle mb-3 minimalist-avatar" style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mb-3 mx-auto minimalist-avatar" 
+                                     style="width: 120px; height: 120px;">
+                                    <i class="fas fa-store fa-3x text-muted-light"></i>
+                                </div>
+                            {% endif %}
+                            <h5 class="fw-light mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                            <span class="badge-minimalist">
+                                <i class="fas fa-briefcase me-1"></i>Event Organizer
+                            </span>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="minimalist-info mb-3">
+                                        <h6 class="mb-3 fw-light text-muted-light">
+                                            <i class="fas fa-user-circle me-2"></i>Personal Information
+                                        </h6>
+                                        <table class="table table-borderless table-sm minimalist-table">
+                                            <tr>
+                                                <td class="text-muted-light" style="width: 100px;">Username</td>
+                                                <td class="fw-light">{{ user.username }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted-light">First Name</td>
+                                                <td class="fw-light">{{ user.first_name|default:"Not provided" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted-light">Last Name</td>
+                                                <td class="fw-light">{{ user.last_name|default:"Not provided" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted-light">Email</td>
+                                                <td class="fw-light">{{ user.email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted-light">Phone</td>
+                                                <td class="fw-light">{{ user.phone_number|default:"Not provided" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted-light">Member Since</td>
+                                                <td class="fw-light">{{ user.date_joined|date:"F d, Y" }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="minimalist-business-info mb-3">
+                                        <h6 class="mb-3 fw-light text-success">
+                                            <i class="fas fa-building me-2"></i>Business Information
+                                        </h6>
+                                        <table class="table table-borderless table-sm minimalist-table">
+                                            <tr>
+                                                <td class="text-muted-light" style="width: 100px;">Business Name</td>
+                                                <td class="fw-light">{{ user.business_name|default:"Not provided" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted-light">Description</td>
+                                                <td class="fw-light">
+                                                    {% if user.business_description %}
+                                                        {{ user.business_description|truncatewords:15 }}
+                                                    {% else %}
+                                                        Not provided
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4" style="border-color: #f3f4f6;">
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="mb-4 fw-light text-muted-light">
+                                <i class="fas fa-chart-line me-2"></i>Business Statistics
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <div class="minimalist-stat-card h-100">
+                                        <div class="card-body text-center p-4">
+                                            <div class="mb-2">
+                                                <i class="fas fa-calendar-plus fa-2x text-primary"></i>
+                                            </div>
+                                            <h4 class="text-primary fw-light">{{ total_events }}</h4>
+                                            <small class="text-muted-light">Events Created</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="minimalist-stat-card h-100">
+                                        <div class="card-body text-center p-4">
+                                            <div class="mb-2">
+                                                <i class="fas fa-play-circle fa-2x text-success"></i>
+                                            </div>
+                                            <h4 class="text-success fw-light">{{ active_events_count }}</h4>
+                                            <small class="text-muted-light">Active Events</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="minimalist-stat-card h-100">
+                                        <div class="card-body text-center p-4">
+                                            <div class="mb-2">
+                                                <i class="fas fa-ticket-alt fa-2x text-info"></i>
+                                            </div>
+                                            <h4 class="text-info fw-light">{{ tickets_sold }}</h4>
+                                            <small class="text-muted-light">Total Tickets Sold</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="minimalist-stat-card h-100">
+                                        <div class="card-body text-center p-4">
+                                            <div class="mb-2">
+                                                <i class="fas fa-dollar-sign fa-2x text-warning"></i>
+                                            </div>
+                                            <h4 class="text-warning fw-light">KSh {{ total_revenue|floatformat:2 }}</h4>
+                                            <small class="text-muted-light">Total Revenue</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'profile_edit' %}" class="btn minimalist-btn-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                        <button type="button" class="btn minimalist-btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash me-2"></i>Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content minimalist-card">
+            <div class="modal-header minimalist-header border-0">
+                <h5 class="modal-title fw-light">Delete Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-light">Are you sure you want to delete your seller account? This action cannot be undone.</p>
+                <p class="text-danger fw-light"><strong>Warning:</strong> All your events, ticket sales, and business data will be permanently deleted.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="{% url 'profile_delete' %}" class="btn btn-danger">Delete Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

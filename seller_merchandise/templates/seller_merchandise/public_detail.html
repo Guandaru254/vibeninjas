@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}{{ item.name }} — ZOZAPRIME Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+.detail-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: 6rem;
+}
+
+.breadcrumb-nav {
+  font-size: 0.85rem;
+  color: var(--text-tertiary, #666);
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb-nav a {
+  color: var(--text-secondary, #999);
+  text-decoration: none;
+}
+
+.breadcrumb-nav a:hover { color: var(--coral, #F05252); }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.detail-img {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-img img { width: 100%; height: 100%; object-fit: cover; }
+.detail-img .no-img { font-size: 5rem; color: var(--text-tertiary, #666); }
+
+.detail-info { display: flex; flex-direction: column; gap: 1rem; }
+
+.d-category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--coral, #F05252);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.d-name {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  color: var(--text-primary, #fff);
+  line-height: 1.2;
+}
+
+.d-price-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.d-price {
+  font-family: var(--font-display, sans-serif);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--coral, #F05252);
+}
+
+.d-stock {
+  padding: 0.4rem 0.875rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stock-ok { background: rgba(16,185,129,0.1); color: #10b981; }
+.stock-low { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.stock-out { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+.d-desc {
+  color: var(--text-secondary, #999);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.d-meta {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.06));
+}
+
+.meta-row:last-child { border-bottom: none; }
+.meta-label { color: var(--text-tertiary, #666); }
+.meta-value { color: var(--text-primary, #fff); font-weight: 600; }
+
+.d-actions { display: flex; gap: 0.75rem; }
+
+.d-btn {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.btn-coral { background: var(--coral, #F05252); color: white; }
+.btn-coral:hover { background: var(--coral-dark, #d93b3b); color: white; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-primary, #fff);
+  border: 1.5px solid var(--border-color, #333);
+}
+.btn-outline:hover { border-color: var(--coral); color: var(--coral); }
+
+.d-alert {
+  background: rgba(239,68,68,0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  color: #ef4444;
+}
+
+.d-login-alert {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  color: #f59e0b;
+  font-size: 0.9rem;
+}
+
+.d-login-alert a { color: var(--coral, #F05252); }
+
+/* Related */
+.related-section { margin-top: 3rem; }
+
+.related-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin-bottom: 1rem;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.rel-card {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  display: block;
+}
+
+.rel-card:hover { border-color: var(--coral); transform: translateY(-2px); }
+.rel-card img { width: 100%; height: 140px; object-fit: cover; }
+.rel-card .ri { padding: 0.875rem; }
+.rel-card .rn { font-weight: 600; font-size: 0.85rem; color: var(--text-primary, #fff); margin-bottom: 0.25rem; }
+.rel-card .rp { font-weight: 800; color: var(--coral, #F05252); font-size: 0.95rem; }
+
+@media (max-width: 768px) {
+  .detail-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .detail-img { aspect-ratio: 4/3; }
+  .d-actions { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+
+  <div class="breadcrumb-nav">
+    <a href="{% url 'public_merchandise_list' %}">Shop</a>
+    <i class="bi bi-chevron-right" style="font-size: 0.7rem; margin: 0 0.4rem;"></i>
+    <span style="color: var(--text-primary, #fff);">{{ item.name|truncatechars:30 }}</span>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-img">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.name }}">
+      {% else %}
+        <i class="bi bi-image no-img"></i>
+      {% endif %}
+    </div>
+
+    <div class="detail-info">
+      {% if item.category %}
+        <div class="d-category">{{ item.category.name }}</div>
+      {% endif %}
+
+      <h1 class="d-name">{{ item.name }}</h1>
+
+      <div class="d-price-row">
+        <span class="d-price">Ksh {{ item.price|floatformat:0|intcomma }}</span>
+        <span class="d-stock {% if item.stock_quantity > 5 %}stock-ok{% elif item.stock_quantity > 0 %}stock-low{% else %}stock-out{% endif %}">
+          {% if item.stock_quantity > 5 %}In Stock ({{ item.stock_quantity }})
+          {% elif item.stock_quantity > 0 %}Only {{ item.stock_quantity }} left
+          {% else %}Out of Stock{% endif %}
+        </span>
+      </div>
+
+      <div class="d-desc">{{ item.description|linebreaksbr }}</div>
+
+      <div class="d-meta">
+        <div class="meta-row">
+          <span class="meta-label">Seller</span>
+          <span class="meta-value">{{ item.seller.business_name|default:item.seller.username }}</span>
+        </div>
+        {% if item.category %}
+        <div class="meta-row">
+          <span class="meta-label">Category</span>
+          <span class="meta-value">{{ item.category.name }}</span>
+        </div>
+        {% endif %}
+        <div class="meta-row">
+          <span class="meta-label">Listed</span>
+          <span class="meta-value">{{ item.created_at|date:"M d, Y" }}</span>
+        </div>
+      </div>
+
+      {% if item.stock_quantity > 0 %}
+        {% if user.is_authenticated and user.is_buyer %}
+          <div class="d-actions">
+            <a href="{% url 'public_merchandise_order' item.pk %}" class="d-btn btn-coral">
+              <i class="bi bi-bag-check"></i> Order Now
+            </a>
+            <button class="d-btn btn-outline" onclick="navigator.share ? navigator.share({title:'{{ item.name }}', url:window.location.href}) : navigator.clipboard.writeText(window.location.href)">
+              <i class="bi bi-share"></i> Share
+            </button>
+          </div>
+        {% elif user.is_authenticated %}
+          <div class="d-login-alert">
+            <i class="bi bi-info-circle"></i> Only buyers can purchase merchandise.
+          </div>
+        {% else %}
+          <div class="d-login-alert">
+            <i class="bi bi-lock"></i>
+            <a href="{% url 'login' %}?next={{ request.path }}">Log in as a buyer</a> to purchase this item.
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="d-alert"><i class="bi bi-x-circle"></i> This item is currently out of stock</div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if related_items %}
+  <div class="related-section">
+    <h2 class="related-title">You may also like</h2>
+    <div class="related-grid">
+      {% for rel in related_items %}
+        <a href="{% url 'public_merchandise_detail' rel.pk %}" class="rel-card">
+          {% if rel.image %}
+            <img src="{{ rel.image.url }}" alt="{{ rel.name }}">
+          {% else %}
+            <div style="height:140px;display:flex;align-items:center;justify-content:center;background:var(--bg-tertiary,#111);">
+              <i class="bi bi-image" style="font-size:2rem;color:var(--text-tertiary);"></i>
+            </div>
+          {% endif %}
+          <div class="ri">
+            <div class="rn">{{ rel.name|truncatechars:30 }}</div>
+            <div class="rp">Ksh {{ rel.price|floatformat:0|intcomma }}</div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

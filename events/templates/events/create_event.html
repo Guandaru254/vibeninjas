@@ -1,0 +1,1051 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}Create Event — ZOZAPRIME{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════════════
+   CREATE EVENT — ZOZAPRIME
+   ══════════════════════════════════════════════════════════ */
+
+.create-event-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: 6rem;
+}
+
+/* ── Header ── */
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  transition: all var(--t-fast);
+  font-size: 0.95rem;
+}
+
+.back-button:hover {
+  color: var(--coral);
+  transform: translateX(-4px);
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── Form Sections ── */
+.form-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--t-base);
+}
+
+.form-section:hover { box-shadow: var(--shadow-lg); }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--glass-border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.section-header i {
+  color: var(--coral);
+  font-size: 1.25rem;
+}
+
+/* ── Form Fields ── */
+.form-group { margin-bottom: 1.75rem; }
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form-label .required { color: var(--coral); margin-left: 0.25rem; }
+
+.form-control,
+.form-select,
+textarea.form-control,
+input[type="datetime-local"] {
+  width: 100%;
+  background: var(--bg-secondary) !important;
+  border: 1.5px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: 12px;
+  padding: 0.875rem 1.25rem;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: all var(--t-base);
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea.form-control:focus,
+input[type="datetime-local"]:focus {
+  background: var(--bg-tertiary) !important;
+  border-color: var(--coral) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 3px var(--coral-glow) !important;
+  outline: none !important;
+}
+
+.form-control::placeholder {
+  color: var(--text-tertiary) !important;
+  opacity: 1;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+}
+
+textarea.form-control {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.input-group-text {
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--border-color);
+  border-right: none;
+  color: var(--text-secondary);
+  padding: 0.875rem 1rem;
+  display: flex;
+  align-items: center;
+  border-radius: 12px 0 0 12px;
+  white-space: nowrap;
+}
+
+.input-group .form-control {
+  border-left: none !important;
+  border-radius: 0 12px 12px 0 !important;
+}
+
+.form-text {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* ── Image Upload ── */
+.image-preview {
+  width: 100%;
+  height: 280px;
+  border: 2px dashed var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t-base);
+  overflow: hidden;
+  position: relative;
+}
+
+.image-preview:hover {
+  border-color: var(--coral);
+  background: var(--bg-tertiary);
+}
+
+.image-upload-text { text-align: center; padding: 2rem; }
+
+.image-upload-text i {
+  font-size: 3.5rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1rem;
+  display: block;
+  transition: color var(--t-base);
+}
+
+.image-preview:hover .image-upload-text i { color: var(--coral); }
+.image-upload-text p { color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 500; }
+.image-upload-text small { color: var(--text-tertiary); font-size: 0.85rem; }
+.image-preview img { width: 100%; height: 100%; object-fit: cover; }
+input[type="file"] { display: none; }
+
+/* ── Ticket Section Header ── */
+.ticket-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.btn-add-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: transparent;
+  border: 1.5px solid var(--coral);
+  color: var(--coral);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  font-family: var(--font-body);
+}
+
+.btn-add-category:hover { background: var(--coral-bg); transform: translateY(-2px); }
+
+/* ── Ticket Category Cards ── */
+.ticket-category-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  transition: all var(--t-base);
+}
+
+.ticket-category-card:hover { border-color: var(--coral); box-shadow: var(--shadow-md); }
+
+.category-card-header {
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.category-title i { color: var(--coral); }
+
+.btn-remove-category {
+  background: transparent;
+  border: none;
+  color: var(--danger, #ef4444);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  transition: all var(--t-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body);
+}
+
+.btn-remove-category:hover { background: rgba(239, 68, 68, 0.1); }
+
+.category-card-body { padding: 2rem 1.5rem; }
+
+/* ── Grid Layouts ── */
+.form-row { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.form-row.two-col { grid-template-columns: 1fr 1fr; }
+.form-row.three-col { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ── Toggle Cards (Free / Bundle) ── */
+.toggle-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.toggle-card {
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  user-select: none;
+  gap: 0.75rem;
+}
+
+.toggle-card:hover { border-color: var(--text-secondary); }
+.toggle-card.is-active-free  { border-color: #10b981 !important; background: rgba(16,185,129,0.07) !important; }
+.toggle-card.is-active-bundle { border-color: var(--coral) !important; background: var(--coral-bg, rgba(255,77,77,0.07)) !important; }
+
+.toggle-info { display: flex; flex-direction: column; gap: 0.2rem; }
+
+.toggle-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.toggle-label .t-icon-free   { color: #10b981; }
+.toggle-label .t-icon-bundle { color: var(--coral); }
+.toggle-sub { font-size: 0.78rem; color: var(--text-tertiary); }
+
+/* Custom toggle switch */
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-color);
+  border-radius: 100px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-slider { background: var(--coral); }
+.toggle-card.is-active-free .toggle-switch input:checked + .toggle-slider { background: #10b981; }
+.toggle-switch input:checked + .toggle-slider::after { transform: translateX(20px); }
+
+/* Bundle expand fields */
+.bundle-fields {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  background: var(--coral-bg, rgba(255,77,77,0.05));
+  border: 1px solid rgba(255,77,77,0.15);
+  border-radius: 12px;
+}
+
+.bundle-fields.visible { display: grid; }
+
+/* Sales Period */
+.sales-period-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.datetime-label {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Display Order */
+.display-order-row {
+  margin-top: 0.5rem;
+}
+
+/* ── Submit ── */
+.submit-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.15rem 3rem;
+  background: var(--coral);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--t-base);
+  min-width: 280px;
+  font-family: var(--font-body);
+}
+
+.btn-submit:hover {
+  background: var(--coral-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px var(--coral-glow);
+}
+
+.btn-submit:active { transform: translateY(-1px); }
+
+.submit-note {
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* ── Error States ── */
+.form-control.is-invalid,
+.form-select.is-invalid,
+input[type="datetime-local"].is-invalid { border-color: var(--danger, #ef4444) !important; }
+
+.invalid-feedback { color: var(--danger, #ef4444); font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+.form-control.is-invalid ~ .invalid-feedback,
+.form-select.is-invalid ~ .invalid-feedback { display: block; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .create-event-page { padding: 1.5rem 1rem; padding-top: 5rem; }
+  .page-header { margin-bottom: 2rem; }
+  .page-title { font-size: 2rem; }
+  .form-section, .submit-section { padding: 1.75rem 1.25rem; }
+  .section-header { font-size: 1.25rem; }
+  .form-row.two-col, .form-row.three-col { grid-template-columns: 1fr; }
+  .sales-period-group { grid-template-columns: 1fr; }
+  .toggle-row { grid-template-columns: 1fr; }
+  .bundle-fields { grid-template-columns: 1fr; }
+  .ticket-category-header { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .btn-submit { width: 100%; min-width: auto; }
+  .category-card-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .image-preview { height: 220px; }
+}
+
+@media (max-width: 480px) {
+  .create-event-page { padding: 1rem 0.75rem; padding-top: 4.5rem; }
+  .form-section, .submit-section { padding: 1.5rem 1rem; border-radius: 16px; }
+  .image-upload-text i { font-size: 2.5rem; }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="create-event-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <a href="{% url 'dashboard' %}" class="back-button">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+    <h1 class="page-title">Create New Event</h1>
+    <p class="page-subtitle">Fill in the details below to list your event and start selling tickets</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate id="createEventForm">
+    {% csrf_token %}
+
+    <!-- ══ 1. EVENT INFORMATION ══ -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="bi bi-info-circle"></i>
+        <span>Event Information</span>
+      </div>
+
+      <div class="form-row two-col">
+        <!-- Title spans full width -->
+        <div class="form-group" style="grid-column: span 2;">
+          <label for="{{ form.title.id_for_label }}" class="form-label">
+            Event Title <span class="required">*</span>
+          </label>
+          {{ form.title|addclass:"form-control" }}
+          <div class="invalid-feedback">{{ form.title.errors }}</div>
+          <span class="form-text">Choose a clear, descriptive name for your event</span>
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.category.id_for_label }}" class="form-label">
+            Category <span class="required">*</span>
+          </label>
+          {{ form.category|addclass:"form-select" }}
+          <div class="invalid-feedback">{{ form.category.errors }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.location.id_for_label }}" class="form-label">
+            Location <span class="required">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+            {{ form.location|addclass:"form-control" }}
+          </div>
+          <div class="invalid-feedback">{{ form.location.errors }}</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.description.id_for_label }}" class="form-label">
+          Event Description <span class="required">*</span>
+        </label>
+        {{ form.description|addclass:"form-control" }}
+        <div class="invalid-feedback">{{ form.description.errors }}</div>
+        <span class="form-text">Give attendees a compelling reason to show up</span>
+      </div>
+
+      <div class="form-row two-col">
+        <div class="form-group">
+          <label for="{{ form.date.id_for_label }}" class="form-label">
+            Date & Time <span class="required">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+            {{ form.date|addclass:"form-control" }}
+          </div>
+          <div class="invalid-feedback">{{ form.date.errors }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.total_tickets.id_for_label }}" class="form-label">
+            Total Tickets <span class="required">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-ticket-perforated"></i></span>
+            {{ form.total_tickets|addclass:"form-control" }}
+          </div>
+          <div class="invalid-feedback">{{ form.total_tickets.errors }}</div>
+          <span class="form-text">Will be auto-updated from ticket categories below</span>
+        </div>
+      </div>
+
+      <!-- Event Image -->
+      <div class="form-group">
+        <label class="form-label">Event Image</label>
+        <div class="image-preview" id="imagePreview"
+             onclick="document.getElementById('{{ form.image.id_for_label }}').click()"
+             role="button"
+             tabindex="0"
+             aria-label="Upload event image">
+          <div class="image-upload-text">
+            <i class="bi bi-cloud-upload"></i>
+            <p>Click to upload event image</p>
+            <small>Recommended: 1200×630px · JPG, PNG, WEBP</small>
+          </div>
+        </div>
+        {{ form.image }}
+        <div class="invalid-feedback">{{ form.image.errors }}</div>
+      </div>
+    </div>
+
+    <!-- ══ 2. TICKET CATEGORIES ══ -->
+    <div class="form-section">
+      <div class="ticket-category-header">
+        <div class="section-header" style="margin:0; padding:0; border:none;">
+          <i class="bi bi-ticket-perforated"></i>
+          <span>Ticket Categories</span>
+        </div>
+        <button type="button" class="btn-add-category" id="addCategoryBtn">
+          <i class="bi bi-plus-circle"></i> Add Category
+        </button>
+      </div>
+
+      <!-- Django formset management form -->
+      {{ ticket_formset.management_form }}
+
+      <div id="ticketCategoriesContainer">
+        {% for ticket_form in ticket_formset %}
+        <div class="ticket-category-card" data-index="{{ forloop.counter0 }}">
+
+          <!-- Card Header -->
+          <div class="category-card-header">
+            <div class="category-title">
+              <i class="bi bi-ticket"></i>
+              <span>Category {{ forloop.counter }}</span>
+            </div>
+            {% if not forloop.first %}
+            <button type="button" class="btn-remove-category">
+              <i class="bi bi-trash"></i> Remove
+            </button>
+            {% endif %}
+          </div>
+
+          <!-- Card Body -->
+          <div class="category-card-body">
+
+            <!-- Hidden formset fields -->
+            {% if ticket_form.instance.pk %}
+              {{ ticket_form.id }}
+            {% endif %}
+            {{ ticket_form.DELETE }}
+
+            <!-- Row 1: Name + Type -->
+            <div class="form-row two-col">
+              <div class="form-group">
+                <label class="form-label">Category Name <span class="required">*</span></label>
+                {{ ticket_form.name|addclass:"form-control" }}
+                <span class="form-text">e.g. General, VIP, Early Bird</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Type</label>
+                {{ ticket_form.category_type|addclass:"form-select" }}
+              </div>
+            </div>
+
+            <!-- Row 2: Price + Available + Max Per Purchase -->
+            <div class="form-row three-col">
+              <div class="form-group price-field-group">
+                <label class="form-label">Price (Ksh) <span class="required">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">Ksh</span>
+                  {{ ticket_form.price|addclass:"form-control price-input" }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Available <span class="required">*</span></label>
+                {{ ticket_form.available_tickets|addclass:"form-control" }}
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Max Per Purchase</label>
+                {{ ticket_form.max_tickets_per_purchase|addclass:"form-control" }}
+                <span class="form-text">Leave 0 for unlimited</span>
+              </div>
+            </div>
+
+            <!-- Row 3: Free / Bundle Toggles -->
+            <div class="toggle-row">
+
+              <!-- Free / RSVP Toggle -->
+              <label class="toggle-card {% if ticket_form.is_free.value %}is-active-free{% endif %}"
+                     id="freeCard-{{ forloop.counter0 }}">
+                <div class="toggle-info">
+                  <span class="toggle-label">
+                    <i class="bi bi-gift t-icon-free"></i>
+                    Free / RSVP
+                  </span>
+                  <span class="toggle-sub">No payment required</span>
+                </div>
+                <div class="toggle-switch">
+                  {{ ticket_form.is_free }}
+                  <span class="toggle-slider"></span>
+                </div>
+              </label>
+
+              <!-- Bundle Toggle -->
+              <label class="toggle-card {% if ticket_form.is_bundle.value %}is-active-bundle{% endif %}"
+                     id="bundleCard-{{ forloop.counter0 }}">
+                <div class="toggle-info">
+                  <span class="toggle-label">
+                    <i class="bi bi-people t-icon-bundle"></i>
+                    Bundle / Group
+                  </span>
+                  <span class="toggle-sub">Couple, table, group ticket</span>
+                </div>
+                <div class="toggle-switch">
+                  {{ ticket_form.is_bundle }}
+                  <span class="toggle-slider"></span>
+                </div>
+              </label>
+
+            </div><!-- /toggle-row -->
+
+            <!-- Bundle expand fields (shown when is_bundle checked) -->
+            <div class="bundle-fields {% if ticket_form.is_bundle.value %}visible{% endif %}"
+                 id="bundleFields-{{ forloop.counter0 }}">
+              <div class="form-group">
+                <label class="form-label">People Per Ticket</label>
+                {{ ticket_form.bundle_size|addclass:"form-control" }}
+                <span class="form-text">e.g. 2 for couples, 8 for table</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Bundle Label</label>
+                {{ ticket_form.bundle_label|addclass:"form-control" }}
+                <span class="form-text">e.g. "Admits 2", "Table of 8"</span>
+              </div>
+            </div>
+
+            <!-- Sales Period (Optional) -->
+            <div class="form-group">
+              <label class="form-label">Sales Period
+                <span style="font-weight:400; color:var(--text-tertiary); font-size:0.85rem;">(Optional)</span>
+              </label>
+              <div class="sales-period-group">
+                <div>
+                  <div class="datetime-label">
+                    <i class="bi bi-calendar-plus"></i> Sales Start
+                  </div>
+                  {{ ticket_form.sales_start|addclass:"form-control" }}
+                  <span class="form-text">Leave blank to sell immediately</span>
+                </div>
+                <div>
+                  <div class="datetime-label">
+                    <i class="bi bi-calendar-x"></i> Sales End
+                  </div>
+                  {{ ticket_form.sales_end|addclass:"form-control" }}
+                  <span class="form-text">Leave blank to sell until event</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Display Order -->
+            <div class="form-row two-col display-order-row">
+              <div class="form-group">
+                <label class="form-label">Display Order</label>
+                {{ ticket_form.display_order|addclass:"form-control" }}
+                <span class="form-text">Lower number = shown first (0 = top)</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description
+                  <span style="font-weight:400; color:var(--text-tertiary); font-size:0.85rem;">(Optional)</span>
+                </label>
+                {{ ticket_form.description|addclass:"form-control" }}
+                <span class="form-text">Perks, restrictions, access level</span>
+              </div>
+            </div>
+
+          </div><!-- /category-card-body -->
+        </div><!-- /ticket-category-card -->
+        {% endfor %}
+      </div><!-- /ticketCategoriesContainer -->
+    </div><!-- /form-section tickets -->
+
+    <!-- ══ 3. SUBMIT ══ -->
+    <div class="submit-section">
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <i class="bi bi-calendar-check"></i>
+        Create Event
+      </button>
+      <div class="submit-note">
+        <i class="bi bi-info-circle"></i>
+        You can edit all details anytime from your dashboard
+      </div>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ══════════════════════════════════════════════════
+  // 1. IMAGE PREVIEW
+  // ══════════════════════════════════════════════════
+  const imageInput   = document.querySelector('input[type="file"]');
+  const imagePreview = document.getElementById('imagePreview');
+
+  if (imageInput && imagePreview) {
+    imageInput.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Event image preview">`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Keyboard accessibility
+    imagePreview.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        imageInput.click();
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════
+  // 2. SET DATETIME MINS (no past dates)
+  // ══════════════════════════════════════════════════
+  const now       = new Date();
+  const localMin  = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                    .toISOString().slice(0, 16);
+
+  function applyDatetimeMins() {
+    document.querySelectorAll('input[type="datetime-local"]').forEach(function (input) {
+      if (!input.min) input.min = localMin;
+    });
+  }
+
+  applyDatetimeMins();
+
+  const eventDateInput = document.querySelector('input[name="date"]');
+  if (eventDateInput) eventDateInput.min = localMin;
+
+  // ══════════════════════════════════════════════════
+  // 3. TOGGLE LOGIC (Free + Bundle)
+  //    Attaches to a single card element
+  // ══════════════════════════════════════════════════
+  function attachToggleLogic(card) {
+    const index = card.getAttribute('data-index');
+
+    // Free toggle
+    const freeCard = card.querySelector(`[id^="freeCard-"]`) ||
+                     card.querySelector('.toggle-card:first-of-type');
+    const freeCheckbox = freeCard ? freeCard.querySelector('input[type="checkbox"]') : null;
+    const priceInput   = card.querySelector('.price-input');
+
+    if (freeCheckbox && priceInput) {
+      function syncFree() {
+        if (freeCheckbox.checked) {
+          priceInput.value    = '0';
+          priceInput.readOnly = true;
+          priceInput.style.opacity = '0.45';
+          freeCard.classList.add('is-active-free');
+        } else {
+          priceInput.readOnly = false;
+          priceInput.style.opacity = '1';
+          freeCard.classList.remove('is-active-free');
+        }
+      }
+      freeCheckbox.addEventListener('change', syncFree);
+      syncFree(); // Run on load for pre-checked state
+    }
+
+    // Bundle toggle
+    const bundleCard     = card.querySelector(`[id^="bundleCard-"]`) ||
+                           card.querySelectorAll('.toggle-card')[1];
+    const bundleCheckbox = bundleCard ? bundleCard.querySelector('input[type="checkbox"]') : null;
+    const bundleFields   = card.querySelector(`[id^="bundleFields-"]`) ||
+                           card.querySelector('.bundle-fields');
+    const bundleSizeInput = card.querySelector('input[name*="bundle_size"]');
+    const bundleLabelInput = card.querySelector('input[name*="bundle_label"]');
+
+    if (bundleCheckbox && bundleFields) {
+      function syncBundle() {
+        if (bundleCheckbox.checked) {
+          bundleFields.classList.add('visible');
+          bundleCard.classList.add('is-active-bundle');
+        } else {
+          bundleFields.classList.remove('visible');
+          bundleCard.classList.remove('is-active-bundle');
+          if (bundleSizeInput) bundleSizeInput.value  = '1';
+          if (bundleLabelInput) bundleLabelInput.value = '';
+        }
+      }
+      bundleCheckbox.addEventListener('change', syncBundle);
+      syncBundle();
+    }
+  }
+
+  // Attach to all existing cards on load
+  document.querySelectorAll('.ticket-category-card').forEach(attachToggleLogic);
+
+  // ══════════════════════════════════════════════════
+  // 4. ADD CATEGORY
+  // ══════════════════════════════════════════════════
+  const addBtn      = document.getElementById('addCategoryBtn');
+  const container   = document.getElementById('ticketCategoriesContainer');
+  const totalForms  = document.getElementById('id_form-TOTAL_FORMS');
+
+  if (addBtn && container) {
+    addBtn.addEventListener('click', function () {
+      const currentCount = container.querySelectorAll('.ticket-category-card').length;
+      const template     = container.querySelector('.ticket-category-card').cloneNode(true);
+
+      // Update all form field name/id attributes to new index
+      template.innerHTML = template.innerHTML
+        .replace(/form-\d+-/g, `form-${currentCount}-`)
+        .replace(/id_form-\d+-/g, `id_form-${currentCount}-`)
+        .replace(/freeCard-\d+/g, `freeCard-${currentCount}`)
+        .replace(/bundleCard-\d+/g, `bundleCard-${currentCount}`)
+        .replace(/bundleFields-\d+/g, `bundleFields-${currentCount}`);
+
+      template.setAttribute('data-index', currentCount);
+
+      // Update card title
+      const titleSpan = template.querySelector('.category-title span');
+      if (titleSpan) titleSpan.textContent = `Category ${currentCount + 1}`;
+
+      // Clear all input values
+      template.querySelectorAll('input, select, textarea').forEach(function (el) {
+        if (el.type === 'checkbox')       { el.checked = false; }
+        else if (el.type === 'hidden')    { /* keep */ }
+        else                              { el.value = ''; }
+        el.classList.remove('is-invalid', 'is-valid');
+        el.readOnly = false;
+        el.style.opacity = '1';
+      });
+
+      // Reset toggle card active states
+      template.querySelectorAll('.toggle-card').forEach(function (tc) {
+        tc.classList.remove('is-active-free', 'is-active-bundle');
+      });
+
+      // Hide bundle fields
+      const bf = template.querySelector('.bundle-fields');
+      if (bf) bf.classList.remove('visible');
+
+      // Show remove button on all non-first cards
+      const removeBtn = template.querySelector('.btn-remove-category');
+      if (removeBtn) removeBtn.style.display = 'flex';
+
+      container.appendChild(template);
+      totalForms.value = currentCount + 1;
+
+      applyDatetimeMins();
+      attachToggleLogic(template);
+
+      // Smooth scroll to new card
+      template.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  // ══════════════════════════════════════════════════
+  // 5. REMOVE CATEGORY
+  // ══════════════════════════════════════════════════
+  container.addEventListener('click', function (e) {
+    const removeBtn = e.target.closest('.btn-remove-category');
+    if (!removeBtn) return;
+
+    const card = removeBtn.closest('.ticket-category-card');
+    if (!card) return;
+
+    // Don't allow removing if only 1 card left
+    const allCards = container.querySelectorAll('.ticket-category-card');
+    if (allCards.length <= 1) {
+      alert('You need at least one ticket category.');
+      return;
+    }
+
+    card.remove();
+
+    // Renumber remaining cards
+    container.querySelectorAll('.ticket-category-card').forEach(function (c, idx) {
+      const span = c.querySelector('.category-title span');
+      if (span) span.textContent = `Category ${idx + 1}`;
+    });
+
+    totalForms.value = container.querySelectorAll('.ticket-category-card').length;
+  });
+
+  // ══════════════════════════════════════════════════
+  // 6. FORM VALIDATION ON SUBMIT
+  // ══════════════════════════════════════════════════
+  const form = document.getElementById('createEventForm');
+  const submitBtn = document.getElementById('submitBtn');
+
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      let valid = true;
+
+      // Check required fields
+      form.querySelectorAll('[required]').forEach(function (field) {
+        if (!field.value.trim()) {
+          field.classList.add('is-invalid');
+          valid = false;
+        } else {
+          field.classList.remove('is-invalid');
+        }
+      });
+
+      // Check each ticket card has name and price (unless free)
+      container.querySelectorAll('.ticket-category-card').forEach(function (card) {
+        const nameInput  = card.querySelector('input[name*="name"]');
+        const priceInput = card.querySelector('.price-input');
+        const freeCheck  = card.querySelector('input[name*="is_free"]');
+
+        if (nameInput && !nameInput.value.trim()) {
+          nameInput.classList.add('is-invalid');
+          valid = false;
+        }
+
+        if (priceInput && !freeCheck?.checked) {
+          const val = parseFloat(priceInput.value);
+          if (isNaN(val) || val < 0) {
+            priceInput.classList.add('is-invalid');
+            valid = false;
+          }
+        }
+      });
+
+      if (!valid) {
+        e.preventDefault();
+        const firstInvalid = form.querySelector('.is-invalid');
+        if (firstInvalid) {
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstInvalid.focus();
+        }
+        return;
+      }
+
+      // Disable button to prevent double-submit
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating Event...';
+    });
+
+    // Live clear invalid state on input
+    form.addEventListener('input', function (e) {
+      if (e.target.classList.contains('is-invalid') && e.target.value.trim()) {
+        e.target.classList.remove('is-invalid');
+      }
+    });
+  }
+
+});
+</script>
+{% endblock %}

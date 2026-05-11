@@ -1,0 +1,854 @@
+{% extends 'merchandise/base_merchandise.html' %}
+{% load humanize %}
+
+{% block merchandise_title %}Order #{{ order.order_number }} - TazamoEXP{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+    <i class="bi bi-bag-check-fill text-primary me-2" style="font-size: 1.5rem;"></i>
+    <span>Order #{{ order.order_number }}</span>
+</div>
+{% endblock %}
+
+{% block page_subtitle %}
+<div class="d-flex align-items-center text-muted">
+    <i class="bi bi-calendar3 me-2"></i>
+    <span>Placed on {{ order.created_at|date:"F j, Y" }}</span>
+</div>
+{% endblock %}
+
+{% block breadcrumb_items %}
+    <li class="breadcrumb-item"><a href="{% url 'merchandise_order_list' %}">My Orders</a></li>
+    <li class="breadcrumb-item active" aria-current="page">#{{ order.order_number }}</li>
+{% endblock %}
+
+{% block merchandise_content %}
+<div class="row">
+    <!-- Order Details -->
+    <div class="col-lg-8">
+        <!-- Order Status -->
+        <div class="card shadow-sm border-0 mb-4" style="border-left: 4px solid #0d6efd !important; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important;">
+            <div class="card-header bg-white d-flex align-items-center py-3">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                    <i class="bi bi-truck text-primary" style="font-size: 1rem;"></i>
+                </div>
+                <h5 class="mb-0 fw-semibold">Order Status & Tracking</h5>
+                {% if is_seller %}
+                <button type="button" class="btn btn-sm btn-outline-primary ms-auto" 
+                        data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+                    <i class="bi bi-pencil-square me-1"></i> Update Status
+                </button>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill" style="font-size: 0.9rem;">
+                            <i class="bi bi-{{ order.status_icon }} me-1"></i>
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar with Steps -->
+                <div class="position-relative mt-4 mb-3">
+                    <!-- Progress Line -->
+                    <div class="progress" style="height: 6px; position: absolute; top: 12px; width: 100%;">
+                        {% if order.status == 'pending' %}
+                        <div class="progress-bar bg-light" style="width: 25%;"></div>
+                        {% elif order.status == 'processing' %}
+                        <div class="progress-bar bg-light" style="width: 50%;"></div>
+                        {% elif order.status == 'shipped' %}
+                        <div class="progress-bar bg-light" style="width: 75%;"></div>
+                        {% elif order.status == 'delivered' %}
+                        <div class="progress-bar bg-success" style="width: 100%;"></div>
+                        {% elif order.status == 'cancelled' or order.status == 'refunded' %}
+                        <div class="progress-bar bg-danger" style="width: 100%;"></div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Steps -->
+                    <div class="d-flex justify-content-between position-relative">
+                        <!-- Step 1: Pending -->
+                        <div class="d-flex flex-column align-items-center" style="width: 25%;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle mb-1" 
+                                 style="width: 30px; height: 30px; background-color: {% if order.status == 'pending' %}#0d6efd{% else %}#e9ecef{% endif %}">
+                                <i class="bi bi-cart-check text-{% if order.status == 'pending' %}white{% else %}muted{% endif %}" style="font-size: 1rem;"></i>
+                            </div>
+                            <span class="text-center small {% if order.status == 'pending' %}fw-bold text-primary{% else %}text-muted{% endif %}">Order Placed</span>
+                        </div>
+                        
+                        <!-- Step 2: Processing -->
+                        <div class="d-flex flex-column align-items-center" style="width: 25%;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle mb-1" 
+                                 style="width: 30px; height: 30px; background-color: {% if order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}#0d6efd{% else %}#e9ecef{% endif %}">
+                                <i class="bi bi-gear-fill text-{% if order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}white{% else %}muted{% endif %}" style="font-size: 1rem;"></i>
+                            </div>
+                            <span class="text-center small {% if order.status == 'processing' %}fw-bold text-primary{% elif order.status == 'shipped' or order.status == 'delivered' %}text-primary{% else %}text-muted{% endif %}">Processing</span>
+                        </div>
+                        
+                        <!-- Step 3: Shipped -->
+                        <div class="d-flex flex-column align-items-center" style="width: 25%;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle mb-1" 
+                                 style="width: 30px; height: 30px; background-color: {% if order.status == 'shipped' or order.status == 'delivered' %}#0d6efd{% else %}#e9ecef{% endif %}">
+                                <i class="bi bi-truck text-{% if order.status == 'shipped' or order.status == 'delivered' %}white{% else %}muted{% endif %}" style="font-size: 1rem;"></i>
+                            </div>
+                            <span class="text-center small {% if order.status == 'shipped' %}fw-bold text-primary{% elif order.status == 'delivered' %}text-primary{% else %}text-muted{% endif %}">Shipped</span>
+                        </div>
+                        
+                        <!-- Step 4: Delivered -->
+                        <div class="d-flex flex-column align-items-center" style="width: 25%;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle mb-1" 
+                                 style="width: 30px; height: 30px; background-color: {% if order.status == 'delivered' %}#198754{% elif order.status == 'cancelled' or order.status == 'refunded' %}#dc3545{% else %}#e9ecef{% endif %}">
+                                <i class="bi bi-check-circle-fill text-{% if order.status == 'delivered' %}white{% elif order.status == 'cancelled' or order.status == 'refunded' %}white{% else %}muted{% endif %}" style="font-size: 1rem;"></i>
+                            </div>
+                            <span class="text-center small {% if order.status == 'delivered' %}fw-bold text-success{% elif order.status == 'cancelled' or order.status == 'refunded' %}text-danger{% else %}text-muted{% endif %}">
+                                {% if order.status == 'cancelled' %}Cancelled
+                                {% elif order.status == 'refunded' %}Refunded
+                                {% else %}Delivered
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Items -->
+        <div class="card shadow-sm border-0 border-start border-primary border-4 mb-4" style="--bs-border-opacity: 0.1;">
+            <div class="card-header bg-white d-flex align-items-center py-3">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                    <i class="bi bi-cart-check text-primary" style="font-size: 1rem;"></i>
+                </div>
+                <h5 class="mb-0 fw-semibold">Order Items</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0" style="width: 45%;">Item</th>
+                                <th class="text-end border-0" style="width: 20%;">Price</th>
+                                <th class="text-center border-0" style="width: 15%;">Qty</th>
+                                <th class="text-end border-0" style="width: 20%;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr class="border-0">
+                                <td class="border-0">
+                                    <div class="d-flex align-items-center">
+                                        <div class="position-relative me-3">
+                                            <img src="{{ item.merchandise.image.url }}" alt="{{ item.merchandise.name }}" class="img-fluid rounded" style="width: 56px; height: 56px; object-fit: cover;">
+                                            {% if item.quantity > 1 %}
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                                {{ item.quantity }}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-medium">{{ item.merchandise.name }}</h6>
+                                            <small class="text-muted">SKU: {{ item.merchandise.sku|default:'N/A' }}</small>
+                                            {% if item.merchandise.size %}
+                                            <div class="mt-1">
+                                                <span class="badge bg-light text-dark border">Size: {{ item.merchandise.size }}</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end border-0">
+                                    <div class="text-nowrap">Ksh {{ item.price|intcomma }}</div>
+                                    {% if item.quantity > 1 %}
+                                    <div class="text-muted small">{{ item.quantity }} × Ksh {{ item.price|intcomma }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center border-0">
+                                    <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-pill px-2 py-1 min-width-40">
+                                        {{ item.quantity }}
+                                    </div>
+                                </td>
+                                <td class="text-end border-0 fw-bold">
+                                    <div class="text-nowrap">Ksh {{ item.get_cost|intcomma }}</div>
+                                </td>
+                            </tr>
+                            {% if not forloop.last %}
+                            <tr>
+                                <td colspan="4" class="p-0"><div class="border-bottom" style="margin: 0 1.5rem;"></div></td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="card shadow-sm border-0" style="box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important; border-left: 4px solid #fd7e14 !important;">
+                    <div class="card-header bg-white d-flex align-items-center py-3">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                            <i class="bi bi-receipt text-warning" style="font-size: 1rem;"></i>
+                        </div>
+                        <h5 class="mb-0 fw-semibold">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted">Subtotal ({{ order.items.count }} item{% if order.items.count != 1 %}s{% endif %}):</span>
+                            <span class="fw-medium">Ksh {{ order.get_total_cost|intcomma }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted">Shipping:</span>
+                            <span class="fw-medium">Ksh {{ order.shipping_cost|intcomma }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom mb-3">
+                            <span class="text-muted">Tax ({{ order.tax_rate|floatformat:0 }}%):</span>
+                            <span class="fw-medium">Ksh {{ order.get_tax|intcomma }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-2 bg-light rounded p-3 mb-3">
+                            <span class="fw-bold">Total Amount:</span>
+                            <span class="fw-bold fs-5 text-primary">Ksh {{ order.get_total_cost_with_shipping|intcomma }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment & Shipping -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0 h-100" style="box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important; border-left: 4px solid #6f42c1 !important;">
+                    <div class="card-header bg-white d-flex align-items-center py-3">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-purple bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                            <i class="bi bi-credit-card text-purple" style="font-size: 1rem;"></i>
+                        </div>
+                        <h5 class="mb-0 fw-semibold">Payment Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center p-3 bg-light rounded mb-3">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                                {% if order.payment_method == 'mpesa' %}
+                                    <i class="bi bi-phone text-primary"></i>
+                                {% elif order.payment_method == 'card' %}
+                                    <i class="bi bi-credit-card text-primary"></i>
+                                {% else %}
+                                    <i class="bi bi-cash-coin text-primary"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <span class="text-muted small d-block">Payment Method</span>
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-medium me-2">
+                                        {% if order.payment_method == 'mpesa' %}M-Pesa
+                                        {% elif order.payment_method == 'card' %}Credit/Debit Card
+                                        {% else %}Cash on Delivery
+                                        {% endif %}
+                                    </span>
+                                    {% if order.paid %}
+                                        <span class="badge bg-success bg-opacity-10 text-success">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning bg-opacity-10 text-warning">
+                                            <i class="bi bi-clock-history me-1"></i> Pending
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if order.payment_method == 'mpesa' and not order.paid %}
+                        <div class="alert alert-primary d-flex align-items-center p-3" style="border-radius: 0.5rem;">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-25 rounded-circle me-3" style="width: 36px; height: 36px;">
+                                <i class="bi bi-phone-vibrate" style="font-size: 1.25rem;"></i>
+                            </div>
+                            <div>
+                                <h6 class="alert-heading mb-1 d-flex align-items-center">
+                                    <span>Complete M-Pesa Payment</span>
+                                    <span class="ms-2 badge bg-primary bg-opacity-25 text-primary">Action Required</span>
+                                </h6>
+                                <p class="mb-0 small">You will receive an M-Pesa payment request on your phone. Please enter your M-Pesa PIN to complete the payment.</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0 h-100" style="box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important; border-left: 4px solid #198754 !important;">
+                    <div class="card-header bg-white d-flex align-items-center py-3">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                            <i class="bi bi-truck text-success" style="font-size: 1rem;"></i>
+                        </div>
+                        <h5 class="mb-0 fw-semibold">Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-person text-primary"></i>
+                                </div>
+                                <div>
+                                    <span class="text-muted small d-block">Recipient</span>
+                                    <div class="fw-medium">{{ order.first_name }} {{ order.last_name }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex align-items-start p-3 bg-light rounded">
+                                <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-geo-alt text-primary"></i>
+                                </div>
+                                <div>
+                                    <span class="text-muted small d-block">Shipping Address</span>
+                                    <div class="fw-medium">
+                                        {{ order.address_line1 }}<br>
+                                        {% if order.address_line2 %}{{ order.address_line2 }}<br>{% endif %}
+                                        {{ order.city }}, {{ order.county }}<br>
+                                        {% if order.postal_code %}{{ order.postal_code }}<br>{% endif %}
+                                        {{ order.get_country_display }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <div class="d-flex align-items-center p-3 bg-light rounded">
+                                <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-telephone text-primary"></i>
+                                </div>
+                                <div>
+                                    <span class="text-muted small d-block">Contact Number</span>
+                                    <div class="fw-medium">{{ order.phone_number }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if is_seller %}
+                    {% if order.status != 'cancelled' and order.status != 'refunded' %}
+                    <button type="button" class="btn btn-outline-danger w-100 mb-2" 
+                            data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                        <i class="bi bi-x-circle me-2"></i> Cancel Order
+                    </button>
+                    {% endif %}
+                    <a href="{% url 'seller_dashboard' %}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                    </a>
+                {% else %}
+                    {% if order.status == 'pending' or order.status == 'processing' %}
+                    <button type="button" class="btn btn-outline-danger w-100 mb-2" 
+                            data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                        <i class="bi bi-x-circle me-2"></i> Request Cancellation
+                    </button>
+                    {% endif %}
+                    <a href="{% 
+                        url 'merchandise_order_list' %}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Orders
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Order Timeline -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex align-items-center py-3">
+                <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                    <i class="bi bi-truck text-success" style="font-size: 1rem;"></i>
+                </div>
+                <h5 class="mb-0 fw-semibold">Order Timeline</h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item {% if order.status == 'pending' %}active{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>Order Placed</h6>
+                            <p class="text-muted small mb-0">
+                                {{ order.created_at|date:"M j, Y H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item {% if order.status == 'processing' %}active{% elif order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>Processing</h6>
+                            {% if order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}
+                                <p class="text-muted small mb-0">
+                                    {{ order.updated_at|date:"M j, Y H:i" }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item {% if order.status == 'shipped' %}active{% elif order.status == 'delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>Shipped</h6>
+                            {% if order.status == 'shipped' or order.status == 'delivered' %}
+                                <p class="text-muted small mb-0">
+                                    {{ order.shipped_date|default:order.updated_at|date:"M j, Y H:i" }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item {% if order.status == 'delivered' %}active{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>Delivered</h6>
+                            {% if order.status == 'delivered' %}
+                                <p class="text-muted small mb-0">
+                                    {{ order.delivered_date|default:order.updated_at|date:"M j, Y H:i" }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Payment & Shipping -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 h-100" style="box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important; border-left: 4px solid #6f42c1 !important;">
+                <div class="card-header bg-white d-flex align-items-center py-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-purple bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                        <i class="bi bi-credit-card text-purple" style="font-size: 1rem;"></i>
+                    </div>
+                    <h5 class="mb-0 fw-semibold">Payment Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center p-3 bg-light rounded mb-3">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                            {% if order.payment_method == 'mpesa' %}
+                                <i class="bi bi-phone text-primary"></i>
+                            {% elif order.payment_method == 'card' %}
+                                <i class="bi bi-credit-card text-primary"></i>
+                            {% else %}
+                                <i class="bi bi-cash-coin text-primary"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <span class="text-muted small d-block">Payment Method</span>
+                            <div class="d-flex align-items-center">
+                                <span class="fw-medium me-2">
+                                    {% if order.payment_method == 'mpesa' %}M-Pesa
+                                    {% elif order.payment_method == 'card' %}Credit/Debit Card
+                                    {% else %}Cash on Delivery
+                                    {% endif %}
+                                </span>
+                                {% if order.paid %}
+                                    <span class="badge bg-success bg-opacity-10 text-success">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning">
+                                        <i class="bi bi-clock-history me-1"></i> Pending
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if order.payment_method == 'mpesa' and not order.paid %}
+                    <div class="alert alert-primary d-flex align-items-center p-3" style="border-radius: 0.5rem;">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-25 rounded-circle me-3" style="width: 36px; height: 36px;">
+                            <i class="bi bi-phone-vibrate" style="font-size: 1.25rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="alert-heading mb-1 d-flex align-items-center">
+                                <span>Complete M-Pesa Payment</span>
+                                <span class="ms-2 badge bg-primary bg-opacity-25 text-primary">Action Required</span>
+                            </h6>
+                            <p class="mb-0 small">You will receive an M-Pesa payment request on your phone. Please enter your M-Pesa PIN to complete the payment.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0 h-100" style="box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important; border-left: 4px solid #198754 !important;">
+                <div class="card-header bg-white d-flex align-items-center py-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                        <i class="bi bi-truck text-success" style="font-size: 1rem;"></i>
+                    </div>
+                    <h5 class="mb-0 fw-semibold">Shipping Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center p-3 bg-light rounded">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person text-primary"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted small d-block">Recipient</span>
+                                <div class="fw-medium">{{ order.first_name }} {{ order.last_name }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex align-items-start p-3 bg-light rounded">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                                <i class="bi bi-geo-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted small d-block">Shipping Address</span>
+                                <div class="fw-medium">
+                                    {{ order.address_line1 }}<br>
+                                    {% if order.address_line2 %}{{ order.address_line2 }}<br>{% endif %}
+                                    {{ order.city }}, {{ order.county }}<br>
+                                    {% if order.postal_code %}{{ order.postal_code }}<br>{% endif %}
+                                    {{ order.get_country_display }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <div class="d-flex align-items-center p-3 bg-light rounded">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle me-3" style="width: 40px; height: 40px;">
+                                <i class="bi bi-telephone text-primary"></i>
+                            </div>
+                            <div>
+                                <span class="text-muted small d-block">Contact Number</span>
+                                <div class="fw-medium">{{ order.phone_number }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Actions -->
+    <div class="card shadow-sm border-0 mb-4" style="box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05) !important; border-left: 4px solid #fd7e14 !important;">
+        <div class="card-header bg-white d-flex align-items-center py-3">
+            <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                <i class="bi bi-lightning-charge text-warning" style="font-size: 1rem;"></i>
+            </div>
+            <h5 class="mb-0 fw-semibold">Order Actions</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+                {% if not order.paid and order.status != 'cancelled' %}
+                <a href="{% url 'merchandise_order_payment' order.id %}" class="btn btn-primary d-flex align-items-center">
+                    <i class="bi bi-credit-card me-2"></i> Complete Payment
+                </a>
+                {% endif %}
+                
+                {% if order.status == 'pending' %}
+                <button type="button" class="btn btn-outline-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                    <i class="bi bi-x-circle me-2"></i> Cancel Order
+                </button>
+                {% endif %}
+                
+                {% if request.user.is_staff %}
+                <button type="button" class="btn btn-outline-secondary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+                    <i class="bi bi-pencil-square me-2"></i> Update Status
+                </button>
+                {% endif %}
+                
+                <a href="{% url 'merchandise_order_invoice' order.id %}" class="btn btn-outline-primary d-flex align-items-center ms-auto">
+                    <i class="bi bi-receipt me-2"></i> View Invoice
+                </a>
+                
+                <button class="btn btn-outline-secondary d-flex align-items-center" onclick="window.print()">
+                    <i class="bi bi-printer me-2"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Timeline -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex align-items-center py-3">
+            <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle me-3" style="width: 36px; height: 36px;">
+                <i class="bi bi-truck text-success" style="font-size: 1rem;"></i>
+            </div>
+            <h5 class="mb-0 fw-semibold">Order Timeline</h5>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <div class="timeline-item {% if order.status == 'pending' %}active{% endif %}">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h6>Order Placed</h6>
+                        <p class="text-muted small mb-0">
+                            {{ order.created_at|date:"M j, Y H:i" }}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item {% if order.status == 'processing' %}active{% elif order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %}">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h6>Processing</h6>
+                        {% if order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}
+                            <p class="text-muted small mb-0">
+                                {{ order.updated_at|date:"M j, Y H:i" }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="timeline-item {% if order.status == 'shipped' %}active{% elif order.status == 'delivered' %}completed{% endif %}">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h6>Shipped</h6>
+                        {% if order.status == 'shipped' or order.status == 'delivered' %}
+                            <p class="text-muted small mb-0">
+                                {{ order.shipped_date|default:order.updated_at|date:"M j, Y H:i" }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="timeline-item {% if order.status == 'delivered' %}active{% endif %}">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h6>Delivered</h6>
+                        {% if order.status == 'delivered' %}
+                            <p class="text-muted small mb-0">
+                                {{ order.delivered_date|default:order.updated_at|date:"M j, Y H:i" }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Order Modal -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-light">
+                <div class="d-flex align-items-center">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle me-3" style="width: 36px; height: 36px;">
+                        <i class="bi bi-x-circle-fill" style="font-size: 1.25rem;"></i>
+                    </div>
+                    <h5 class="modal-title mb-0" id="cancelOrderModalLabel">Cancel Order #{{ order.id }}</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>
+                        Are you sure you want to cancel this order? This action cannot be undone.
+                    </div>
+                </div>
+                
+                <form method="post" action="{% url 'merchandise_order_cancel' order.id %}">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="cancelReason" class="form-label fw-medium text-muted mb-2">Reason for cancellation</label>
+                        <textarea class="form-control" id="cancelReason" name="reason" rows="3" placeholder="Please provide a reason for cancellation" required style="min-height: 100px;"></textarea>
+                        <div class="form-text">Your feedback helps us improve our service.</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center pt-2">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-arrow-left me-2"></i> Go Back
+                        </button>
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-x-circle me-2"></i> Confirm Cancellation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+/* Timeline */
+.timeline {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0.5rem;
+    width: 2px;
+    background-color: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -0.5rem;
+    top: 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    border: 2px solid #fff;
+    z-index: 1;
+}
+
+.timeline-item.active .timeline-marker {
+    background-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+.timeline-item.completed .timeline-marker {
+    background-color: #198754;
+}
+
+.timeline-content h6 {
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.timeline-content p {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+}
+
+/* Status badges */
+.status-badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.status-processing {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.status-shipped {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.status-delivered {
+    background-color: #198754;
+    color: #fff;
+}
+
+.status-cancelled, .status-refunded {
+    background-color: #dc3545;
+    color: #fff;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+{{ order.id|json_script:"order_id" }}
+{{ order.payment_method|json_script:"payment_method" }}
+{{ order.paid|json_script:"is_paid" }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get data from Django template
+    const orderId = JSON.parse(document.getElementById('order_id').textContent);
+    const paymentMethod = JSON.parse(document.getElementById('payment_method').textContent);
+    const isPaid = JSON.parse(document.getElementById('is_paid').textContent);
+    
+    // Check for pending M-Pesa payments
+    if (paymentMethod === 'mpesa' && !isPaid) {
+        let checkCount = 0;
+        const maxChecks = 10;
+        const checkInterval = 5000; // 5 seconds
+        const statusUrl = `/api/merchandise/orders/${orderId}/status/`;
+        
+        function checkPaymentStatus() {
+            if (checkCount >= maxChecks) {
+                console.log('Max payment status checks reached');
+                return;
+            }
+            
+            fetch(statusUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.paid) {
+                    window.location.reload();
+                } else {
+                    checkCount++;
+                    if (checkCount < maxChecks) {
+                        setTimeout(checkPaymentStatus, checkInterval);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error checking payment status:', error);
+                checkCount++;
+                if (checkCount < maxChecks) {
+                    setTimeout(checkPaymentStatus, checkInterval);
+                }
+            });
+        }
+    }
+    
+    // Start checking payment status after a short delay
+    if (paymentMethod === 'mpesa' && !isPaid) {
+        setTimeout(checkPaymentStatus, 2000);
+    }
+    
+    // Handle resend M-Pesa prompt
+    const resendButton = document.getElementById('resendMpesaPrompt');
+    if (resendButton) {
+        resendButton.addEventListener('click', function() {
+            const button = this;
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending...';
+            
+            fetch(`/api/merchandise/orders/{{ order.id }}/resend-prompt/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFTTOKEN': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('M-Pesa prompt has been resent to your phone.');
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to resend M-Pesa prompt.'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while resending the M-Pesa prompt.');
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i> Resend M-Pesa Prompt';
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

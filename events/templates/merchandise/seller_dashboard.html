@@ -1,0 +1,369 @@
+{% extends 'merchandise/base_merchandise.html' %}
+{% load humanize %}
+
+{% block title %}Seller Dashboard — ZOZAPRIME{% endblock %}
+
+{% block shop_css %}
+<style>
+/* Stats */
+.seller-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.s-stat {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 14px;
+  padding: 1.25rem;
+  transition: all 0.15s ease;
+}
+
+.s-stat:hover {
+  border-color: var(--coral, #F05252);
+  transform: translateY(-2px);
+}
+
+.s-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.s-stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  font-family: var(--font-display, sans-serif);
+}
+
+.s-stat-trend {
+  font-size: 0.8rem;
+  color: var(--text-tertiary, #666);
+  margin-top: 0.2rem;
+}
+
+/* Quick actions */
+.quick-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Section cards */
+.dash-card {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.dash-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+}
+
+.dash-card-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-primary, #fff);
+}
+
+.dash-card-body {
+  padding: 1.25rem 1.5rem;
+}
+
+/* Product rows */
+.prod-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.06));
+}
+
+.prod-row:last-child { border-bottom: none; }
+
+.prod-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: var(--bg-tertiary, #111);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prod-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.prod-thumb i {
+  color: var(--text-tertiary, #666);
+  font-size: 1.2rem;
+}
+
+.prod-info { flex: 1; }
+
+.prod-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary, #fff);
+}
+
+.prod-meta {
+  font-size: 0.8rem;
+  color: var(--text-tertiary, #666);
+}
+
+.prod-price {
+  font-weight: 700;
+  color: var(--coral, #F05252);
+  font-size: 0.95rem;
+}
+
+.prod-stock {
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-width: 50px;
+  text-align: right;
+}
+
+.stock-good { color: #10b981; }
+.stock-warn { color: #f59e0b; }
+.stock-bad { color: #ef4444; }
+
+/* Order rows */
+.order-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.06));
+}
+
+.order-row:last-child { border-bottom: none; }
+
+.order-id {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--coral, #F05252);
+  min-width: 60px;
+}
+
+.order-customer {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text-primary, #fff);
+}
+
+.order-amount {
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  font-size: 0.9rem;
+}
+
+/* Two-column layout */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .dash-grid { grid-template-columns: 1fr; }
+  .quick-actions { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block shop_content %}
+
+<div class="shop-header">
+  <h1 class="shop-title">Seller Dashboard</h1>
+  <p class="shop-sub">Manage your products and orders</p>
+</div>
+
+<!-- Stats -->
+<div class="seller-stats">
+  <div class="s-stat">
+    <div class="s-stat-label">Total Revenue</div>
+    <div class="s-stat-value">Ksh {{ total_revenue|default:0|floatformat:0|intcomma }}</div>
+    <div class="s-stat-trend">All time</div>
+  </div>
+  <div class="s-stat">
+    <div class="s-stat-label">Orders</div>
+    <div class="s-stat-value">{{ total_sales|default:0 }}</div>
+    <div class="s-stat-trend">Total orders</div>
+  </div>
+  <div class="s-stat">
+    <div class="s-stat-label">Products</div>
+    <div class="s-stat-value">{{ products|length|default:0 }}</div>
+    <div class="s-stat-trend">Listed</div>
+  </div>
+  <div class="s-stat">
+    <div class="s-stat-label">Low Stock</div>
+    <div class="s-stat-value" style="color: {% if low_stock_items %}#f59e0b{% else %}#10b981{% endif %};">
+      {{ low_stock_items|length|default:0 }}
+    </div>
+    <div class="s-stat-trend">Items need restock</div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+  <a href="{% url 'seller_merchandise_add' %}" class="btn-coral">
+    <i class="bi bi-plus-lg"></i> Add Product
+  </a>
+  <a href="{% url 'seller_merchandise_category_add' %}" class="btn-ghost">
+    <i class="bi bi-tags"></i> Add Category
+  </a>
+  <a href="{% url 'merchandise_list' %}" class="btn-ghost">
+    <i class="bi bi-box-seam"></i> View Shop
+  </a>
+  <a href="{% url 'merchandise_order_list' %}" class="btn-ghost">
+    <i class="bi bi-list-ul"></i> All Orders
+  </a>
+</div>
+
+<div class="dash-grid">
+
+  <!-- Left column -->
+  <div>
+    <!-- Recent Orders -->
+    <div class="dash-card">
+      <div class="dash-card-head">
+        <span class="dash-card-title">Recent Orders</span>
+        <a href="{% url 'merchandise_order_list' %}" style="font-size: 0.85rem; color: var(--coral); text-decoration: none;">View All</a>
+      </div>
+      <div class="dash-card-body">
+        {% if recent_orders %}
+          {% for order in recent_orders %}
+          <div class="order-row">
+            <span class="order-id">#{{ order.id }}</span>
+            <span class="order-customer">{{ order.buyer.get_full_name|default:order.buyer.username }}</span>
+            <span class="order-amount">Ksh {{ order.total_amount|floatformat:0|intcomma }}</span>
+            <span class="badge-{% if order.status == 'pending' %}amber{% elif order.status == 'delivered' %}green{% elif order.status == 'cancelled' %}coral{% else %}gray{% endif %}">
+              {{ order.get_status_display }}
+            </span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="shop-empty">
+            <div class="icon"><i class="bi bi-receipt"></i></div>
+            <div class="title">No orders yet</div>
+            <div class="sub">Orders will appear here when customers buy your products.</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="dash-card">
+      <div class="dash-card-head">
+        <span class="dash-card-title">Your Products</span>
+        <a href="{% url 'seller_merchandise_add' %}" style="font-size: 0.85rem; color: var(--coral); text-decoration: none;">Add New</a>
+      </div>
+      <div class="dash-card-body">
+        {% if recent_products %}
+          {% for product in recent_products %}
+          <div class="prod-row">
+            <div class="prod-thumb">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+              {% else %}
+                <i class="bi bi-image"></i>
+              {% endif %}
+            </div>
+            <div class="prod-info">
+              <div class="prod-name">
+                <a href="{% url 'merchandise_detail' product.pk %}" style="color: inherit; text-decoration: none;">
+                  {{ product.name|truncatechars:30 }}
+                </a>
+              </div>
+              <div class="prod-meta">{{ product.category.name|default:"No category" }}</div>
+            </div>
+            <span class="prod-price">Ksh {{ product.price|floatformat:0|intcomma }}</span>
+            <span class="prod-stock {% if product.stock_quantity > 5 %}stock-good{% elif product.stock_quantity > 0 %}stock-warn{% else %}stock-bad{% endif %}">
+              {{ product.stock_quantity }}
+            </span>
+            <a href="{% url 'merchandise_edit' product.pk %}" style="color: var(--text-tertiary); font-size: 0.85rem;">
+              <i class="bi bi-pencil"></i>
+            </a>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="shop-empty">
+            <div class="icon"><i class="bi bi-box-seam"></i></div>
+            <div class="title">No products yet</div>
+            <div class="sub">Start by adding your first product.</div>
+            <a href="{% url 'seller_merchandise_add' %}" class="btn-coral" style="margin-top: 1rem; display: inline-flex;">
+              <i class="bi bi-plus-lg"></i> Add Product
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div>
+    <!-- Low Stock Alert -->
+    <div class="dash-card">
+      <div class="dash-card-head">
+        <span class="dash-card-title">Low Stock Alerts</span>
+      </div>
+      <div class="dash-card-body">
+        {% if low_stock_items %}
+          {% for item in low_stock_items %}
+          <div class="prod-row">
+            <div class="prod-info">
+              <div class="prod-name">{{ item.name|truncatechars:25 }}</div>
+              <div class="prod-meta">{{ item.category.name|default:"" }}</div>
+            </div>
+            <span class="prod-stock stock-warn">{{ item.stock_quantity }} left</span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div style="text-align: center; padding: 1.5rem; color: var(--text-tertiary);">
+            <i class="bi bi-check-circle" style="font-size: 2rem; color: #10b981;"></i>
+            <p style="margin: 0.5rem 0 0; font-size: 0.85rem;">All stocked up!</p>
+          </div>
+        {% endif %}
+
+        {% if out_of_stock_items %}
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+            <div style="font-size: 0.8rem; font-weight: 600; color: #ef4444; margin-bottom: 0.5rem;">OUT OF STOCK</div>
+            {% for item in out_of_stock_items %}
+            <div class="prod-row">
+              <div class="prod-info">
+                <div class="prod-name">{{ item.name|truncatechars:25 }}</div>
+              </div>
+              <a href="{% url 'merchandise_edit' item.pk %}" class="btn-ghost" style="padding: 0.3rem 0.75rem; font-size: 0.75rem;">
+                Restock
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

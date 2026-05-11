@@ -1,0 +1,332 @@
+{% extends 'merchandise/base_merchandise.html' %}
+{% load humanize %}
+
+{% block title %}Shop — ZOZAPRIME{% endblock %}
+
+{% block shop_css %}
+<style>
+/* Filters */
+.filter-bar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.filter-bar .search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.filter-bar .search-box input {
+  padding-left: 2.5rem;
+}
+
+.filter-bar .search-box i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary, #666);
+}
+
+.filter-bar select {
+  min-width: 160px;
+}
+
+/* Product Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Product Card */
+.product-card {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  border-color: var(--coral, #F05252);
+  transform: translateY(-3px);
+}
+
+.product-img {
+  width: 100%;
+  height: 200px;
+  background: var(--bg-tertiary, #111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-img .no-img {
+  font-size: 3rem;
+  color: var(--text-tertiary, #666);
+}
+
+.stock-pill {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.product-body {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-category {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--coral, #F05252);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.4rem;
+}
+
+.product-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary, #fff);
+  margin-bottom: 0.4rem;
+  text-decoration: none;
+  display: block;
+}
+
+.product-name:hover {
+  color: var(--coral, #F05252);
+}
+
+.product-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #999);
+  margin-bottom: auto;
+  line-height: 1.4;
+}
+
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+}
+
+.product-price {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--coral, #F05252);
+}
+
+.product-buy {
+  background: var(--coral, #F05252);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.product-buy:hover {
+  background: var(--coral-dark, #d93b3b);
+  color: white;
+}
+
+.product-buy:disabled, .product-buy.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Results header */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.results-count {
+  color: var(--text-secondary, #999);
+  font-size: 0.9rem;
+}
+
+.results-count strong {
+  color: var(--text-primary, #fff);
+}
+
+@media (max-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .product-img { height: 150px; }
+  .product-body { padding: 0.875rem; }
+  .product-footer { padding: 0.75rem 0.875rem; }
+  .product-price { font-size: 1rem; }
+  .filter-bar { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block shop_content %}
+<div class="shop-header">
+  <h1 class="shop-title">Shop</h1>
+  <p class="shop-sub">Event merchandise and collectibles</p>
+</div>
+
+<!-- Filter Bar -->
+<form method="get" action="{% url 'merchandise_list' %}">
+  <div class="filter-bar">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" name="q" class="shop-input" placeholder="Search products..."
+             value="{{ request.GET.q }}" style="padding-left: 2.5rem;">
+    </div>
+    <select name="category" class="shop-select" onchange="this.form.submit()" style="min-width: 160px; max-width: 200px;">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>
+          {{ cat.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <select name="sort" class="shop-select" onchange="this.form.submit()" style="min-width: 150px; max-width: 180px;">
+      <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+      <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low–High</option>
+      <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High–Low</option>
+    </select>
+    {% if request.GET.q or request.GET.category or request.GET.sort %}
+      <a href="{% url 'merchandise_list' %}" class="btn-ghost" style="padding: 0.7rem 1rem; font-size: 0.8rem;">
+        <i class="bi bi-x"></i> Clear
+      </a>
+    {% endif %}
+  </div>
+</form>
+
+<!-- Results Header -->
+<div class="results-header">
+  <div class="results-count">
+    {% if request.GET.q %}
+      Results for "<strong>{{ request.GET.q }}</strong>"
+    {% else %}
+      <strong>{{ page_obj.paginator.count|default:object_list|length }}</strong> products
+    {% endif %}
+  </div>
+  {% if user.is_authenticated and user.is_seller %}
+    <a href="{% url 'merchandise_add' %}" class="btn-coral">
+      <i class="bi bi-plus-lg"></i> Add Product
+    </a>
+  {% endif %}
+</div>
+
+<!-- Product Grid -->
+{% if object_list %}
+  <div class="product-grid">
+    {% for item in object_list %}
+      <div class="product-card">
+        <div class="product-img">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}">
+          {% else %}
+            <i class="bi bi-image no-img"></i>
+          {% endif %}
+          {% if item.stock_quantity <= 5 and item.stock_quantity > 0 %}
+            <span class="stock-pill badge-amber">{{ item.stock_quantity }} left</span>
+          {% elif item.stock_quantity == 0 %}
+            <span class="stock-pill badge-coral">Sold Out</span>
+          {% endif %}
+        </div>
+        <div class="product-body">
+          {% if item.category %}
+            <div class="product-category">{{ item.category.name }}</div>
+          {% endif %}
+          <a href="{% url 'merchandise_detail' item.pk %}" class="product-name">
+            {{ item.name }}
+          </a>
+          <p class="product-desc">{{ item.description|truncatewords:15 }}</p>
+        </div>
+        <div class="product-footer">
+          <span class="product-price">Ksh {{ item.price|floatformat:0|intcomma }}</span>
+          {% if item.stock_quantity > 0 %}
+            <a href="{% url 'merchandise_order' item.pk %}" class="product-buy">
+              <i class="bi bi-bag"></i> Buy
+            </a>
+          {% else %}
+            <span class="product-buy disabled">Sold Out</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+  <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
+         class="btn-ghost" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+        <i class="bi bi-chevron-left"></i> Prev
+      </a>
+    {% endif %}
+
+    <span style="padding: 0.5rem 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}"
+         class="btn-ghost" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+        Next <i class="bi bi-chevron-right"></i>
+      </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+{% else %}
+  <div class="shop-empty" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; margin-top: 1rem;">
+    <div class="icon"><i class="bi bi-bag-x"></i></div>
+    <div class="title">No products found</div>
+    <div class="sub" style="margin-bottom: 1.5rem;">
+      {% if request.GET.q %}
+        No results for "{{ request.GET.q }}". Try a different search.
+      {% else %}
+        No products available yet. Check back soon!
+      {% endif %}
+    </div>
+    {% if request.GET %}
+      <a href="{% url 'merchandise_list' %}" class="btn-coral">
+        <i class="bi bi-arrow-left"></i> View All Products
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% endblock %}

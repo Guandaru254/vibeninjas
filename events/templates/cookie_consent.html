@@ -1,0 +1,184 @@
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" class="cookie-consent">
+    <div class="container">
+        <div class="cookie-consent-content">
+            <div class="cookie-consent-title">
+                <i class="fas fa-cookie-bite me-2"></i>Cookie & Privacy Notice
+            </div>
+            <div class="cookie-consent-text">
+                We use cookies to enhance your experience, analyze site traffic, and personalize content. 
+                By continuing to use our site, you agree to our use of cookies in accordance with our 
+                <a href="{% url 'privacy_policy' %}" style="color: #3498db; text-decoration: underline;">Privacy Policy</a>.
+            </div>
+        </div>
+        <div class="cookie-consent-buttons">
+            <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">
+                <i class="fas fa-check me-1"></i>Accept All
+            </button>
+            <button class="cookie-btn cookie-btn-settings" onclick="showCookieSettings()">
+                <i class="fas fa-cog me-1"></i>Settings
+            </button>
+            <button class="cookie-btn cookie-btn-decline" onclick="declineCookies()">
+                <i class="fas fa-times me-1"></i>Essential Only
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Cookie Settings Modal -->
+<div class="modal fade" id="cookieSettingsModal" tabindex="-1" aria-labelledby="cookieSettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cookieSettingsModalLabel">
+                    <i class="fas fa-cog me-2"></i>Cookie Preferences
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="essentialCookies" checked disabled>
+                        <label class="form-check-label" for="essentialCookies">
+                            <strong>Essential Cookies</strong>
+                            <small class="d-block text-muted">Required for the site to function properly</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="analyticsCookies" checked>
+                        <label class="form-check-label" for="analyticsCookies">
+                            <strong>Analytics Cookies</strong>
+                            <small class="d-block text-muted">Help us understand how visitors interact with our site</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="marketingCookies">
+                        <label class="form-check-label" for="marketingCookies">
+                            <strong>Marketing Cookies</strong>
+                            <small class="d-block text-muted">Used to deliver personalized advertisements</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="personalizationCookies" checked>
+                        <label class="form-check-label" for="personalizationCookies">
+                            <strong>Personalization Cookies</strong>
+                            <small class="d-block text-muted">Remember your preferences and personalize content</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveCookieSettings()">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Cookie Management
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if user has already made cookie choice
+    if (!localStorage.getItem('cookieConsent')) {
+        // Show cookie consent banner after 2 seconds
+        setTimeout(function() {
+            document.getElementById('cookieConsent').classList.add('show');
+        }, 2000);
+    }
+});
+
+function acceptCookies() {
+    localStorage.setItem('cookieConsent', 'all');
+    localStorage.setItem('analyticsCookies', 'true');
+    localStorage.setItem('marketingCookies', 'true');
+    localStorage.setItem('personalizationCookies', 'true');
+    
+    // Hide cookie banner
+    document.getElementById('cookieConsent').classList.remove('show');
+    
+    // Show success message
+    showNotification('Cookie preferences saved! Thank you for accepting.', 'success');
+    
+    // Initialize analytics if accepted
+    initializeAnalytics();
+}
+
+function declineCookies() {
+    localStorage.setItem('cookieConsent', 'essential');
+    localStorage.setItem('analyticsCookies', 'false');
+    localStorage.setItem('marketingCookies', 'false');
+    localStorage.setItem('personalizationCookies', 'false');
+    
+    // Hide cookie banner
+    document.getElementById('cookieConsent').classList.remove('show');
+    
+    // Show notification
+    showNotification('Only essential cookies will be used.', 'info');
+}
+
+function showCookieSettings() {
+    // Load current preferences
+    document.getElementById('analyticsCookies').checked = localStorage.getItem('analyticsCookies') === 'true';
+    document.getElementById('marketingCookies').checked = localStorage.getItem('marketingCookies') === 'true';
+    document.getElementById('personalizationCookies').checked = localStorage.getItem('personalizationCookies') === 'true';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('cookieSettingsModal'));
+    modal.show();
+}
+
+function saveCookieSettings() {
+    const analytics = document.getElementById('analyticsCookies').checked;
+    const marketing = document.getElementById('marketingCookies').checked;
+    const personalization = document.getElementById('personalizationCookies').checked;
+    
+    localStorage.setItem('cookieConsent', 'custom');
+    localStorage.setItem('analyticsCookies', analytics.toString());
+    localStorage.setItem('marketingCookies', marketing.toString());
+    localStorage.setItem('personalizationCookies', personalization.toString());
+    
+    // Hide modal and banner
+    bootstrap.Modal.getInstance(document.getElementById('cookieSettingsModal')).hide();
+    document.getElementById('cookieConsent').classList.remove('show');
+    
+    // Show notification
+    showNotification('Your cookie preferences have been saved.', 'success');
+    
+    // Initialize analytics if accepted
+    if (analytics) {
+        initializeAnalytics();
+    }
+}
+
+function initializeAnalytics() {
+    // Initialize Google Analytics or other analytics here
+    console.log('Analytics initialized');
+    // Add your analytics initialization code here
+}
+
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 10000; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(function() {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>

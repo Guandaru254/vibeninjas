@@ -1,0 +1,68 @@
+{
+  "name": "ZOZAPRIME — Live Events & Tickets in Kenya",
+  "short_name": "ZOZAPRIME",
+  "description": "Discover concerts, festivals, sports events and live experiences across Kenya. M-Pesa integrated ticketing for the 254 culture.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#ff4d4d",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/img/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/img/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/img/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["entertainment", "lifestyle", "music"],
+  "shortcuts": [
+    {
+      "name": "Browse Events",
+      "short_name": "Events",
+      "description": "Discover upcoming events",
+      "url": "/events/",
+      "icons": [
+        {
+          "src": "/static/img/favicon.png",
+          "sizes": "32x32"
+        }
+      ]
+    },
+    {
+      "name": "My Tickets",
+      "short_name": "Tickets",
+      "description": "View your tickets",
+      "url": "/my-tickets/",
+      "icons": [
+        {
+          "src": "/static/img/favicon.png",
+          "sizes": "32x32"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/img/og-banner.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

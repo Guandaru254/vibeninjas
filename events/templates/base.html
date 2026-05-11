@@ -1,0 +1,643 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <title>{% block title %}ZOZAPRIME — Live Events & Tickets in Kenya{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Discover concerts, festivals, sports events and live experiences across Kenya. Smart ticketing, content monetization, and creator commerce for the 254 culture.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}Kenya events, Nairobi concerts, event tickets, M-Pesa ticketing, live events Kenya, festivals Kenya, sports events, entertainment Kenya{% endblock %}">
+    <meta name="author" content="ZOZAPRIME">
+    <meta name="robots" content="index, follow">
+   
+    <link rel="canonical" href="{% block canonical %}https://www.zozaprime.com{% url 'home' %}{% endblock %}">
+   
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+   
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon.png' %}?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon.png' %}?v=2">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'img/favicon.png' %}?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}?v=2">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.png' %}?v=2">
+   
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ZOZAPRIME">
+   
+    <!-- Android PWA Support -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ff4d4d">
+   
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.zozaprime.com/">
+    <meta property="og:title" content="ZOZAPRIME — Live Events & Tickets in Kenya">
+    <meta property="og:description" content="Discover concerts, festivals, sports events and live experiences across Kenya. M-Pesa integrated ticketing for the 254 culture.">
+    <meta property="og:image" content="https://www.zozaprime.com{% static 'img/og-banner.png' %}">
+    <meta property="og:image:secure_url" content="https://www.zozaprime.com{% static 'img/og-banner.png' %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:site_name" content="ZOZAPRIME">
+    <meta property="og:locale" content="en_KE">
+   
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@zozaprime">
+    <meta name="twitter:creator" content="@zozaprime">
+    <meta name="twitter:url" content="https://www.zozaprime.com/">
+    <meta name="twitter:title" content="ZOZAPRIME — Live Events & Tickets in Kenya">
+    <meta name="twitter:description" content="Discover concerts, festivals, sports events across Kenya">
+    <meta name="twitter:image" content="https://www.zozaprime.com{% static 'img/og-banner.png' %}">
+   
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+   
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Urbanist:wght@500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Urbanist:wght@500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
+   
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></noscript>
+   
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ZOZAPRIME",
+      "url": "https://www.zozaprime.com",
+      "logo": "https://www.zozaprime.com{% static 'img/logo.png' %}",
+      "description": "Kenya's premier platform for ticketing, content monetization, and creator commerce.",
+      "foundingDate": "2026",
+      "foundingLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Nairobi",
+          "addressCountry": "KE"
+        }
+      },
+      "sameAs": [
+        "https://www.instagram.com/zozaprime",
+        "https://www.tiktok.com/@zozaprime",
+        "https://twitter.com/zozaprime",
+        "https://www.linkedin.com/company/zozaprime",
+        "https://www.facebook.com/zozaprime",
+        "https://www.youtube.com/@zozaprime"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "hello@zozaprime.com",
+        "availableLanguage": ["English", "Swahili"]
+      }
+    }
+    </script>
+   
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <!-- ONE-TIME SERVICE WORKER CLEANUP — Remove after May 9, 2026  -->
+    <!-- Forces all browsers carrying old broken SW (v1, v2) to dump it -->
+    <!-- and load the fixed v3 cleanly. Critical for unblocking payments. -->
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <script>
+    (function() {
+      if (!('serviceWorker' in navigator)) return;
+      
+      const RESET_FLAG = 'zp_sw_reset_v3';
+      
+      // Only run cleanup once per browser
+      if (localStorage.getItem(RESET_FLAG) === 'done') return;
+      
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        let needsReload = false;
+        const promises = [];
+        
+        registrations.forEach(function(reg) {
+          const url = (reg.active && reg.active.scriptURL) || '';
+          // If the active SW isn't v3, kill it
+          if (!url.includes('v=3')) {
+            console.log('[SW Cleanup] Unregistering old worker:', url);
+            promises.push(reg.unregister());
+            needsReload = true;
+          }
+        });
+        
+        // Also clear any old caches matching old version names
+        if ('caches' in window) {
+          promises.push(
+            caches.keys().then(function(names) {
+              return Promise.all(
+                names.map(function(name) {
+                  if (name === 'zozaprime-v1' || name === 'zozaprime-v2') {
+                    console.log('[SW Cleanup] Deleting old cache:', name);
+                    return caches.delete(name);
+                  }
+                })
+              );
+            })
+          );
+        }
+        
+        Promise.all(promises).then(function() {
+          localStorage.setItem(RESET_FLAG, 'done');
+          if (needsReload) {
+            console.log('[SW Cleanup] Reloading with fresh SW...');
+            window.location.reload();
+          }
+        });
+      });
+    })();
+    </script>
+   
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FPR18XNW25"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FPR18XNW25');
+    </script>
+   
+    <style>
+:root {
+  --bg-primary: #ffffff; --bg-secondary: #fafafa; --bg-tertiary: #f5f5f5;
+  --text-primary: #0a0a0a; --text-secondary: #525252; --text-tertiary: #a3a3a3;
+  --border-color: #e5e5e5; --border-light: #f0f0f0;
+  --coral: #ff4d4d; --coral-dark: #e03030; --coral-light: #ff7070;
+  --coral-bg: rgba(255, 77, 77, 0.08); --coral-glow: rgba(255, 77, 77, 0.2);
+  --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+  --font-display: 'Urbanist', sans-serif; --font-body: 'Inter', sans-serif;
+  --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04); --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1); --t-fast: 0.15s var(--ease); --t-base: 0.25s var(--ease);
+}
+
+
+[data-theme="dark"] {
+  --bg-primary: #0a0a0a; --bg-secondary: #141414; --bg-tertiary: #1f1f1f;
+  --text-primary: #ffffff; --text-secondary: #a3a3a3; --text-tertiary: #737373;
+  --border-color: #2a2a2a; --border-light: #1f1f1f;
+  --glass-bg: rgba(20, 20, 20, 0.7); --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3); --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--text-primary);
+  background: var(--bg-primary); transition: background var(--t-base), color var(--t-base);
+  min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; margin-top: 72px; }
+a { text-decoration: none; color: inherit; transition: var(--t-fast); }
+img { max-width: 100%; display: block; height: auto; }
+
+
+/* Loading Screen - Pulsing Logo Only */
+.loading-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex;
+  align-items: center; justify-content: center; z-index: 9999;
+  transition: opacity 0.5s var(--ease), visibility 0.5s var(--ease); }
+.loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loading-logo-img { height: 120px; width: auto; animation: breathe 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px var(--coral-glow)); }
+@keyframes breathe { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+
+
+/* Navbar */
+.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 72px;
+  background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color); transition: all var(--t-base); }
+.navbar-inner { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; height: 100%; display: flex;
+  align-items: center; justify-content: space-between; gap: 1rem; }
+.logo { display: flex; align-items: center; flex-shrink: 0; }
+.logo-img { height: 48px; width: auto; transition: transform var(--t-fast); }
+.logo:hover .logo-img { transform: scale(1.05); }
+
+
+.nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
+.nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); position: relative; white-space: nowrap; }
+.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+  background: var(--coral); transition: width var(--t-base); }
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+
+.nav-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+.theme-toggle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color);
+  background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--t-fast); color: var(--text-primary); font-size: 1.1rem; }
+.theme-toggle:hover { background: var(--coral); border-color: var(--coral); color: white; transform: rotate(180deg); }
+
+
+.menu-toggle { display: none; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border-color);
+  background: var(--bg-secondary); align-items: center; justify-content: center; cursor: pointer;
+  transition: all var(--t-fast); color: var(--text-primary); font-size: 1.2rem; }
+.menu-toggle:hover { background: var(--coral); border-color: var(--coral); color: white; }
+
+
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.5rem; font-family: var(--font-body);
+  font-size: 0.875rem; font-weight: 600; border-radius: 10px; cursor: pointer; transition: all var(--t-fast);
+  border: none; white-space: nowrap; }
+.btn-primary { background: var(--coral); color: white; }
+.btn-primary:hover { background: var(--coral-dark); transform: translateY(-2px); box-shadow: 0 8px 20px var(--coral-glow); }
+.btn-outline { background: transparent; color: var(--text-primary); border: 1.5px solid var(--border-color); }
+.btn-outline:hover { border-color: var(--coral); color: var(--coral); background: var(--coral-bg); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+
+
+/* Mobile Nav */
+.mobile-nav { position: fixed; top: 72px; left: 0; right: 0; bottom: 0; background: var(--bg-primary);
+  padding: 1.5rem; transform: translateX(-100%); transition: transform 0.3s var(--ease);
+  z-index: 999; overflow-y: auto; }
+.mobile-nav.active { transform: translateX(0); }
+.mobile-nav .nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; }
+.mobile-nav .nav-links li { width: 100%; }
+.mobile-nav .nav-links a { display: flex; align-items: center; padding: 1rem 1.25rem; border-radius: 12px;
+  transition: all var(--t-fast); font-size: 0.95rem; font-weight: 500; width: 100%; }
+.mobile-nav .nav-links a i { font-size: 1.1rem; width: 24px; margin-right: 0.75rem; }
+.mobile-nav .nav-links a:hover, .mobile-nav .nav-links a.active { background: var(--coral-bg); color: var(--coral); }
+.mobile-nav-actions { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);
+  display: flex; flex-direction: column; gap: 0.75rem; }
+.mobile-nav-actions .btn { width: 100%; justify-content: center; padding: 1rem; }
+.mobile-nav-actions form { width: 100%; }
+
+
+/* PWA Install Button - Mobile Only - Hidden by default */
+#installBtn { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1001;
+  background: var(--coral); color: white; padding: 0.625rem 1rem; border-radius: 10px;
+  box-shadow: var(--shadow-lg); cursor: pointer; opacity: 0;
+  font-weight: 600; font-size: 0.8rem; gap: 0.4rem; align-items: center; border: none;
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+#installBtn.show { opacity: 1; transform: translateY(0); }
+#installBtn.hide { opacity: 0; transform: translateY(20px); }
+#installBtn:hover { background: var(--coral-dark); transform: translateY(-2px) !important; }
+#installBtn i { font-size: 0.9rem; }
+
+
+/* Hide install button on desktop */
+@media (min-width: 769px) {
+  #installBtn { display: none !important; }
+}
+
+
+/* Messages */
+.messages { position: fixed; top: 88px; right: 2rem; z-index: 999; display: flex; flex-direction: column;
+  gap: 0.75rem; max-width: 400px; }
+.alert { padding: 1rem 1.25rem; border-radius: 12px; border: 1px solid; background: var(--glass-bg);
+  backdrop-filter: blur(12px); display: flex; align-items: center; gap: 0.75rem; box-shadow: var(--shadow-md);
+  animation: slideIn 0.3s var(--ease); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.alert-success { border-color: var(--success); color: var(--success); }
+.alert-error, .alert-danger { border-color: var(--danger); color: var(--danger); }
+
+
+/* Footer */
+.footer { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 3rem 2rem 1.5rem; }
+.footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 2rem; }
+.footer-brand { max-width: 320px; }
+.footer-logo { margin-bottom: 0.75rem; }
+.footer-logo-img { height: 44px; width: auto; }
+.footer-brand p { font-size: 0.875rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1rem; }
+.footer-social { display: flex; gap: 0.75rem; margin-top: 1rem; }
+.footer-social a { width: 36px; height: 36px; border-radius: 8px; background: var(--bg-tertiary);
+  display: flex; align-items: center; justify-content: center; color: var(--text-secondary);
+  transition: all var(--t-fast); font-size: 1.1rem; }
+.footer-social a:hover { background: var(--coral); color: white; transform: translateY(-2px); }
+.footer-col h5 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-primary); margin-bottom: 1rem; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.6rem; }
+.footer-col ul a { font-size: 0.875rem; color: var(--text-secondary); }
+.footer-col ul a:hover { color: var(--coral); }
+.footer-bottom { max-width: 1280px; margin: 0 auto; padding-top: 2rem; border-top: 1px solid var(--border-color);
+  display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-size: 0.8rem; color: var(--text-tertiary); }
+
+
+/* Responsive */
+@media (max-width: 1024px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 768px) {
+  .navbar-inner .nav-links { display: none !important; }
+  .menu-toggle { display: flex !important; }
+  .nav-right .btn-ghost, .nav-right .btn-primary, .nav-right form { display: none !important; }
+  .logo-img { height: 40px; }
+  .loading-logo-img { height: 90px; }
+  .footer-logo-img { height: 36px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .messages { right: 1rem; left: 1rem; max-width: none; }
+ 
+  #installBtn {
+    bottom: 20px !important;
+    right: 20px !important;
+    left: auto !important;
+    width: auto !important;
+    justify-content: center;
+  }
+}
+    </style>
+   
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <img src="{% static 'img/logo.png' %}" alt="ZOZAPRIME" class="loading-logo-img">
+    </div>
+
+
+    <!-- PWA Install Button -->
+    <button id="installBtn">
+        <i class="bi bi-download"></i> Install App
+    </button>
+
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{% url 'home' %}" class="logo" aria-label="ZOZAPRIME Home">
+                <img src="{% static 'img/logo.png' %}" alt="ZOZAPRIME" class="logo-img">
+            </a>
+           
+            <ul class="nav-links">
+                <li><a href="{% url 'event_list' %}">Events</a></li>
+                <li><a href="{% url 'public_merchandise_list' %}">Vendors</a></li>
+                <li><a href="{% url 'blog:list' %}">Blog</a></li>
+                {% if user.is_authenticated %}
+                    {% if user.is_seller %}
+                        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'create_event' %}">Create Event</a></li>
+                        <li><a href="{% url 'profile_view' %}">My Profile</a></li>
+                    {% elif user.is_buyer %}
+                        <li><a href="{% url 'my_tickets' %}">My Tickets</a></li>
+                        <li><a href="{% url 'buyer_merchandise_order_list' %}">Orders</a></li>
+                        <li><a href="{% url 'profile_view' %}">My Profile</a></li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+           
+            <div class="nav-right">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="bi bi-sun-fill" id="themeIcon"></i>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline">Sign Out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-ghost">Sign In</a>
+                    <a href="{% url 'signup_buyer' %}" class="btn btn-primary">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+
+    <nav class="mobile-nav" id="mobileNav">
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}"><i class="bi bi-house-door"></i>Home</a></li>
+            <li><a href="{% url 'event_list' %}"><i class="bi bi-calendar-event"></i>Events</a></li>
+            <li><a href="{% url 'public_merchandise_list' %}"><i class="bi bi-shop"></i>Vendors</a></li>
+            <li><a href="{% url 'blog:list' %}"><i class="bi bi-journal-text"></i>Blog</a></li>
+            {% if user.is_authenticated %}
+                {% if user.is_seller %}
+                    <li><a href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+                    <li><a href="{% url 'create_event' %}"><i class="bi bi-plus-circle"></i>Create Event</a></li>
+                    <li><a href="{% url 'profile_view' %}"><i class="bi bi-person-circle"></i>My Profile</a></li>
+                {% elif user.is_buyer %}
+                    <li><a href="{% url 'my_tickets' %}"><i class="bi bi-ticket-perforated"></i>My Tickets</a></li>
+                    <li><a href="{% url 'buyer_merchandise_order_list' %}"><i class="bi bi-bag"></i>Orders</a></li>
+                    <li><a href="{% url 'profile_view' %}"><i class="bi bi-person-circle"></i>My Profile</a></li>
+                {% endif %}
+            {% endif %}
+        </ul>
+       
+        {% if user.is_authenticated %}
+            <div class="mobile-nav-actions">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline">
+                        <i class="bi bi-box-arrow-right"></i> Sign Out
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <div class="mobile-nav-actions">
+                <a href="{% url 'login' %}" class="btn btn-outline">Sign In</a>
+                <a href="{% url 'signup_buyer' %}" class="btn btn-primary">Get Started</a>
+            </div>
+        {% endif %}
+    </nav>
+
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+    <main>{% block content %}{% endblock %}</main>
+
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="{% static 'img/logo.png' %}" alt="ZOZAPRIME" class="footer-logo-img">
+                </div>
+                <p>Kenya's premier platform for live events, concerts, festivals, and unforgettable experiences.</p>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/zozaprime" target="_blank" rel="noopener" aria-label="Instagram">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@zozaprime" target="_blank" rel="noopener" aria-label="TikTok">
+                        <i class="bi bi-tiktok"></i>
+                    </a>
+                    <a href="https://twitter.com/zozaprime" target="_blank" rel="noopener" aria-label="Twitter/X">
+                        <i class="bi bi-twitter-x"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/company/zozaprime" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="https://www.facebook.com/zozaprime" target="_blank" rel="noopener" aria-label="Facebook">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@zozaprime" target="_blank" rel="noopener" aria-label="YouTube">
+                        <i class="bi bi-youtube"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h5>Platform</h5>
+                <ul>
+                    <li><a href="{% url 'event_list' %}">Browse Events</a></li>
+                    <li><a href="{% url 'create_event' %}">Sell Tickets</a></li>
+                    <li><a href="{% url 'public_merchandise_list' %}">Vendors</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Company</h5>
+                  <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="{% url 'blog:list' %}">Blog</a></li>
+                    <li><a href="{% url 'privacy_policy' %}">Privacy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Support</h5>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="year"></span> ZOZAPRIME. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <script>
+// Loading screen
+window.addEventListener('load', () => setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 800));
+
+
+// Theme toggle - LIGHT IS DEFAULT
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme') || 'light';
+
+
+html.setAttribute('data-theme', savedTheme);
+themeIcon.className = savedTheme === 'dark' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
+
+
+themeToggle.addEventListener('click', () => {
+    const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeIcon.className = newTheme === 'dark' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
+});
+
+
+// Mobile menu
+const menuToggle = document.getElementById('menuToggle');
+const mobileNav = document.getElementById('mobileNav');
+
+
+menuToggle.addEventListener('click', () => {
+    mobileNav.classList.toggle('active');
+    menuToggle.querySelector('i').className = mobileNav.classList.contains('active') ? 'bi bi-x-lg' : 'bi bi-list';
+});
+
+
+// Close mobile menu when clicking links
+document.querySelectorAll('.mobile-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileNav.classList.remove('active');
+        menuToggle.querySelector('i').className = 'bi bi-list';
+    });
+});
+
+
+// Year
+document.getElementById('year').textContent = new Date().getFullYear();
+
+
+// Auto-dismiss messages
+document.querySelectorAll('.alert').forEach(alert => {
+    setTimeout(() => alert.remove(), 5000);
+});
+
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// PWA Service Worker — REGISTER v3 with cache-busting query
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js?v=3')
+            .then(reg => {
+                console.log('[SW] Registered v3');
+                
+                // Detect updates and reload gracefully
+                reg.addEventListener('updatefound', () => {
+                    const newWorker = reg.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                console.log('[SW] Updated to new version');
+                            }
+                        });
+                    }
+                });
+            })
+            .catch(err => console.log('[SW] Registration failed:', err));
+    });
+}
+
+
+// PWA Install Prompt
+let deferredPrompt;
+let installBtnTimeout;
+let hideInstallBtnTimeout;
+
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById('installBtn');
+   
+    // Only show on mobile (extra safety)
+    if (window.innerWidth >= 769) return;
+    
+    installBtnTimeout = setTimeout(() => {
+        installBtn.style.display = 'flex';
+        setTimeout(() => installBtn.classList.add('show'), 10);
+       
+        hideInstallBtnTimeout = setTimeout(() => {
+            installBtn.classList.remove('show');
+            installBtn.classList.add('hide');
+            setTimeout(() => {
+                installBtn.style.display = 'none';
+                installBtn.classList.remove('hide');
+            }, 300);
+        }, 4000);
+    }, 3000);
+});
+
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+   
+    clearTimeout(installBtnTimeout);
+    clearTimeout(hideInstallBtnTimeout);
+   
+    const installBtn = document.getElementById('installBtn');
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`Install ${outcome}`);
+    deferredPrompt = null;
+   
+    installBtn.classList.remove('show');
+    installBtn.classList.add('hide');
+    setTimeout(() => installBtn.style.display = 'none', 300);
+});
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

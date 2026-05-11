@@ -1,0 +1,332 @@
+{% extends 'merchandise/base_merchandise.html' %}
+{% load humanize %}
+
+{% block title %}{{ item.name }} — ZOZAPRIME Shop{% endblock %}
+
+{% block shop_css %}
+<style>
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.detail-img {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-img .no-img {
+  font-size: 5rem;
+  color: var(--text-tertiary, #666);
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.detail-category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--coral, #F05252);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.detail-name {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  color: var(--text-primary, #fff);
+  line-height: 1.2;
+}
+
+.detail-price-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.detail-price {
+  font-family: var(--font-display, sans-serif);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--coral, #F05252);
+}
+
+.detail-stock {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stock-ok {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.stock-low {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.stock-out {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.detail-desc {
+  color: var(--text-secondary, #999);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.detail-meta {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--glass-border, rgba(255,255,255,0.06));
+}
+
+.meta-row:last-child { border-bottom: none; }
+
+.meta-label { color: var(--text-tertiary, #666); }
+.meta-value { color: var(--text-primary, #fff); font-weight: 600; }
+
+.detail-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.detail-actions .btn-coral,
+.detail-actions .btn-ghost {
+  flex: 1;
+  justify-content: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+/* Seller controls */
+.seller-controls {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+}
+
+.seller-controls a {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Related products */
+.related-section {
+  margin-top: 3rem;
+}
+
+.related-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin-bottom: 1rem;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.related-card {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  display: block;
+}
+
+.related-card:hover {
+  border-color: var(--coral, #F05252);
+  transform: translateY(-2px);
+}
+
+.related-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.related-card .card-info {
+  padding: 0.875rem;
+}
+
+.related-card .card-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-primary, #fff);
+  margin-bottom: 0.25rem;
+}
+
+.related-card .card-price {
+  font-weight: 800;
+  color: var(--coral, #F05252);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .detail-img { aspect-ratio: 4/3; }
+  .detail-actions { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block shop_content %}
+
+<!-- Breadcrumb -->
+<div style="margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--text-tertiary, #666);">
+  <a href="{% url 'merchandise_list' %}" style="color: var(--text-secondary, #999); text-decoration: none;">Shop</a>
+  <i class="bi bi-chevron-right" style="font-size: 0.7rem; margin: 0 0.4rem;"></i>
+  <span style="color: var(--text-primary, #fff);">{{ item.name|truncatechars:30 }}</span>
+</div>
+
+<div class="detail-grid">
+
+  <!-- Image -->
+  <div class="detail-img">
+    {% if item.image %}
+      <img src="{{ item.image.url }}" alt="{{ item.name }}">
+    {% else %}
+      <i class="bi bi-image no-img"></i>
+    {% endif %}
+  </div>
+
+  <!-- Info -->
+  <div class="detail-info">
+
+    {% if item.category %}
+      <div class="detail-category">{{ item.category.name }}</div>
+    {% endif %}
+
+    <h1 class="detail-name">{{ item.name }}</h1>
+
+    <div class="detail-price-row">
+      <span class="detail-price">Ksh {{ item.price|floatformat:0|intcomma }}</span>
+      <span class="detail-stock {% if item.stock_quantity > 5 %}stock-ok{% elif item.stock_quantity > 0 %}stock-low{% else %}stock-out{% endif %}">
+        {% if item.stock_quantity > 5 %}
+          In Stock ({{ item.stock_quantity }})
+        {% elif item.stock_quantity > 0 %}
+          Only {{ item.stock_quantity }} left
+        {% else %}
+          Out of Stock
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="detail-desc">{{ item.description|linebreaksbr }}</div>
+
+    <div class="detail-meta">
+      <div class="meta-row">
+        <span class="meta-label">Seller</span>
+        <span class="meta-value">
+          {{ item.seller.business_name|default:item.seller.username }}
+        </span>
+      </div>
+      {% if item.category %}
+      <div class="meta-row">
+        <span class="meta-label">Category</span>
+        <span class="meta-value">{{ item.category.name }}</span>
+      </div>
+      {% endif %}
+      <div class="meta-row">
+        <span class="meta-label">Listed</span>
+        <span class="meta-value">{{ item.created_at|date:"M d, Y" }}</span>
+      </div>
+    </div>
+
+    <!-- Buy / Actions -->
+    {% if item.stock_quantity > 0 %}
+      <div class="detail-actions">
+        <a href="{% url 'merchandise_order' item.pk %}" class="btn-coral">
+          <i class="bi bi-bag-check"></i> Buy Now
+        </a>
+        <button class="btn-ghost" onclick="navigator.share ? navigator.share({title: '{{ item.name }}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href)">
+          <i class="bi bi-share"></i> Share
+        </button>
+      </div>
+    {% else %}
+      <div style="background: rgba(239,68,68,0.1); border-radius: 10px; padding: 1rem; text-align: center; color: #ef4444;">
+        <i class="bi bi-x-circle"></i> This item is currently out of stock
+      </div>
+    {% endif %}
+
+    <!-- Seller controls -->
+    {% if item.seller == request.user or request.user.is_staff %}
+    <div class="seller-controls">
+      <a href="{% url 'merchandise_edit' item.pk %}" class="btn-ghost">
+        <i class="bi bi-pencil"></i> Edit
+      </a>
+      <a href="{% url 'merchandise_delete' item.pk %}" class="btn-ghost" style="border-color: #ef4444; color: #ef4444;">
+        <i class="bi bi-trash"></i> Delete
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- Related Products -->
+{% if related_items %}
+<div class="related-section">
+  <h2 class="related-title">You may also like</h2>
+  <div class="related-grid">
+    {% for rel in related_items %}
+      <a href="{% url 'merchandise_detail' rel.pk %}" class="related-card">
+        {% if rel.image %}
+          <img src="{{ rel.image.url }}" alt="{{ rel.name }}">
+        {% else %}
+          <div style="height: 140px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary, #111);">
+            <i class="bi bi-image" style="font-size: 2rem; color: var(--text-tertiary);"></i>
+          </div>
+        {% endif %}
+        <div class="card-info">
+          <div class="card-name">{{ rel.name|truncatechars:30 }}</div>
+          <div class="card-price">Ksh {{ rel.price|floatformat:0|intcomma }}</div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

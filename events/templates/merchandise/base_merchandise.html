@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════════════
+   ZOZAPRIME MERCHANDISE — GLOBAL STYLES
+   Shared across all shop pages
+   ══════════════════════════════════════════════════════════ */
+
+.shop-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: 6rem;
+}
+
+.shop-header {
+  margin-bottom: 2rem;
+}
+
+.shop-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 900;
+  color: var(--text-primary, #fff);
+  margin-bottom: 0.25rem;
+}
+
+.shop-sub {
+  color: var(--text-secondary, #999);
+  font-size: 0.95rem;
+}
+
+/* Cards */
+.glass-card {
+  background: var(--glass-bg, rgba(255,255,255,0.05));
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--coral, #F05252);
+  transform: translateY(-2px);
+}
+
+/* Buttons */
+.btn-coral {
+  background: var(--coral, #F05252);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-coral:hover {
+  background: var(--coral-dark, #d93b3b);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary, #fff);
+  border: 1.5px solid var(--border-color, #333);
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-ghost:hover {
+  border-color: var(--coral, #F05252);
+  color: var(--coral, #F05252);
+}
+
+/* Badges */
+.badge-coral {
+  background: rgba(240, 82, 82, 0.15);
+  color: #F05252;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-green {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.badge-amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.badge-gray {
+  background: rgba(107, 114, 128, 0.15);
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* Price */
+.price-tag {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  color: var(--coral, #F05252);
+}
+
+/* Form controls (dark theme) */
+.shop-input {
+  width: 100%;
+  background: var(--bg-secondary, #1a1a1a) !important;
+  border: 1.5px solid var(--border-color, #333) !important;
+  color: var(--text-primary, #fff) !important;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+
+.shop-input:focus {
+  border-color: var(--coral, #F05252) !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(240, 82, 82, 0.15);
+}
+
+.shop-select {
+  width: 100%;
+  background: var(--bg-secondary, #1a1a1a);
+  border: 1.5px solid var(--border-color, #333);
+  color: var(--text-primary, #fff);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+
+.shop-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+}
+
+/* Empty state */
+.shop-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.shop-empty .icon {
+  font-size: 3rem;
+  color: var(--text-tertiary, #666);
+  margin-bottom: 1rem;
+}
+
+.shop-empty .title {
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  margin-bottom: 0.5rem;
+}
+
+.shop-empty .sub {
+  color: var(--text-secondary, #999);
+  font-size: 0.9rem;
+}
+
+/* Alerts */
+.shop-alert {
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.shop-alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.shop-alert-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.shop-alert-info {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+}
+
+@media (max-width: 768px) {
+  .shop-container {
+    padding: 1.5rem 1rem;
+    padding-top: 5rem;
+  }
+}
+</style>
+{% block shop_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="shop-container">
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="shop-alert shop-alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% block shop_content %}{% endblock %}
+</div>
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends 'merchandise/base_merchandise.html' %}
+{% load humanize %}
+
+{% block merchandise_content %}
+<div class="container py-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <!-- Invoice Header -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2 class="mb-0">INVOICE</h2>
+                    <p class="text-muted mb-0">#{{ order.id|stringformat:"06d" }}</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h4 class="mb-0">{{ company_name }}</h4>
+                    <p class="text-muted mb-0">{{ company_address }}</p>
+                    <p class="text-muted mb-0">Phone: {{ company_phone }}</p>
+                    <p class="text-muted mb-0">Email: {{ company_email }}</p>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <!-- Order and Shipping Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card mb-3 border-0 bg-light">
+                        <div class="card-body p-3">
+                            <h6 class="fw-bold mb-3">Billing & Shipping Information</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="mb-1 fw-semibold">Recipient:</p>
+                                    <p class="mb-1">{{ order.buyer.get_full_name|default:order.buyer.username }}</p>
+                                    
+                                    <p class="mb-1 mt-3 fw-semibold">Contact:</p>
+                                    <p class="mb-1">
+                                        {% if order.phone_number %}
+                                            {{ order.phone_number }}
+                                        {% else %}
+                                            {{ order.buyer.phone_number|default:"N/A" }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-0">{{ order.buyer.email }}</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-1 fw-semibold">Shipping Address:</p>
+                                    <p class="mb-0">
+                                        {% if order.shipping_address %}
+                                            {{ order.shipping_address|linebreaksbr }}
+                                        {% else %}
+                                            {{ order.buyer.shipping_address|default:"No shipping address provided"|linebreaksbr }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 bg-light h-100">
+                        <div class="card-body p-3">
+                            <h6 class="fw-bold mb-3">Order Details</h6>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Order Number:</span>
+                                <span>#{{ order.id|stringformat:"06d" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Order Date:</span>
+                                <span>{{ order.created_at|date:"F d, Y" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Status:</span>
+                                <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'cancelled' %}danger{% else %}warning{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </div>
+                            {% if order.paid %}
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Payment Status:</span>
+                                <span class="badge bg-success">Paid on {{ order.updated_at|date:"M d, Y" }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Items -->
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Item</th>
+                            <th class="text-end">Price</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order_items %}
+                        <tr>
+                            <td class="text-center">{{ forloop.counter }}</td>
+                            <td>
+                                <h6 class="mb-0">{{ item.merchandise.name }}</h6>
+                                {% if item.merchandise.description %}
+                                <p class="text-muted small mb-0">{{ item.merchandise.description|truncatewords:10 }}</p>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">Ksh {{ item.price|intcomma }}</td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">Ksh {{ item.get_total|intcomma }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-end fw-semibold">Subtotal ({{ order_items|length }} items):</td>
+                            <td class="text-end">Ksh {{ order.total_amount|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end fw-semibold">Shipping & Handling:</td>
+                            <td class="text-end">
+                                {% if order.shipping_cost %}
+                                    Ksh {{ order.shipping_cost|intcomma }}
+                                {% else %}
+                                    <span class="text-muted">Calculated at checkout</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if order.discount_amount and order.discount_amount > 0 %}
+                        <tr>
+                            <td colspan="4" class="text-end fw-semibold text-success">
+                                Discount {% if order.discount_code %}({{ order.discount_code }}){% endif %}:
+                            </td>
+                            <td class="text-end text-success">- Ksh {{ order.discount_amount|intcomma }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr class="table-active">
+                            <td colspan="4" class="text-end fw-bold fs-5">Total Amount:</td>
+                            <td class="text-end fw-bold fs-5">
+                                Ksh {{ order.get_total_with_shipping|default:order.total_amount|intcomma }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-muted small text-end">
+                                Amount in words: {{ order.get_total_with_shipping|default:order.total_amount|floatformat:0|intcomma }} Kenya Shillings Only
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <!-- Payment Instructions -->
+            <div class="alert alert-info">
+                <h6 class="alert-heading mb-2">Payment Instructions</h6>
+                <p class="mb-0">
+                    Please make payment to the following M-Pesa Paybill number: <strong>123456</strong> 
+                    with account number: <strong>INV{{ order.id|stringformat:"06d" }}</strong>
+                </p>
+            </div>
+            
+            <!-- Footer -->
+            <div class="mt-5 pt-4 border-top">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Thank you for your business!</h6>
+                        <p class="text-muted small">
+                            If you have any questions concerning this invoice, contact us at 
+                            <a href="mailto:{{ company_email }}">{{ company_email }}</a>
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <button onclick="window.print()" class="btn btn-outline-primary">
+                            <i class="bi bi-printer me-2"></i>Print Invoice
+                        </button>
+                        <a href="{% url 'merchandise_order_detail' order.id %}" class="btn btn-primary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Order
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .card, .card * {
+            visibility: visible;
+        }
+        .card {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+{% endblock %}

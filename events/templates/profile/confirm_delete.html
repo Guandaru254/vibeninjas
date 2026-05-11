@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Account - TazamoExp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-warning me-2"></i>Warning!</h5>
+                        <p>You are about to permanently delete your account. This action cannot be undone.</p>
+                    </div>
+                    
+                    <h6>What will be deleted:</h6>
+                    <ul class="list-unstyled">
+                        {% if user.is_seller %}
+                            <li><i class="fas fa-times text-danger me-2"></i>All your events and event data</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>All ticket sales records</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Business information and profile</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Revenue and analytics data</li>
+                        {% elif user.is_buyer %}
+                            <li><i class="fas fa-times text-danger me-2"></i>All your ticket purchases</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Event attendance history</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Personal profile information</li>
+                        {% endif %}
+                        <li><i class="fas fa-times text-danger me-2"></i>Account login credentials</li>
+                        <li><i class="fas fa-times text-danger me-2"></i>All personal data and preferences</li>
+                    </ul>
+                    
+                    <div class="mt-4">
+                        <h6>Account Information:</h6>
+                        <div class="bg-light p-3 rounded">
+                            <p><strong>Username:</strong> {{ user.username }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>Account Type:</strong> 
+                                {% if user.is_seller %}
+                                    <span class="badge bg-success">Seller</span>
+                                {% elif user.is_buyer %}
+                                    <span class="badge bg-primary">Buyer</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">User</span>
+                                {% endif %}
+                            </p>
+                            <p class="mb-0"><strong>Member Since:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form method="post" class="d-flex justify-content-between">
+                        {% csrf_token %}
+                        <a href="{% url 'profile_view' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you absolutely sure you want to delete your account? This cannot be undone!')">
+                            <i class="fas fa-trash me-2"></i>Yes, Delete My Account
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

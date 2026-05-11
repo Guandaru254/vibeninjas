@@ -1,0 +1,496 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Privacy Policy - ZOZAPRIME{% endblock %}
+{% block meta_description %}Learn how ZOZAPRIME protects your privacy and handles your personal data. GDPR compliant, CCPA ready, fully transparent.{% endblock %}
+{% block canonical %}https://www.zozaprime.com{% url 'privacy_policy' %}{% endblock %}
+
+{% block extra_css %}
+<style>
+.privacy-policy {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  color: var(--text-primary);
+}
+
+.privacy-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.privacy-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.privacy-header h1 i {
+  color: var(--coral);
+  font-size: 0.9em;
+}
+
+.privacy-header .lead {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.data-protection-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--success);
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  color: white;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0.5rem;
+}
+
+.data-protection-badge i {
+  font-size: 1rem;
+}
+
+.privacy-section {
+  margin-bottom: 3rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  transition: all var(--t-base);
+}
+
+.privacy-section:hover {
+  border-color: rgba(255, 77, 77, 0.2);
+  box-shadow: var(--shadow-md);
+}
+
+.privacy-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+.privacy-section h2 i {
+  color: var(--coral);
+  font-size: 0.9em;
+}
+
+.privacy-section h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.privacy-section p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.privacy-section ul {
+  margin: 1.5rem 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.privacy-section ul li {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  padding-left: 2rem;
+  position: relative;
+}
+
+.privacy-section ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0.75rem;
+  color: var(--coral);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.privacy-section ul li strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.privacy-section a {
+  color: var(--coral);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 77, 77, 0.3);
+  text-underline-offset: 3px;
+  transition: all var(--t-fast);
+}
+
+.privacy-section a:hover {
+  text-decoration-color: var(--coral);
+}
+
+.highlight-box {
+  background: var(--coral-bg);
+  border-left: 4px solid var(--coral);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.highlight-box p {
+  margin-bottom: 0;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .privacy-policy {
+    padding: 2rem 1rem;
+  }
+  
+  .privacy-header h1 {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .data-protection-badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    margin: 0.25rem;
+  }
+  
+  .privacy-section {
+    padding: 1.5rem;
+  }
+  
+  .privacy-section h2 {
+    font-size: 1.4rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="privacy-policy">
+    <header class="privacy-header">
+        <h1><i class="bi bi-shield-check" aria-hidden="true"></i>Privacy Policy</h1>
+        <p class="lead">Last updated: <time datetime="2026-04-04">April 04, 2026</time></p>
+        <div role="list">
+            <span class="data-protection-badge" role="listitem">
+                <i class="bi bi-lock-fill" aria-hidden="true"></i> GDPR Compliant
+            </span>
+            <span class="data-protection-badge" role="listitem">
+                <i class="bi bi-shield-fill-check" aria-hidden="true"></i> Data Protection
+            </span>
+            <span class="data-protection-badge" role="listitem">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> CCPA Ready
+            </span>
+        </div>
+    </header>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-info-circle" aria-hidden="true"></i>Introduction</h2>
+        <p>
+            At ZOZAPRIME, we are committed to protecting your privacy and ensuring the security of your personal information. 
+            This Privacy Policy explains how we collect, use, store, and protect your data when you use our event management 
+            and ticketing platform. We are fully compliant with the General Data Protection Regulation (GDPR), California Consumer 
+            Privacy Act (CCPA), and other applicable data protection laws.
+        </p>
+        <p>
+            By using ZOZAPRIME, you agree to the collection and use of information in accordance with this policy. 
+            If you do not agree with any part of this policy, please do not use our services.
+        </p>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-database" aria-hidden="true"></i>Information We Collect</h2>
+        
+        <h3>Personal Information</h3>
+        <p>We collect the following types of personal information when you use our services:</p>
+        <ul>
+            <li><strong>Account Information:</strong> Name, email address, phone number, username, and password</li>
+            <li><strong>Profile Information:</strong> Profile picture, business name, business description, and user preferences</li>
+            <li><strong>Payment Information:</strong> Billing address, payment method details (processed securely through M-Pesa and other third-party payment providers)</li>
+            <li><strong>Event Data:</strong> Events you create, attend, or show interest in</li>
+            <li><strong>Communication Data:</strong> Messages, support requests, feedback, and correspondence with ZOZAPRIME</li>
+        </ul>
+
+        <h3>Automatically Collected Information</h3>
+        <p>We automatically collect certain technical information when you visit our platform:</p>
+        <ul>
+            <li><strong>Usage Data:</strong> Pages visited, time spent on pages, click patterns, and user interactions</li>
+            <li><strong>Device Information:</strong> IP address, browser type, operating system, device identifiers, and screen resolution</li>
+            <li><strong>Location Data:</strong> Approximate location based on IP address (with your consent for precise location)</li>
+            <li><strong>Cookies and Tracking:</strong> Cookie data and similar tracking technologies (see our Cookie Policy)</li>
+            <li><strong>Analytics Data:</strong> Performance metrics, conversion rates, and user behavior patterns</li>
+        </ul>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-bullseye" aria-hidden="true"></i>How We Use Your Information</h2>
+        
+        <h3>Service Provision</h3>
+        <p>We use your information to:</p>
+        <ul>
+            <li>Create and manage your account on ZOZAPRIME</li>
+            <li>Process event registrations and ticket purchases</li>
+            <li>Facilitate M-Pesa and other payment transactions</li>
+            <li>Generate QR code tickets with HMAC encryption for security</li>
+            <li>Provide customer support and respond to your inquiries</li>
+            <li>Send important notifications about your events, purchases, and account</li>
+            <li>Personalize your experience on our platform</li>
+            <li>Detect and prevent fraud, abuse, and security incidents</li>
+        </ul>
+
+        <h3>Analytics and Improvement</h3>
+        <p>We use data to:</p>
+        <ul>
+            <li>Analyze platform usage and improve our services</li>
+            <li>Understand user preferences and behavior patterns</li>
+            <li>Develop new features and optimize existing functionality</li>
+            <li>Ensure platform security and prevent fraudulent activities</li>
+            <li>Conduct research and statistical analysis</li>
+            <li>Monitor and improve platform performance</li>
+        </ul>
+
+        <h3>Marketing and Communications</h3>
+        <p>With your explicit consent, we may use your information to:</p>
+        <ul>
+            <li>Send promotional emails about relevant events and platform features</li>
+            <li>Display personalized event recommendations</li>
+            <li>Share success stories and testimonials (with explicit permission)</li>
+            <li>Conduct market research and user surveys</li>
+            <li>Send newsletters about the creative economy in Kenya</li>
+        </ul>
+        
+        <div class="highlight-box">
+            <p><strong>You can opt-out of marketing communications at any time</strong> by clicking the "unsubscribe" link in our emails or adjusting your account preferences.</p>
+        </div>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-share" aria-hidden="true"></i>Data Sharing and Disclosure</h2>
+        
+        <div class="highlight-box">
+            <p><strong>We Do Not Sell Your Personal Information</strong><br>
+            ZOZAPRIME does not sell, rent, or trade your personal information to third parties for their marketing purposes.</p>
+        </div>
+        
+        <h3>Service Providers</h3>
+        <p>We share information with trusted third-party service providers who help us operate our platform:</p>
+        <ul>
+            <li><strong>Payment Processors:</strong> M-Pesa (Safaricom), Stripe, PayPal for secure payment processing</li>
+            <li><strong>Communication Services:</strong> Email service providers, SMS gateways for notifications</li>
+            <li><strong>Analytics Providers:</strong> Google Analytics for usage insights and platform optimization</li>
+            <li><strong>Hosting Services:</strong> Cloud infrastructure providers for data storage and platform hosting</li>
+            <li><strong>Security Services:</strong> Anti-fraud and security monitoring providers</li>
+        </ul>
+        
+        <p>All service providers are contractually obligated to protect your data and use it only for the purposes we specify.</p>
+
+        <h3>Event Organizers</h3>
+        <p>When you purchase tickets to an event, we share necessary information with the event organizer, including:</p>
+        <ul>
+            <li>Your name and contact information</li>
+            <li>Ticket purchase details</li>
+            <li>Attendance confirmation</li>
+        </ul>
+
+        <h3>Legal Requirements</h3>
+        <p>We may disclose your information if required by law or to:</p>
+        <ul>
+            <li>Comply with legal obligations, court orders, and government requests</li>
+            <li>Protect our rights, property, and safety</li>
+            <li>Prevent fraud or illegal activities</li>
+            <li>Protect the rights and safety of our users and the public</li>
+            <li>Enforce our Terms of Service</li>
+        </ul>
+
+        <h3>Business Transfers</h3>
+        <p>
+            In the event of a merger, acquisition, or sale of assets, your information may be transferred to the new owners. 
+            We will notify you via email and/or prominent notice on our platform before your information is transferred.
+        </p>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-globe-africa" aria-hidden="true"></i>International Data Transfers</h2>
+        <p>
+            Your information may be transferred to and processed in countries other than Kenya. We ensure appropriate safeguards 
+            are in place for international data transfers, including:
+        </p>
+        <ul>
+            <li>Standard Contractual Clauses (SCCs) approved by the European Commission</li>
+            <li>Adequacy decisions from relevant data protection authorities</li>
+            <li>Technical and organizational security measures</li>
+            <li>Compliance with GDPR requirements for data transfers outside the EEA</li>
+        </ul>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-clock-history" aria-hidden="true"></i>Data Retention</h2>
+        <p>We retain your personal information only as long as necessary for the purposes outlined in this policy:</p>
+        <ul>
+            <li><strong>Account Information:</strong> Retained until you delete your account, plus 90 days for backup recovery</li>
+            <li><strong>Transaction Data:</strong> Retained for 7 years for legal, accounting, and tax purposes</li>
+            <li><strong>Analytics Data:</strong> Retained for 26 months in anonymized form</li>
+            <li><strong>Marketing Communications:</strong> Retained until you unsubscribe or request deletion</li>
+            <li><strong>Support Tickets:</strong> Retained for 3 years for quality assurance</li>
+            <li><strong>Payment Records:</strong> Retained as required by Kenyan financial regulations</li>
+        </ul>
+        
+        <p>
+            After the retention period, we securely delete or anonymize your personal information in accordance with 
+            applicable data protection laws.
+        </p>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-person-gear" aria-hidden="true"></i>Your Rights and Choices</h2>
+        
+        <h3>Data Subject Rights</h3>
+        <p>Under GDPR, CCPA, and Kenyan data protection laws, you have the right to:</p>
+        <ul>
+            <li><strong>Access:</strong> Request a copy of your personal information</li>
+            <li><strong>Rectification:</strong> Correct inaccurate or incomplete information</li>
+            <li><strong>Erasure ("Right to be Forgotten"):</strong> Request deletion of your personal information</li>
+            <li><strong>Portability:</strong> Request transfer of your data to another service in a machine-readable format</li>
+            <li><strong>Objection:</strong> Object to processing of your personal information for certain purposes</li>
+            <li><strong>Restriction:</strong> Limit processing of your personal information in certain circumstances</li>
+            <li><strong>Withdraw Consent:</strong> Withdraw consent for processing where consent was the legal basis</li>
+            <li><strong>Lodge a Complaint:</strong> File a complaint with your local data protection authority</li>
+        </ul>
+        
+        <div class="highlight-box">
+            <p><strong>How to Exercise Your Rights:</strong> Email us at <a href="mailto:privacy@zozaprime.com">privacy@zozaprime.com</a> with your request. We will respond within 30 days.</p>
+        </div>
+
+        <h3>Account Controls</h3>
+        <p>You can manage your privacy settings through your account dashboard:</p>
+        <ul>
+            <li>Update or delete your profile information</li>
+            <li>Control email preferences and notification settings</li>
+            <li>Delete your account and all associated data</li>
+            <li>Export your data in JSON or CSV format</li>
+            <li>Manage cookie preferences</li>
+            <li>View your data processing history</li>
+        </ul>
+
+        <h3>Cookie Controls</h3>
+        <p>You can control cookies through:</p>
+        <ul>
+            <li>Our cookie consent banner (appears on first visit)</li>
+            <li>Browser settings and preferences</li>
+            <li>Opt-out tools for advertising cookies</li>
+            <li>Your account privacy settings</li>
+        </ul>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-shield-lock" aria-hidden="true"></i>Data Security</h2>
+        <p>
+            We implement comprehensive security measures to protect your personal information:
+        </p>
+        <ul>
+            <li><strong>Encryption:</strong> SSL/TLS encryption for data in transit; AES-256 encryption for data at rest</li>
+            <li><strong>HMAC QR Codes:</strong> Cryptographically secure ticket verification to prevent counterfeiting</li>
+            <li><strong>Access Controls:</strong> Role-based access control (RBAC) and multi-factor authentication for staff</li>
+            <li><strong>Regular Audits:</strong> Annual security assessments and penetration testing</li>
+            <li><strong>Data Minimization:</strong> We collect only necessary information</li>
+            <li><strong>Employee Training:</strong> Privacy and security awareness programs for all staff</li>
+            <li><strong>Incident Response:</strong> 24/7 security monitoring and breach notification procedures</li>
+            <li><strong>Payment Security:</strong> PCI DSS compliance for card payments; M-Pesa security protocols</li>
+        </ul>
+        
+        <p>
+            While we use industry-standard security measures, no method of transmission over the internet is 100% secure. 
+            We cannot guarantee absolute security but are committed to protecting your information to the best of our ability.
+        </p>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-people" aria-hidden="true"></i>Children's Privacy</h2>
+        <p>
+            ZOZAPRIME is not intended for children under 18 years of age. We do not knowingly collect personal information 
+            from children under 13 (or 16 in the European Economic Area). If we become aware that we have collected such 
+            information, we will take immediate steps to delete it.
+        </p>
+        <p>
+            If you are a parent or guardian and believe your child has provided us with personal information, please contact 
+            us at <a href="mailto:privacy@zozaprime.com">privacy@zozaprime.com</a>.
+        </p>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-arrow-repeat" aria-hidden="true"></i>Changes to This Policy</h2>
+        <p>
+            We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal 
+            requirements, or other factors. We will notify you of any material changes by:
+        </p>
+        <ul>
+            <li>Posting the updated policy on our website with a new "Last Updated" date</li>
+            <li>Sending email notifications to registered users</li>
+            <li>Displaying prominent notices on our platform</li>
+            <li>Requiring re-acceptance for significant changes</li>
+        </ul>
+        <p>
+            Your continued use of ZOZAPRIME after we make changes constitutes acceptance of the updated Privacy Policy. 
+            We encourage you to review this policy periodically.
+        </p>
+    </section>
+
+    <section class="privacy-section">
+        <h2><i class="bi bi-envelope" aria-hidden="true"></i>Contact Us</h2>
+        <p>
+            If you have any questions about this Privacy Policy, want to exercise your rights, or have concerns about 
+            how we handle your data, please contact us:
+        </p>
+        <ul>
+            <li><strong>Email:</strong> <a href="mailto:privacy@zozaprime.com">privacy@zozaprime.com</a></li>
+            <li><strong>General Inquiries:</strong> <a href="mailto:hello@zozaprime.com">hello@zozaprime.com</a></li>
+            <li><strong>Phone:</strong> <a href="tel:+254111363870">+254-111-363-870</a></li>
+            <li><strong>WhatsApp:</strong> <a href="https://wa.me/254111363870" target="_blank" rel="noopener noreferrer">Chat with us</a></li>
+            <li><strong>Address:</strong> Nairobi, Kenya</li>
+        </ul>
+        <p>
+            <strong>Data Protection Officer:</strong> For data protection inquiries, contact our DPO at 
+            <a href="mailto:dpo@zozaprime.com">dpo@zozaprime.com</a>
+        </p>
+        <p>
+            <strong>EU Representative:</strong> For EU data protection inquiries, contact our EU representative at 
+            <a href="mailto:eu-rep@zozaprime.com">eu-rep@zozaprime.com</a>
+        </p>
+        
+        <div class="highlight-box">
+            <p><strong>Response Time:</strong> We aim to respond to all privacy-related inquiries within 30 days. For urgent matters, please mark your email as "URGENT" in the subject line.</p>
+        </div>
+    </section>
+</div>
+{% endblock %}

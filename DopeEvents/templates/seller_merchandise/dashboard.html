@@ -1,0 +1,664 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Merchandise Dashboard — ZOZAPRIME{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Merchandise Dashboard - Modern ZOZAPRIME Design */
+
+.merch-dashboard-wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    padding-top: 6rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1600px) {
+    .merch-dashboard-wrapper {
+        max-width: 1600px;
+    }
+}
+
+/* Header */
+.merch-header {
+    margin-bottom: 3rem;
+}
+
+.merch-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.merch-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Navigation Tabs */
+.merch-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+    background: var(--bg-secondary);
+    padding: 0.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+.merch-nav-item {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.merch-nav-item:hover {
+    background: rgba(255, 77, 77, 0.1);
+    color: var(--text-primary);
+}
+
+.merch-nav-item.active {
+    background: var(--coral);
+    color: white;
+}
+
+/* Stats Grid */
+.merch-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.merch-stat-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.75rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.merch-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--coral);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+}
+
+.merch-stat-card:hover {
+    border-color: var(--coral);
+    transform: translateY(-4px);
+}
+
+.merch-stat-card:hover::before {
+    transform: scaleX(1);
+}
+
+.merch-stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.merch-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.merch-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.merch-stat-icon.blue { background: rgba(99, 102, 241, 0.15); color: #6366F1; }
+.merch-stat-icon.green { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+.merch-stat-icon.orange { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.merch-stat-icon.coral { background: rgba(255, 77, 77, 0.15); color: var(--coral); }
+
+.merch-stat-value {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.merch-stat-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Alert Cards */
+.alert-section {
+    margin-bottom: 3rem;
+}
+
+.alert-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.alert-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.alert-header i {
+    color: var(--warning);
+    font-size: 1.25rem;
+}
+
+.alert-header h6 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.alert-body {
+    padding: 1.5rem;
+}
+
+.alert-item {
+    padding: 1rem 1.25rem;
+    background: rgba(245, 158, 11, 0.05);
+    border-left: 3px solid var(--warning);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.alert-item:last-child {
+    margin-bottom: 0;
+}
+
+.alert-item.danger {
+    background: rgba(239, 68, 68, 0.05);
+    border-left-color: #EF4444;
+}
+
+.alert-item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+}
+
+.alert-list li {
+    padding: 0.5rem 0;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-list li i {
+    color: var(--warning);
+    font-size: 0.875rem;
+}
+
+/* Orders Section */
+.orders-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.orders-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.orders-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.orders-body {
+    padding: 1.5rem;
+}
+
+/* Modern Table */
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.modern-table thead th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: transparent;
+}
+
+.modern-table tbody tr {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.modern-table tbody tr:hover {
+    background: var(--bg-tertiary);
+    transform: scale(1.01);
+}
+
+.modern-table tbody td {
+    padding: 1.25rem;
+    color: var(--text-secondary);
+    background: inherit;
+}
+
+.modern-table tbody td:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.modern-table tbody td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+.order-id {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: monospace;
+}
+
+.order-amount {
+    font-weight: 700;
+    color: var(--coral);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-badge.pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.status-badge.processing { background: rgba(99, 102, 241, 0.15); color: #6366F1; }
+.status-badge.shipped { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+.status-badge.delivered { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+.status-badge.cancelled { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+
+.btn-view {
+    padding: 0.5rem 1rem;
+    background: var(--coral);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-view:hover {
+    background: var(--coral-dark);
+    transform: translateY(-2px);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--text-tertiary);
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.empty-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.empty-text {
+    color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .modern-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .merch-dashboard-wrapper {
+        padding: 1rem;
+        padding-top: 5rem;
+    }
+
+    .merch-title {
+        font-size: 2rem;
+    }
+
+    .merch-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .merch-nav {
+        overflow-x: auto;
+    }
+
+    .modern-table thead {
+        display: none;
+    }
+
+    .modern-table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+
+    .modern-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border: none;
+    }
+
+    .modern-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .modern-table tbody td:first-child,
+    .modern-table tbody td:last-child {
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .merch-dashboard-wrapper {
+        padding: 0.75rem;
+        padding-top: 4.5rem;
+    }
+
+    .merch-title {
+        font-size: 1.75rem;
+    }
+
+    .merch-stat-card {
+        padding: 1.25rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="merch-dashboard-wrapper">
+    <!-- Header -->
+    <div class="merch-header">
+        <h1 class="merch-title">Merchandise Dashboard</h1>
+        <p class="merch-subtitle">Manage your products, inventory, and orders</p>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="merch-nav">
+        <a href="{% url 'seller_dashboard' %}" class="merch-nav-item active">
+            <i class="bi bi-speedometer2"></i>
+            Dashboard
+        </a>
+        <a href="{% url 'seller_merchandise_list' %}" class="merch-nav-item">
+            <i class="bi bi-box-seam"></i>
+            My Products
+        </a>
+        <a href="{% url 'seller_merchandise_add' %}" class="merch-nav-item">
+            <i class="bi bi-plus-circle"></i>
+            Add Product
+        </a>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="merch-stats-grid">
+        <!-- Total Products -->
+        <div class="merch-stat-card">
+            <div class="merch-stat-top">
+                <span class="merch-stat-label">Total Products</span>
+                <div class="merch-stat-icon blue">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+            </div>
+            <div class="merch-stat-value">{{ total_products|default:"0" }}</div>
+            <div class="merch-stat-change">
+                <i class="bi bi-grid"></i> All inventory
+            </div>
+        </div>
+
+        <!-- Active Products -->
+        <div class="merch-stat-card">
+            <div class="merch-stat-top">
+                <span class="merch-stat-label">Active Products</span>
+                <div class="merch-stat-icon green">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+            </div>
+            <div class="merch-stat-value">{{ active_products|default:"0" }}</div>
+            <div class="merch-stat-change">
+                <i class="bi bi-arrow-up-circle"></i> Live listings
+            </div>
+        </div>
+
+        <!-- Total Sales -->
+        <div class="merch-stat-card">
+            <div class="merch-stat-top">
+                <span class="merch-stat-label">Total Sales</span>
+                <div class="merch-stat-icon orange">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+            </div>
+            <div class="merch-stat-value">{{ total_sales|default:"0" }}</div>
+            <div class="merch-stat-change">
+                <i class="bi bi-cart"></i> Orders completed
+            </div>
+        </div>
+
+        <!-- Revenue -->
+        <div class="merch-stat-card">
+            <div class="merch-stat-top">
+                <span class="merch-stat-label">Revenue</span>
+                <div class="merch-stat-icon coral">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+            </div>
+            <div class="merch-stat-value">Ksh {{ total_revenue|floatformat:0|default:"0" }}</div>
+            <div class="merch-stat-change">
+                <i class="bi bi-graph-up"></i> Total earnings
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts Section -->
+    {% if low_stock_items or out_of_stock_items %}
+    <div class="alert-section">
+        <div class="alert-card">
+            <div class="alert-header">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <h6>Inventory Alerts</h6>
+            </div>
+            <div class="alert-body">
+                {% if low_stock_items %}
+                <div class="alert-item">
+                    <div class="alert-item-title">
+                        <i class="bi bi-box"></i>
+                        Low Stock Items
+                    </div>
+                    <ul class="alert-list">
+                        {% for item in low_stock_items %}
+                        <li>
+                            <i class="bi bi-dot"></i>
+                            <strong>{{ item.name }}</strong> - Only {{ item.stock_quantity }} left
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if out_of_stock_items %}
+                <div class="alert-item danger">
+                    <div class="alert-item-title">
+                        <i class="bi bi-x-circle"></i>
+                        Out of Stock Items
+                    </div>
+                    <ul class="alert-list">
+                        {% for item in out_of_stock_items %}
+                        <li>
+                            <i class="bi bi-dot"></i>
+                            <strong>{{ item.name }}</strong> - Needs restocking
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Orders -->
+    <div class="orders-section">
+        <div class="orders-header">
+            <h2 class="orders-title">
+                <i class="bi bi-receipt"></i>
+                Recent Orders
+            </h2>
+        </div>
+        <div class="orders-body">
+            {% if orders %}
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td data-label="Order ID">
+                            <span class="order-id">#{{ order.id }}</span>
+                        </td>
+                        <td data-label="Customer">
+                            {{ order.buyer.get_full_name|default:order.buyer.username }}
+                        </td>
+                        <td data-label="Total">
+                            <span class="order-amount">Ksh {{ order.total_amount|floatformat:0 }}</span>
+                        </td>
+                        <td data-label="Status">
+                            <span class="status-badge {{ order.status }}">
+                                <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i>
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td data-label="Date">
+                            {{ order.created_at|date:"M d, Y" }}
+                        </td>
+                        <td data-label="Actions">
+                            <a href="{% url 'seller_merchandise_order_detail' order.pk %}" class="btn-view">
+                                <i class="bi bi-eye"></i>
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-bag"></i>
+                </div>
+                <h3 class="empty-title">No Orders Yet</h3>
+                <p class="empty-text">Your merchandise orders will appear here once customers start buying</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
