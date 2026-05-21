@@ -350,7 +350,7 @@ img { max-width: 100%; display: block; height: auto; }
 </head>
 <body>
     <div class="loading-screen" id="loadingScreen">
-        <img src="{% static 'img/logo.png' %}" alt="ZOZAPRIME" class="loading-logo-img">
+       <img src="https://res.cloudinary.com/{{ CLOUDINARY_CLOUD_NAME }}/image/upload/q_auto,f_auto,w_200/static/img/logo.png" alt="ZOZAPRIME" class="loading-logo-img">    
     </div>
 
 
@@ -363,7 +363,7 @@ img { max-width: 100%; display: block; height: auto; }
     <nav class="navbar">
         <div class="navbar-inner">
             <a href="{% url 'home' %}" class="logo" aria-label="ZOZAPRIME Home">
-                <img src="{% static 'img/logo.png' %}" alt="ZOZAPRIME" class="logo-img">
+       <img src="https://res.cloudinary.com/{{ CLOUDINARY_CLOUD_NAME }}/image/upload/q_auto,f_auto,w_200/static/img/logo.png" alt="ZOZAPRIME" class="loading-logo-img">    
             </a>
            
             <ul class="nav-links">
@@ -457,9 +457,9 @@ img { max-width: 100%; display: block; height: auto; }
         <div class="footer-inner">
             <div class="footer-brand">
                 <div class="footer-logo">
-                    <img src="{% static 'img/logo.png' %}" alt="ZOZAPRIME" class="footer-logo-img">
+                           <img src="https://res.cloudinary.com/{{ CLOUDINARY_CLOUD_NAME }}/image/upload/q_auto,f_auto,w_200/static/img/logo.png" alt="ZOZAPRIME" class="loading-logo-img">    
                 </div>
-                <p>Kenya's premier platform for live events, concerts, festivals, and unforgettable experiences.</p>
+                <p>Kenya's smartest event ticketing platform.Book your favourite live events, concerts  and experiences securely and conveniently</p>
                 <div class="footer-social">
                     <a href="https://www.instagram.com/zozaprime" target="_blank" rel="noopener" aria-label="Instagram">
                         <i class="bi bi-instagram"></i>
