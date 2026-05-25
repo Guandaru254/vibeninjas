@@ -154,6 +154,74 @@ html, body {
   color: var(--coral);
 }
 
+/* LEGAL CONSENT STYLING MODULE */
+.consent-container {
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.consent-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.consent-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all var(--t-fast);
+}
+
+.consent-checkbox::before {
+  content: "\f26e";
+  font-family: "bootstrap-icons";
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: white;
+  transform: scale(0);
+  transition: transform var(--t-fast);
+}
+
+.consent-checkbox:checked {
+  background: var(--coral);
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px var(--coral-glow);
+}
+
+.consent-checkbox:checked::before {
+  transform: scale(1);
+}
+
+.consent-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  user-select: none;
+}
+
+.consent-text a {
+  color: var(--coral);
+  font-weight: 600;
+}
+
+.consent-text a:hover {
+  text-decoration: underline;
+}
+
 .btn-submit {
   width: 100%;
   padding: 1rem;
@@ -212,66 +280,24 @@ html, body {
   text-decoration: underline;
 }
 
-/* MOBILE OPTIMIZATION - Fix for empty space/zoom issue */
+/* MOBILE OPTIMIZATION */
 @media (max-width: 480px) {
-  .auth-page {
-    padding: 1.5rem 1rem;
-  }
-  
-  .auth-page::before {
-    width: 400px;
-    height: 400px;
-    left: -30%;
-  }
-  
-  .auth-card {
-    border-radius: 20px;
-    max-width: 100%;
-  }
-  
-  .auth-header {
-    padding: 1.75rem 1.25rem;
-  }
-  
-  .auth-icon {
-    width: 56px;
-    height: 56px;
-    font-size: 1.4rem;
-  }
-  
-  .auth-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .auth-body {
-    padding: 1.75rem 1.25rem;
-  }
-  
-  .auth-footer {
-    padding: 1.25rem;
-  }
-  
-  .form-input {
-    font-size: 16px; /* Prevents iOS zoom on focus */
-  }
+  .auth-page { padding: 1.5rem 1rem; }
+  .auth-page::before { width: 400px; height: 400px; left: -30%; }
+  .auth-card { border-radius: 20px; max-width: 100%; }
+  .auth-header { padding: 1.75rem 1.25rem; }
+  .auth-icon { width: 56px; height: 56px; font-size: 1.4rem; }
+  .auth-header h1 { font-size: 1.5rem; }
+  .auth-body { padding: 1.75rem 1.25rem; }
+  .auth-footer { padding: 1.25rem; }
+  .form-input { font-size: 16px; }
 }
 
 @media (max-width: 360px) {
-  .auth-page {
-    padding: 1rem 0.75rem;
-  }
-  
-  .auth-header {
-    padding: 1.5rem 1rem;
-  }
-  
-  .auth-body {
-    padding: 1.5rem 1rem;
-  }
-  
-  .auth-footer {
-    padding: 1rem;
-  }
+  .auth-page { padding: 1rem 0.75rem; }
+  .auth-header { padding: 1.5rem 1rem; }
+  .auth-body { padding: 1.5rem 1rem; }
+  .auth-footer { padding: 1rem; }
 }
 </style>
 {% endblock %}
@@ -310,8 +336,18 @@ html, body {
         </div>
 
         <div class="form-group">
+          <label for="id_phone_number" class="form-label">Phone Number</label>
+          {{ form.phone_number }}
+        </div>
+
+        <div class="form-group">
           <label for="id_business_name" class="form-label">Business Name</label>
           {{ form.business_name }}
+        </div>
+
+        <div class="form-group">
+          <label for="id_business_description" class="form-label">Business Description</label>
+          {{ form.business_description }}
         </div>
         
         <div class="form-group">
@@ -332,6 +368,13 @@ html, body {
               <i class="bi bi-eye" id="toggle-id_password2"></i>
             </button>
           </div>
+        </div>
+
+        <div class="consent-container">
+          <label class="consent-item">
+            <input type="checkbox" name="terms_consent" id="id_terms_consent" class="consent-checkbox" required>
+            <span class="consent-text">I agree to the <a href="/merchant-terms/">Promoter Terms of Service</a> and the platform fee policy.</span>
+          </label>
         </div>
         
         <button type="submit" class="btn-submit">
@@ -368,17 +411,18 @@ function togglePassword(fieldId) {
   }
 }
 
-// Apply styling to Django form inputs
 document.addEventListener('DOMContentLoaded', function() {
-  const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+  const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], textarea');
   inputs.forEach(input => {
-    input.classList.add('form-input');
-    const label = input.previousElementSibling;
-    if (label && label.tagName === 'LABEL') {
-      const labelText = label.textContent.trim().replace(':', '').toLowerCase();
-      input.setAttribute('placeholder', 'Enter ' + labelText);
+    if (!input.classList.contains('consent-checkbox')) {
+      input.classList.add('form-input');
+      const label = input.previousElementSibling;
+      if (label && label.tagName === 'LABEL') {
+        const labelText = label.textContent.trim().replace(':', '').toLowerCase();
+        input.setAttribute('placeholder', 'Enter ' + labelText);
+      }
     }
   });
 });
 </script>
-{% endblock %}
+{% endblock %}~

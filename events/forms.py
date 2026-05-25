@@ -175,10 +175,18 @@ class BuyerSignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username", "email", "phone_number", "password1", "password2")
+        fields = ("username", "email", "phone_number")
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Enforce server-side compliance check
+        terms_consent = self.data.get('terms_consent')
+        if not terms_consent:
+            raise forms.ValidationError("You must accept the Terms of Service and Privacy Policy to create an account.")
+        return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -213,11 +221,18 @@ class SellerSignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username", "email", "phone_number", "business_name",
-                  "business_description", "password1", "password2")
+        fields = ("username", "email", "phone_number", "business_name", "business_description")
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Enforce server-side compliance check
+        terms_consent = self.data.get('terms_consent')
+        if not terms_consent:
+            raise forms.ValidationError("You must accept the Promoter Terms of Service and platform policies to continue.")
+        return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
