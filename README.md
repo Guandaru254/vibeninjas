@@ -138,6 +138,76 @@ vibeninjas/
 - `GET /pro-features/` - Pro features
 - `GET /subscription/settings/` - Manage subscription
 
+### Gate Verification (NEW)
+- `POST /api/v1/gate/verify-ticket/` - Verify ticket at gate entry
+- `POST /api/v1/gate/validate-signature/` - Validate HMAC signature only
+
+#### Gate Verification Endpoint Details
+
+**POST /api/v1/gate/verify-ticket/**
+
+Verify a ticket at the gate using HMAC-SHA256 signature validation. This endpoint:
+- Validates HMAC signature to prevent tampering
+- Checks timestamp to prevent replay attacks (5-minute window)
+- Verifies ticket status and event timing
+- Marks ticket as used when valid
+
+**Request:**
+```json
+{
+  "ticket_code": "ABC12345",
+  "timestamp": "2026-05-27T14:30:00Z",
+  "signature": "abc123def456..."
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Ticket verified and marked as used",
+  "ticket": {
+    "ticket_code": "ABC12345",
+    "status": "valid",
+    "buyer_name": "John Doe",
+    "buyer_email": "john@example.com",
+    "event_title": "Tech Conference 2026",
+    "event_date": "2026-05-27T18:00:00Z",
+    "event_location": "Convention Center",
+    "ticket_category": "VIP",
+    "quantity": 1,
+    "verified_at": "2026-05-27T14:30:15Z"
+  }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Invalid payload or missing fields
+- `401 Unauthorized` - Invalid or expired signature
+- `404 Not Found` - Ticket not found
+- `409 Conflict` - Ticket already used or invalid status
+
+**Generating HMAC Signature (Client-side example):**
+```python
+import hmac
+import hashlib
+
+ticket_code = "ABC12345"
+timestamp = "2026-05-27T14:30:00Z"
+secret_key = "your-secret-key"
+
+payload = f"{ticket_code}:{timestamp}".encode('utf-8')
+signature = hmac.new(
+    secret_key.encode('utf-8'),
+    payload,
+    hashlib.sha256
+).hexdigest()
+```
+
+**POST /api/v1/gate/validate-signature/**
+
+Validate a signature WITHOUT marking the ticket as used. Use for pre-validation or testing.
+
 ## Configuration
 
 ### Required Environment Variables
@@ -149,6 +219,8 @@ vibeninjas/
 - `DEBUG`: Set to False in production
 - `ALLOWED_HOSTS`: List of allowed hosts
 - `DATABASE_URL`: Database connection string
+- `GATE_VERIFICATION_SECRET_KEY`: Secret key for gate verification HMAC signatures (defaults to `SECRET_KEY`)
+- `GATE_VERIFICATION_VALIDITY_SECONDS`: Signature validity window in seconds (default: 300)
 
 ## Development
 

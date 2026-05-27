@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, views_subscription
+from . import views, views_subscription, api
 from django.contrib.auth.decorators import user_passes_test, login_required
 from seller_merchandise import views as seller_merchandise_views
 from events.views import service_worker
@@ -63,4 +63,8 @@ urlpatterns = [
     path('admin-dashboard/', user_passes_test(lambda u: u.is_staff)(views.admin_dashboard), name='admin_dashboard'),
     path('health/', views.health_check, name='health_check'),
     path('sw.js', service_worker, name='service_worker'),
+    
+    # ─── GATE VERIFICATION API ────────────────────────────────────────────────
+    path('api/v1/gate/verify-ticket/', api.verify_ticket_gate, name='api_verify_ticket_gate'),
+    path('api/v1/gate/validate-signature/', api.validate_gate_signature, name='api_validate_gate_signature'),
 ]
