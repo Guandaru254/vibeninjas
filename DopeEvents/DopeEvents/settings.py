@@ -15,7 +15,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='zozaprime.com,www.zozaprime.com,vibeninjas-jbqi.onrender.com,izoza.co.ke,localhost,127.0.0.1',
+    default='zozaprime.com,www.zozaprime.com,vibeninjas-jbqi.onrender.com,izoza.co.ke',
     cast=Csv()
 )
 
