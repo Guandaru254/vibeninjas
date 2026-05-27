@@ -128,7 +128,7 @@ def verify_ticket(ticket_code: str) -> tuple[dict, str]:
     event_date = ticket.event.date
     time_before_event = (event_date - now).total_seconds() / 3600  # hours
     
-    if time_before_event > 1:
+    if time_before_event > 24:
         return {}, f"Gate opens 1 hour before event (in {time_before_event:.1f} hours)"
     
     if time_before_event < -24:

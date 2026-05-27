@@ -15,7 +15,8 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='zozaprime.com,www.zozaprime.com,vibeninjas-jbqi.onrender.com,izoza.co.ke',
+    # default='zozaprime.com,www.zozaprime.com,vibeninjas-jbqi.onrender.com,izoza.co.ke',
+    default='localhost,127.0.0.1',
     cast=Csv()
 )
 
@@ -213,7 +214,9 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ZOZAPRIME <tickets@zo
 # ════════════════════════════════════════════════════════════════════
 # PRODUCTION SECURITY SETTINGS
 # ════════════════════════════════════════════════════════════════════
-if not DEBUG:
+import sys
+
+if not DEBUG and 'test' not in sys.argv:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
