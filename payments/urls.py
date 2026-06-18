@@ -18,6 +18,11 @@ urlpatterns = [
     # Confirmation
     path('ticket-confirmation/<str:transaction_id>/', views.ticket_confirmation, name='ticket_confirmation'),
     
+    # Paystack Integration
+    path('initiate-paystack-payment/<slug:slug>/', views.initiate_paystack_payment, name='initiate_paystack_payment'),
+    path('paystack-payment-success/<slug:slug>/', views.paystack_payment_success, name='paystack_payment_success'),
+    path('paystack-webhook/', views.paystack_webhook, name='paystack_webhook'),
+    
     # Legacy Stripe (keep for compatibility)
     path('payment-success/', views.payment_success, name='payment_success'),
 ]

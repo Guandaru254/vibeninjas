@@ -16,6 +16,7 @@ class Transaction(models.Model):
     PAYMENT_METHOD_CHOICES = (
         ('mpesa', 'M-Pesa'),
         ('stripe', 'Stripe'),
+        ('paystack', 'Paystack'),
     )
     transaction_id = models.CharField(max_length=100, unique=True, primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
