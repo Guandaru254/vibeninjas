@@ -4,252 +4,255 @@
 {% block title %}{{ event.title }} — ZOZAPRIME{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/style.css" />
+
 <style>
+:root {
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
 .event-hero {
-  position: relative; margin-top: 72px;
-  background: var(--bg-primary); padding: 2rem 0;
+  position: relative; 
+  margin-top: 72px;
+  background: var(--bg-primary); 
+  padding: 2.5rem 0;
 }
 .event-hero-content { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+
+/* Breadcrumbs with clean chevron vector alignments */
 .hero-breadcrumb {
   display: flex; align-items: center; gap: 0.5rem;
   color: var(--text-tertiary); font-size: 0.875rem; margin-bottom: 1.5rem;
 }
-.hero-breadcrumb a { color: var(--text-tertiary); text-decoration: none; transition: color var(--t-fast); }
+.hero-breadcrumb a { color: var(--text-tertiary); text-decoration: none; transition: color var(--t-fast); display: flex; align-items: center; }
 .hero-breadcrumb a:hover { color: var(--coral); }
+.hero-breadcrumb i { font-size: 0.75rem; color: var(--text-tertiary); opacity: 0.6; }
+
 .event-title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
   font-weight: 900; color: var(--text-primary);
-  margin-bottom: 1.5rem; line-height: 1.2;
+  margin-bottom: 2rem; line-height: 1.15;
+  letter-spacing: -0.02em;
 }
-.event-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
-.meta-item { display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.95rem; }
-.meta-icon {
-  width: 48px; height: 48px; background: var(--coral-bg);
-  border-radius: 12px; display: flex; align-items: center;
-  justify-content: center; color: var(--coral); font-size: 1.25rem;
-}
+
+/* Polished contextual meta rows */
+.event-meta { display: flex; flex-wrap: wrap; gap: 3.5rem; align-items: center; }
+.meta-item { display: flex; align-items: flex-start; gap: 0.85rem; color: var(--text-secondary); font-size: 0.95rem; }
+.meta-item i { font-size: 1.35rem; color: var(--text-tertiary); margin-top: 2px; }
+.meta-title { font-size: 0.75rem; text-transform: uppercase; color: var(--text-tertiary); font-weight: 700; margin-bottom: 3px; letter-spacing: 0.05em; }
+.meta-value { font-weight: 600; color: var(--text-primary); }
+.meta-subvalue { font-size: 0.85rem; color: var(--text-tertiary); margin-top: 1px; }
+
 .event-content { max-width: 1400px; margin: 0 auto; padding: 3rem 2rem; }
-.content-grid { display: grid; grid-template-columns: 1fr 420px; gap: 2rem; }
+.content-grid { display: grid; grid-template-columns: 1fr 420px; gap: 2.5rem; }
 .event-details { display: flex; flex-direction: column; gap: 2rem; }
+
 .detail-card {
   background: var(--glass-bg); backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border); border-radius: 20px;
-  padding: 2rem; box-shadow: var(--shadow-md);
+  border: 1px solid var(--glass-border); border-radius: var(--radius-lg);
+  padding: 2.25rem; box-shadow: var(--shadow-md);
 }
-.event-image-card { padding: 0; overflow: hidden; }
+.event-image-card { padding: 0; overflow: hidden; border-radius: var(--radius-lg); }
 .event-image-card img {
-  width: 100%; height: auto; max-height: 500px;
-  object-fit: cover; display: block; border-radius: 20px;
+  width: 100%; height: auto; max-height: 520px;
+  object-fit: cover; display: block;
 }
 .card-header-custom {
-  display: flex; align-items: center; gap: 0.75rem;
-  margin-bottom: 1.5rem; padding-bottom: 1rem;
+  margin-bottom: 1.5rem; padding-bottom: 1.15rem;
   border-bottom: 1px solid var(--glass-border);
 }
-.card-icon {
-  width: 48px; height: 48px; background: var(--coral-bg);
-  border-radius: 12px; display: flex; align-items: center;
-  justify-content: center; color: var(--coral); font-size: 1.3rem;
-}
-.card-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin: 0; }
+.card-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin: 0; }
 .event-description { color: var(--text-secondary); line-height: 1.8; font-size: 1rem; white-space: pre-wrap; }
-.event-badges { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
-.badge-custom {
-  padding: 0.5rem 1rem; border-radius: 100px; font-size: 0.85rem;
-  font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;
-}
-.badge-primary { background: var(--coral-bg); color: var(--coral); }
-.badge-success { background: rgba(16,185,129,0.15); color: var(--success); }
-.badge-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+
+/* Booking engine container */
 .booking-card {
   background: var(--glass-bg); backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border); border-radius: 20px;
+  border: 1px solid var(--glass-border); border-radius: var(--radius-lg);
   padding: 2rem; box-shadow: var(--shadow-lg);
   position: sticky; top: 92px;
   max-height: calc(100vh - 120px); overflow-y: auto;
 }
 .ticket-category {
-  background: var(--bg-secondary); border: 2px solid var(--glass-border);
-  border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; transition: all var(--t-base);
+  background: var(--bg-secondary); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1rem; transition: all var(--t-base);
 }
 .ticket-category:hover:not(.unavailable) {
-  transform: translateY(-2px); border-color: rgba(255,77,77,0.4); box-shadow: var(--shadow-sm);
+  border-color: rgba(255,77,77,0.35); box-shadow: var(--shadow-sm);
 }
-.ticket-category.unavailable { opacity: 0.5; cursor: not-allowed; }
-.ticket-category.free-tier { border-color: rgba(16,185,129,0.3); }
-.ticket-category.free-tier:hover:not(.unavailable) { border-color: #10b981; }
-.ticket-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem; }
-.ticket-name { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
-.ticket-desc { font-size: 0.85rem; color: var(--text-secondary); }
-.ticket-price { font-size: 1.75rem; font-weight: 800; font-family: var(--font-display); color: var(--text-primary); white-space: nowrap; }
-.ticket-price.is-free { color: #10b981; font-size: 1.4rem; }
+.ticket-category.unavailable { opacity: 0.55; cursor: not-allowed; }
+.ticket-category.free-tier { border-color: rgba(16,185,129,0.15); }
+.ticket-category.free-tier:hover:not(.unavailable) { border-color: rgba(16,185,129,0.5); }
+
+.ticket-header { display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 0.85rem; }
+.ticket-name { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.3rem; }
+.ticket-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; }
+.ticket-price { font-size: 1.55rem; font-weight: 800; font-family: var(--font-display); color: var(--text-primary); white-space: nowrap; }
+.ticket-price.is-free { color: #10b981; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.02em; }
+
 .bundle-badge {
   display: inline-flex; align-items: center; gap: 0.35rem;
   background: var(--coral-bg); color: var(--coral);
-  padding: 0.2rem 0.65rem; border-radius: 20px;
-  font-size: 0.75rem; font-weight: 700; margin-top: 0.3rem;
+  padding: 0.25rem 0.65rem; border-radius: var(--radius-sm);
+  font-size: 0.75rem; font-weight: 700; margin-top: 0.5rem;
 }
-.per-person { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.2rem; }
+.per-person { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.4rem; font-weight: 500; }
 .ticket-footer {
   display: flex; justify-content: space-between; align-items: center;
-  padding-top: 0.75rem; border-top: 1px solid var(--glass-border); margin-top: 0.75rem;
+  padding-top: 0.85rem; border-top: 1px solid var(--glass-border); margin-top: 0.85rem;
 }
+
+/* Low-saturation, clean utility tags (Replacing AI loud red/green blocks) */
+.badge-custom {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.65rem; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600;
+}
+.badge-danger {
+  background: rgba(239, 68, 68, 0.06);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
 .category-quantity-selector { display: flex; align-items: center; gap: 0.75rem; }
 .qty-btn-small {
-  width: 36px; height: 36px; border-radius: 8px;
-  border: 1.5px solid var(--border-color); background: var(--bg-tertiary);
-  color: var(--text-primary); font-size: 1.2rem; cursor: pointer;
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border); background: var(--bg-tertiary);
+  color: var(--text-primary); font-size: 0.9rem; cursor: pointer;
   transition: all var(--t-fast); display: flex; align-items: center; justify-content: center;
 }
 .qty-btn-small:hover:not(:disabled) { border-color: var(--coral); color: var(--coral); background: var(--coral-bg); }
-.qty-btn-small:disabled { opacity: 0.3; cursor: not-allowed; }
+.qty-btn-small:disabled { opacity: 0.25; cursor: not-allowed; }
 .qty-display-small {
-  font-size: 1.25rem; font-weight: 700;
+  font-size: 1.15rem; font-weight: 700;
   font-family: var(--font-display); color: var(--text-primary);
-  min-width: 40px; text-align: center;
+  min-width: 32px; text-align: center;
 }
+
 .btn-book {
-  width: 100%; padding: 1.25rem; background: var(--coral); color: white;
-  border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem;
+  width: 100%; padding: 1.2rem; background: var(--coral); color: white;
+  border: none; border-radius: var(--radius-md); font-weight: 700; font-size: 1.05rem;
   cursor: pointer; transition: all var(--t-base);
-  display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1.5rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;
 }
-.btn-book:hover:not(:disabled) { background: var(--coral-dark); transform: translateY(-2px); box-shadow: 0 12px 24px var(--coral-glow); }
-.btn-book:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-book:hover:not(:disabled) { background: var(--coral-dark); transform: translateY(-1px); }
+.btn-book:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 .btn-book.free-btn { background: #10b981; }
-.btn-book.free-btn:hover:not(:disabled) { background: #059669; box-shadow: 0 12px 24px rgba(16,185,129,0.3); }
+.btn-book.free-btn:hover:not(:disabled) { background: #059669; }
+
+.action-buttons { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+.btn-action {
+  width: 100%; padding: 0.85rem; background: var(--bg-secondary);
+  border: 1px solid var(--glass-border); border-radius: var(--radius-md);
+  color: var(--text-primary); font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  transition: all var(--t-fast); display: flex; align-items: center;
+  justify-content: center; gap: 0.5rem; text-decoration: none;
+}
+.btn-action:hover { background: var(--bg-tertiary); border-color: var(--text-tertiary); }
+
+.checkout-summary {
+  background: var(--bg-secondary); border-radius: var(--radius-md);
+  padding: 1.25rem; margin-top: 1.5rem; border: 1px solid var(--glass-border);
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0; color: var(--text-secondary); font-size: 0.9rem;
+}
+.summary-row.total {
+  border-top: 1px solid var(--glass-border); margin-top: 0.5rem;
+  padding-top: 0.85rem; font-size: 1.15rem; font-weight: 700; color: var(--text-primary);
+}
+
+/* Embedded native share grid adjustments */
+.share-section-wrapper {
+  margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);
+}
+.share-section-title {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; 
+  color: var(--text-tertiary); font-weight: 700; margin-bottom: 0.85rem;
+}
+.share-inline-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+.share-action-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.45rem; padding: 0.85rem 0.25rem; background: var(--bg-secondary);
+  border: 1px solid var(--glass-border); border-radius: var(--radius-md);
+  color: var(--text-secondary); font-size: 0.75rem; font-weight: 600;
+  text-decoration: none; transition: all var(--t-fast);
+}
+.share-action-btn i { font-size: 1.25rem; }
+.share-action-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); transform: translateY(-1px); }
+.share-action-btn.wa:hover { color: #25D366; border-color: rgba(37,211,102,0.25); }
+.share-action-btn.tw:hover { color: var(--text-primary); border-color: var(--glass-border); }
+.share-action-btn.fb:hover { color: #1877F2; border-color: rgba(24,119,242,0.25); }
+.share-action-btn.cp:hover { color: var(--coral); border-color: rgba(255,77,77,0.25); }
+
 .security-badge {
   text-align: center; margin-top: 1.5rem; padding-top: 1.5rem;
   border-top: 1px solid var(--glass-border);
   color: var(--text-tertiary); font-size: 0.85rem;
-  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
 }
-.action-buttons { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-.btn-action {
-  flex: 1; padding: 1rem; background: var(--bg-secondary);
-  border: 1px solid var(--glass-border); border-radius: 12px;
-  color: var(--text-primary); font-weight: 600; cursor: pointer;
-  transition: all var(--t-fast); display: flex; align-items: center;
-  justify-content: center; gap: 0.5rem; text-decoration: none;
-}
-.btn-action:hover { background: var(--coral-bg); border-color: var(--coral); color: var(--coral); }
-.checkout-summary {
-  background: var(--bg-secondary); border-radius: 14px;
-  padding: 1.5rem; margin-top: 1.5rem; border: 1px solid var(--glass-border);
-}
-.summary-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0.75rem 0; color: var(--text-secondary); font-size: 0.95rem;
-}
-.summary-row.total {
-  border-top: 2px solid var(--glass-border); margin-top: 0.5rem;
-  padding-top: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);
-}
-.modal-content {
-  background: var(--glass-bg); backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border); border-radius: 20px;
-}
-.modal-header { border-bottom: 1px solid var(--glass-border); padding: 1.5rem 2rem; }
-.modal-title { font-family: var(--font-display); font-weight: 700; color: var(--text-primary); }
-.modal-body { padding: 2rem; }
-.share-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-.share-btn {
-  display: flex; align-items: center; gap: 1rem; padding: 1.25rem;
-  background: var(--bg-secondary); border: 1.5px solid var(--glass-border);
-  border-radius: 12px; cursor: pointer; transition: all var(--t-fast);
-  text-decoration: none; color: var(--text-primary);
-}
-.share-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); color: var(--text-primary); }
-.share-btn.whatsapp:hover { border-color: #25D366; }
-.share-btn.twitter:hover { border-color: #1DA1F2; }
-.share-btn.facebook:hover { border-color: #1877F2; }
-.share-btn.copy:hover { border-color: var(--coral); }
-.share-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-.share-icon.whatsapp { background: rgba(37,211,102,0.15); color: #25D366; }
-.share-icon.twitter { background: rgba(29,161,242,0.15); color: #1DA1F2; }
-.share-icon.facebook { background: rgba(24,119,242,0.15); color: #1877F2; }
-.share-icon.copy { background: var(--coral-bg); color: var(--coral); }
+.security-badge i { font-size: 1.15rem; color: #10b981; }
+
 @media (max-width: 1024px) {
-  .content-grid { grid-template-columns: 1fr; }
+  .content-grid { grid-template-columns: 1fr; gap: 2rem; }
   .booking-card { position: relative; top: 0; max-height: none; }
 }
 @media (max-width: 768px) {
-  .event-title { font-size: 2rem; }
-  .event-hero-content, .event-content { padding-left: 1rem; padding-right: 1rem; }
+  .event-title { font-size: 2.25rem; }
+  .event-hero-content, .event-content { padding-left: 1.25rem; padding-right: 1.25rem; }
   .detail-card, .booking-card { padding: 1.5rem; }
-  .event-meta { gap: 1rem; }
-  .meta-icon { width: 40px; height: 40px; }
-  .share-options { grid-template-columns: 1fr; }
-  .event-image-card img { max-height: 300px; }
+  .event-meta { gap: 1.75rem; }
+  .share-inline-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .event-image-card img { max-height: 320px; }
 }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- HERO -->
 <div class="event-hero">
   <div class="event-hero-content">
     <div class="hero-breadcrumb">
       <a href="{% url 'home' %}">Home</a>
-      <i class="bi bi-chevron-right"></i>
+      <i class="ph ph-caret-right"></i>
       <a href="{% url 'event_list' %}">Events</a>
-      <i class="bi bi-chevron-right"></i>
+      <i class="ph ph-caret-right"></i>
       <span>{{ event.title }}</span>
     </div>
     <h1 class="event-title">{{ event.title }}</h1>
     <div class="event-meta">
       <div class="meta-item">
-        <div class="meta-icon"><i class="bi bi-calendar-event"></i></div>
+        <i class="ph ph-calendar-blank"></i>
         <div>
-          <div style="font-weight:600;color:var(--text-primary);">{{ event.date|date:"l, F d, Y" }}</div>
-          <div>{{ event.date|date:"g:i A" }}</div>
+          <div class="meta-title">Date & Time</div>
+          <div class="meta-value">{{ event.date|date:"l, F d, Y" }}</div>
+          <div class="meta-subvalue">{{ event.date|date:"g:i A" }}</div>
         </div>
       </div>
       <div class="meta-item">
-        <div class="meta-icon"><i class="bi bi-geo-alt"></i></div>
+        <i class="ph ph-map-pin"></i>
         <div>
-          <div style="font-weight:600;color:var(--text-primary);">Location</div>
-          <div>{{ event.location }}</div>
+          <div class="meta-title">Venue</div>
+          <div class="meta-value">{{ event.location }}</div>
         </div>
       </div>
       <div class="meta-item">
-        <div class="meta-icon"><i class="bi bi-person"></i></div>
+        <i class="ph ph-user-circle"></i>
         <div>
-          <div style="font-weight:600;color:var(--text-primary);">Organizer</div>
-          <div>{{ event.organizer.get_full_name|default:event.organizer.username }}</div>
+          <div class="meta-title">Organizer</div>
+          <div class="meta-value">{{ event.organizer.get_full_name|default:event.organizer.username }}</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="event-content">
   <div class="content-grid">
 
-    <!-- LEFT -->
     <div class="event-details">
-
-      <div class="event-badges">
-        <span class="badge-custom badge-primary">
-          <i class="bi bi-tag"></i> {{ event.category.name }}
-        </span>
-        {% if event.has_free_tickets %}
-          <span class="badge-custom" style="background:rgba(16,185,129,0.15);color:#10b981;">
-            <i class="bi bi-gift"></i> Free Entry 
-          </span>
-        {% endif %}
-        {% if event.date < now %}
-          <span class="badge-custom badge-danger"><i class="bi bi-calendar-x"></i> Past Event</span>
-        {% elif not event.get_available_categories.exists %}
-          <span class="badge-custom badge-danger"><i class="bi bi-x-circle"></i> Sold Out</span>
-        {% else %}
-          <span class="badge-custom badge-success"><i class="bi bi-check-circle"></i> Tickets Available</span>
-        {% endif %}
-      </div>
-
       {% if event.image %}
       <div class="detail-card event-image-card">
         <img src="{{ event.image.url }}" alt="{{ event.title }}">
@@ -258,28 +261,21 @@
 
       <div class="detail-card">
         <div class="card-header-custom">
-          <div class="card-icon"><i class="bi bi-info-circle"></i></div>
           <h3 class="card-title">About This Event</h3>
         </div>
         <p class="event-description">{{ event.description }}</p>
       </div>
-
     </div>
 
-    <!-- RIGHT — BOOKING -->
     <div>
       <div class="booking-card">
         <div class="card-header-custom">
-          <div class="card-icon"><i class="bi bi-ticket-perforated"></i></div>
           <h3 class="card-title">Get Tickets</h3>
         </div>
 
         <div class="action-buttons">
-          <button class="btn-action" data-bs-toggle="modal" data-bs-target="#shareModal">
-            <i class="bi bi-share"></i> Share
-          </button>
-          <button class="btn-action" onclick="addToWishlist()">
-            <i class="bi bi-heart"></i> Wishlist
+          <button type="button" class="btn-action" onclick="addToWishlist()">
+            <i class="ph ph-bookmark-simple"></i> Save to Wishlist
           </button>
         </div>
 
@@ -302,13 +298,13 @@
                 <div class="ticket-name">{{ category.name }}</div>
                 {% if category.is_bundle and category.bundle_size > 1 %}
                   <div class="bundle-badge">
-                    <i class="bi bi-people-fill"></i> {{ category.bundle_label|default:"Bundle" }}
+                    <i class="ph ph-users-three"></i> {{ category.bundle_label|default:"Bundle" }}
                   </div>
                   {% if not category.is_free %}
                   <div class="per-person">Ksh {{ category.per_person_price|floatformat:0 }} per person</div>
                   {% endif %}
                 {% elif category.is_free %}
-                  <div class="ticket-desc"><i class="bi bi-gift-fill" style="color:#10b981;"></i> Free entry — RSVP required</div>
+                  <div class="ticket-desc" style="color:#10b981; font-weight: 500;">Free entry — RSVP required</div>
                 {% else %}
                   <div class="ticket-desc">{{ category.description|default:"Standard ticket" }}</div>
                 {% endif %}
@@ -322,26 +318,22 @@
 
             <div class="ticket-footer">
               <div>
-                {% if is_avail %}
-                  <span class="badge-custom badge-success">{{ category.available_tickets }} Available</span>
-                {% elif category.available_tickets <= 0 %}
-                  <span class="badge-custom badge-danger">Sold Out</span>
-                {% elif category.sales_start and category.sales_start > now %}
-                  <span class="badge-custom badge-danger">Starts {{ category.sales_start|date:"M d" }}</span>
-                {% elif category.sales_end and category.sales_end < now %}
-                  <span class="badge-custom badge-danger">Sales Ended</span>
+                {% if not is_avail %}
+                  {% if category.available_tickets <= 0 %}
+                    <span class="badge-custom badge-danger"><i class="ph ph-prohibit"></i> Sold Out</span>
+                  {% elif category.sales_start and category.sales_start > now %}
+                    <span class="badge-custom badge-danger"><i class="ph ph-clock"></i> Starts {{ category.sales_start|date:"M d" }}</span>
+                  {% elif category.sales_end and category.sales_end < now %}
+                    <span class="badge-custom badge-danger"><i class="ph ph-calendar-x"></i> Ended</span>
+                  {% endif %}
                 {% endif %}
               </div>
 
               {% if is_avail %}
               <div class="category-quantity-selector">
-                <button type="button" class="qty-btn-small qty-minus" data-category="{{ category.id }}">
-                  <i class="bi bi-dash"></i>
-                </button>
+                <button type="button" class="qty-btn-small qty-minus" data-category="{{ category.id }}"><i class="ph ph-minus"></i></button>
                 <div class="qty-display-small" id="qty-{{ category.id }}">0</div>
-                <button type="button" class="qty-btn-small qty-plus" data-category="{{ category.id }}">
-                  <i class="bi bi-plus"></i>
-                </button>
+                <button type="button" class="qty-btn-small qty-plus" data-category="{{ category.id }}"><i class="ph ph-plus"></i></button>
               </div>
               {% endif %}
             </div>
@@ -350,7 +342,6 @@
           {% endwith %}
           {% endfor %}
 
-          <!-- Summary -->
           <div class="checkout-summary" id="checkout-summary" style="display:none;">
             <div class="summary-row">
               <span>Tickets Selected:</span>
@@ -366,64 +357,51 @@
             </div>
           </div>
 
-          <!-- Book Button -->
           {% if event.get_available_categories.exists and event.date >= now %}
             <button type="submit" class="btn-book" id="book-btn" disabled>
-              <i class="bi bi-ticket-perforated"></i>
               <span id="book-btn-text">Select tickets above</span>
             </button>
           {% elif event.date < now %}
             <button type="button" class="btn-book" disabled>
-              <i class="bi bi-clock-history"></i> Event Has Passed
+              <i class="ph ph-calendar-x"></i> Event Has Passed
             </button>
           {% else %}
             <button type="button" class="btn-book" disabled>
-              <i class="bi bi-x-circle"></i> Sold Out
+              <i class="ph ph-prohibit"></i> Sold Out
             </button>
           {% endif %}
 
         </form>
 
+        <div class="share-section-wrapper">
+          <div class="share-section-title">Share Event</div>
+          <div class="share-inline-grid">
+            <a href="#" class="share-action-btn wa" onclick="shareToWhatsApp();return false;">
+              <i class="ph ph-whatsapp-logo"></i>
+              <span>WhatsApp</span>
+            </a>
+            <a href="#" class="share-action-btn tw" onclick="shareToTwitter();return false;">
+              <i class="ph ph-x-logo"></i>
+              <span>Twitter</span>
+            </a>
+            <a href="#" class="share-action-btn fb" onclick="shareToFacebook();return false;">
+              <i class="ph ph-facebook-logo"></i>
+              <span>Facebook</span>
+            </a>
+            <a href="#" class="share-action-btn cp" onclick="copyLink();return false;">
+              <i class="ph ph-link"></i>
+              <span>Copy Link</span>
+            </a>
+          </div>
+        </div>
+
         <div class="security-badge">
-          <i class="bi bi-shield-check"></i>
-          Secured by M-Pesa · ZOZAPRIME
+          <i class="ph ph-lock-key"></i> Secured via M-Pesa · ZOZAPRIME
         </div>
 
       </div>
     </div>
 
-  </div>
-</div>
-
-<!-- Share Modal -->
-<div class="modal fade" id="shareModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><i class="bi bi-share me-2"></i>Share this event</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="share-options">
-          <a href="#" class="share-btn whatsapp" onclick="shareToWhatsApp();return false;">
-            <div class="share-icon whatsapp"><i class="bi bi-whatsapp"></i></div>
-            <div style="font-weight:600;">WhatsApp</div>
-          </a>
-          <a href="#" class="share-btn twitter" onclick="shareToTwitter();return false;">
-            <div class="share-icon twitter"><i class="bi bi-twitter"></i></div>
-            <div style="font-weight:600;">Twitter / X</div>
-          </a>
-          <a href="#" class="share-btn facebook" onclick="shareToFacebook();return false;">
-            <div class="share-icon facebook"><i class="bi bi-facebook"></i></div>
-            <div style="font-weight:600;">Facebook</div>
-          </a>
-          <a href="#" class="share-btn copy" onclick="copyLink();return false;">
-            <div class="share-icon copy"><i class="bi bi-link-45deg"></i></div>
-            <div style="font-weight:600;">Copy Link</div>
-          </a>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
