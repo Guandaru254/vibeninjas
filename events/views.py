@@ -33,6 +33,8 @@ from django.template.loader import render_to_string
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET
 from django.views.decorators.vary import vary_on_cookie
+from blog.models import Post  # Make sure this import matches your blog app name
+
 
 
 User = get_user_model()
@@ -145,16 +147,20 @@ def signup_seller(request):
 # ============================================================================
 # PUBLIC EVENT VIEWS
 # ============================================================================
+
 @vary_on_cookie
 def home(request):
-    """Home page with upcoming events"""
+    """Home page with upcoming events and recent blog posts"""
     events = Event.objects.filter(
         is_active=True, 
         date__gte=timezone.now()
     ).prefetch_related('ticket_categories').order_by('date')[:6]
     
+    recent_posts = Post.objects.all().order_by('-created_at')[:3]
+    
     return render(request, 'events/home.html', {
-        'events': events
+        'events': events,
+        'recent_posts': recent_posts,
     })
 
 @vary_on_cookie
