@@ -39,12 +39,12 @@
         gap: 2.5rem;
     }
 
-    /* Blog Card */
+    /* Blog Card - Border Radius Reduced by Half (28px -> 14px) */
     .blog-card {
         background: var(--glass-bg);
         backdrop-filter: blur(20px);
         border: 1px solid var(--glass-border);
-        border-radius: 28px;
+        border-radius: 14px;
         overflow: hidden;
         transition: all 0.3s var(--ease);
         display: flex;
@@ -114,22 +114,19 @@
         margin-bottom: 1.5rem;
     }
 
+    /* Card Footer - Aligned Left */
     .card-footer {
         margin-top: auto;
         padding-top: 1.5rem;
         border-top: 1px solid var(--border-light);
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
     }
 
+    /* Hidden Author & Views Styling */
     .author-info {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        color: var(--text-primary);
-        font-size: 0.85rem;
-        font-weight: 600;
+        display: none;
     }
 
     .author-avatar {
@@ -146,11 +143,27 @@
     }
 
     .read-time {
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
-        display: flex;
+        display: none;
+    }
+
+    /* Read Full Article Button */
+    .read-more-btn {
+        background-color: var(--coral);
+        color: #ffffff;
+        padding: 0.65rem 1.25rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: 0.5rem;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+        text-decoration: none;
+    }
+
+    .blog-card:hover .read-more-btn {
+        transform: translateX(4px);
+        opacity: 0.95;
     }
 
     /* Empty State */
@@ -228,6 +241,7 @@
                 </p>
 
                 <div class="card-footer">
+                    <!-- Hidden elements preserved below -->
                     <div class="author-info">
                         <div class="author-avatar">
                             {{ post.author.username|first|upper }}
@@ -238,6 +252,11 @@
                         <i class="bi bi-eye"></i>
                         <span>{{ post.views }} views</span>
                     </div>
+
+                    <!-- Coral Red Button (Left Aligned) -->
+                    <span class="read-more-btn">
+                        Read Full Article <i class="bi bi-arrow-right"></i>
+                    </span>
                 </div>
             </div>
         </a>
