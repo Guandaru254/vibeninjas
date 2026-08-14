@@ -11,6 +11,9 @@ admin.site.site_header = 'Zozaprime Admin'
 admin.site.site_title = 'Zozaprime Administration'
 admin.site.index_title = 'Site Administration'
 
+# Calculate absolute project root safely regardless of execution environment
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # Serve manifest.json
 def serve_manifest(request):
     manifest = {
@@ -60,7 +63,7 @@ def serve_manifest(request):
 
 def serve_llms_txt(request):
     """Serve llms.txt for AI search engines (ChatGPT, Claude, Perplexity, Gemini)."""
-    file_path = os.path.join(settings.BASE_DIR, 'llms.txt')
+    file_path = os.path.join(PROJECT_ROOT, 'llms.txt')
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -71,7 +74,7 @@ def serve_llms_txt(request):
 
 def serve_sitemap_xml(request):
     """Serve sitemap.xml for search engine indexing."""
-    file_path = os.path.join(settings.BASE_DIR, 'sitemap.xml')
+    file_path = os.path.join(PROJECT_ROOT, 'sitemap.xml')
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -82,7 +85,7 @@ def serve_sitemap_xml(request):
 
 def serve_robots_txt(request):
     """Serve robots.txt for search engine crawler instructions."""
-    file_path = os.path.join(settings.BASE_DIR, 'robots.txt')
+    file_path = os.path.join(PROJECT_ROOT, 'robots.txt')
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -93,7 +96,7 @@ def serve_robots_txt(request):
 
 def serve_bing_site_auth(request):
     """Serve BingSiteAuth.xml for Bing Webmaster Tools verification."""
-    file_path = os.path.join(settings.BASE_DIR, 'BingSiteAuth.xml')
+    file_path = os.path.join(PROJECT_ROOT, 'BingSiteAuth.xml')
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
